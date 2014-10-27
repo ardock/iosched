@@ -28,8 +28,11 @@ android {
     buildToolsVersion "21.0.2"
 
     defaultConfig {
+        applicationId "com.google.samples.apps.iosched"
         minSdkVersion 14
         targetSdkVersion 21
+        versionCode 223
+        versionName "2.2.3"
     }
 
     signingConfigs {
