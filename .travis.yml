@@ -33,11 +33,19 @@ notifications:
 
 env:
   matrix:
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    # Travis CI will run your tests against a matrix of all possible combinations.
+    # For Android projects, env and jdk can be given as arrays to construct a build matrix.
+    # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
+    #- AVD_NAME=test-api15-arm-$RANDOM  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+    #- AVD_NAME=test-api16-arm-$RANDOM  ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    #- AVD_NAME=test-api17-arm-$RANDOM  ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+    #- AVD_NAME=test-api18-arm-$RANDOM  ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
+    #- AVD_NAME=test-api19-arm-$RANDOM  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - AVD_NAME=test-api21-arm-$RANDOM  ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 
 before_install:
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n $AVD_NAME -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd $AVD_NAME -no-skin -no-audio -no-window &
 
 before_script:
   - ./scripts/wait_for_emulator.sh
