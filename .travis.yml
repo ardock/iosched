@@ -14,6 +14,11 @@
 
 language: android
 
+jdk:
+  # Test against one or more JDKs. (Travis CI provides openjdk6, openjdk7, oraclejdk7, and oraclejdk8).
+  #- openjdk7
+  - oraclejdk7
+
 android:
   components:
     - build-tools-21.0.2
