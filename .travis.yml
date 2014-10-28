@@ -47,12 +47,23 @@ android:
     # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
 
+  licenses:
+    # By default, Travis CI will accept all the requested licenses, but it is also possible to define a white list:
+    # See http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
+    # License id: android-sdk-license-5be876d5 Used by:Android SDK Platform-tools, revision 21 and other (October 2014).
+    - 'android-sdk-license-5be876d5'
+    # White list future versions
+    #- 'android-sdk-license-.+'
+
+
 notifications:
   email: false
 
 env:
   global:
     - TERM=dumb
+    - AVD_PATH=avds
+
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations.
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -67,9 +78,15 @@ env:
 before_install:
   # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
   - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
-  - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "avds"
+  - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "$AVD_PATH"
   - emulator -avd "$AVD_NAME" -no-skin -no-audio -no-window &
-  # - ls avds -al
+  - ls avds -al
+
+install:
+  - true
+  # If true, Travis skips default "./gradlew assemble" or override it and check? disabling pre-dexing ??
+  # See http://docs.travis-ci.com/user/build-configuration/#install
+  # - ./gradlew clean assemble check -PdisablePreDex
 
 before_script:
   - chmod +x scripts/wait_for_emulator.sh
@@ -80,5 +97,5 @@ before_script:
 # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 script:
   - chmod +x gradlew
-  - ./gradlew build connectedCheck
-  # - ./gradlew build connectedCheck -PdisablePreDex
+  # - ./gradlew build connectedCheck
+  - ./gradlew build connectedCheck -PdisablePreDex
