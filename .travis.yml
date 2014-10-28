@@ -69,3 +69,11 @@ before_install:
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
+
+# If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
+# See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
+#script:
+  #- chmod +x gradlew
+  #- ./gradlew clean
+  #- ./gradlew assemble -PdisablePreDex
+  #- ./gradlew build connectedCheck
