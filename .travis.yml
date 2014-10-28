@@ -16,7 +16,7 @@ language: android
 
 jdk:
   # Test against one or more JDKs. (Travis CI provides openjdk6, openjdk7, oraclejdk7, and oraclejdk8).
-  #- openjdk7
+  # - openjdk7
   - oraclejdk7
 
 android:
@@ -30,11 +30,11 @@ android:
     - tools
 
     # Comment the lines below if the latest BuildTools versions used by Android Wear and Android Lollipop are included.
-    #- build-tools-20.0.0
+    # - build-tools-20.0.0
     - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile Android Wear and Android Lollipop are included.
-    #- android-20
+    # - android-20
     - android-21
 
     # Comment the lines below if the latest additional components are included by default or not required.
@@ -44,36 +44,41 @@ android:
     - extra-android-support
 
     # Comment the lines below if the latest images are included or you don't need to run emulator(s) during your tests.
-    #- sys-img-armeabi-v7a-android-wear-20
+    # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
 
 notifications:
   email: false
 
 env:
+  global:
+    - TERM=dumb
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations.
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    #- AVD_NAME=test-api15-arm-$RANDOM  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
-    #- AVD_NAME=test-api16-arm-$RANDOM  ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
-    #- AVD_NAME=test-api17-arm-$RANDOM  ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
-    #- AVD_NAME=test-api18-arm-$RANDOM  ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
-    #- AVD_NAME=test-api19-arm-$RANDOM  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
-    - AVD_NAME=test-api21-arm-$RANDOM  ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 
 before_install:
-  - echo no | android create avd --force -n $AVD_NAME -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd $AVD_NAME -no-skin -no-audio -no-window &
+  # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
+  - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
+  - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "avds"
+  - emulator -avd "$AVD_NAME" -no-skin -no-audio -no-window &
+  # - ls avds -al
 
 before_script:
+  - chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
 # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
 # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
-#script:
-  #- chmod +x gradlew
-  #- ./gradlew clean
-  #- ./gradlew assemble -PdisablePreDex
-  #- ./gradlew build connectedCheck
+script:
+  - chmod +x gradlew
+  - ./gradlew build connectedCheck
+  # - ./gradlew build connectedCheck -PdisablePreDex
