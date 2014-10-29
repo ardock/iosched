@@ -46,8 +46,6 @@ android:
     # Comment the lines below if the latest images are included or you don't need to run emulator(s) during your tests.
     - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
-    - sys-img-x86_64-android-21
-    - sys-img-x86-android-21
 
   licenses:
     # By default, Travis CI will accept all the requested licenses, but it is also possible to define a white list:
@@ -71,23 +69,21 @@ env:
     # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-21  ANDROID_ABI=x86
+    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 
 before_install:
   # - pwd
   # - ls -al
   # - android list sdk --no-ui --all --extended
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list targets | grep -e '^\(\(id:\)\|\( Tag\)\)'
+  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - android list targets | grep -e '^\(\(id:\)\|\( Tag\)\)'
 
   # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
   - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
   - echo no | android create avd --force -n test -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd test -no-skin -no-audio -no-window &
-  - pwd
-  - ls avds -al
 
 # install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
