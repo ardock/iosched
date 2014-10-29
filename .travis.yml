@@ -15,44 +15,44 @@
 language: android
 
 jdk:
-  # Test against one or more JDKs. (Travis CI provides openjdk6, openjdk7, oraclejdk7, and oraclejdk8).
+  # Test against one or more JDKs. Travis CI provides openjdk7, oraclejdk7 and other versions.
   - openjdk7
   - oraclejdk7
 
 android:
   components:
-    # Note: Revisions included depend on android-sdk included, we need last version, currently not included.
+    # Note: Revisions included depend on android-sdk included, we need last version, not included.
     # See required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
-    # See defaults: https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb
+    # See defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
     - platform-tools
     - tools
 
-    # Comment the lines below if the latest BuildTools versions used by Android Wear and Android Lollipop are included.
-    - build-tools-20.0.0
+    # Comment the lines below if latest BuildTools versions used by Wear and Lollipop are included.
+    # - build-tools-20.0.0
     - build-tools-21.0.2
 
-    # Comment the lines below if the SDK versions used to compile Android Wear and Android Lollipop are included.
-    - android-20
+    # Comment the lines below if the SDK versions used to compile Wear and Lollipop are included.
+    # - android-20
     - android-21
 
-    # Comment the lines below if the latest additional components are included by default or not required.
+    # Comment the lines below if the latest additional components are included or not required.
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
 
-    # Comment the lines below if the latest images are included or you don't need to run emulator(s) during your tests.
-    - sys-img-armeabi-v7a-android-wear-20
+    # Comment the lines below if the latest images are included or you don't need to run emulator(s)
+    # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
 
   licenses:
-    # By default, Travis CI will accept all the requested licenses, but it is also possible to define a white list:
+    # By default, Travis will accept all the licenses, but it's also possible to define a white list
     # See http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
-    # License id: android-sdk-license-5be876d5 Used by:Android SDK Platform-tools, revision 21 and other (October 2014).
+    # License id: android-sdk-license-5be876d5 Used by Android SDK Platform-tools, rev 21 and other.
     - 'android-sdk-license-5be876d5'
-    # White list future versions
+    # White list future android-sdk-license revisions
     # - 'android-sdk-license-.+'
     # White list all the licenses
     # - '.+'
@@ -65,10 +65,10 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations.
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 
@@ -79,7 +79,7 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list targets | grep -e '^\(\(id:\)\|\( Tag\)\)'
 
-  # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
+  # Create and start emulator. AVD name based on target, abi and random suffix.
   - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
   - echo no | android create avd --force -n test -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd test -no-skin -no-audio -no-window &
@@ -87,7 +87,7 @@ before_install:
 # install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # See http://docs.travis-ci.com/user/build-configuration/#install
-  #- true
+  # - true
   # - TERM=dumb ./gradlew clean check assembleDebug -PdisablePreDex
 
 before_script:
@@ -97,12 +97,12 @@ before_script:
 
 script:
   # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
-  # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
+  # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   # - TERM=dumb ./gradlew build connectedCheck
   # - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
 
 after_failure:
-  - cd /home/travis/build/ardock/iosched/android/build/outputs/reports/androidTests/connected/
-  - sudo apt-get install lynx
-  - lynx --dump index.html > connectedAndroidTest.log
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  # - cd /home/travis/build/google/iosched/android/build/outputs/reports/androidTests/connected/
+  # - sudo apt-get install lynx
+  # - lynx --dump index.html > connectedAndroidTest.log
+  # - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
