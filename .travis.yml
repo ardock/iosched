@@ -61,7 +61,6 @@ notifications:
 
 env:
   global:
-    - TERM=dumb
     - AVD_PATH=avds
 
   matrix:
@@ -83,19 +82,17 @@ before_install:
   - ls avds -al
 
 install:
-  - true
-  # If true, Travis skips default "./gradlew assemble" or override it and check? disabling pre-dexing ??
+  # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # See http://docs.travis-ci.com/user/build-configuration/#install
-  # - ./gradlew clean assemble check -PdisablePreDex
+  # - true
+  - TERM=dumb ./gradlew clean assemble check -PdisablePreDex
 
 before_script:
-  - chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
 # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
 # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 script:
-  - chmod +x gradlew
-  # - ./gradlew build connectedCheck
-  - ./gradlew build connectedCheck -PdisablePreDex
+  # - TERM=dumb ./gradlew build connectedCheck
+  - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
