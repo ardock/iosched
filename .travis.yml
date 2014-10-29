@@ -30,11 +30,11 @@ android:
     - tools
 
     # Comment the lines below if the latest BuildTools versions used by Android Wear and Android Lollipop are included.
-    # - build-tools-20.0.0
+    - build-tools-20.0.0
     - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile Android Wear and Android Lollipop are included.
-    # - android-20
+    - android-20
     - android-21
 
     # Comment the lines below if the latest additional components are included by default or not required.
@@ -44,8 +44,10 @@ android:
     - extra-android-support
 
     # Comment the lines below if the latest images are included or you don't need to run emulator(s) during your tests.
-    # - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
+    - sys-img-x86_64-android-21
+    - sys-img-x86-android-21
 
   licenses:
     # By default, Travis CI will accept all the requested licenses, but it is also possible to define a white list:
@@ -53,8 +55,9 @@ android:
     # License id: android-sdk-license-5be876d5 Used by:Android SDK Platform-tools, revision 21 and other (October 2014).
     - 'android-sdk-license-5be876d5'
     # White list future versions
-    #- 'android-sdk-license-.+'
-
+    # - 'android-sdk-license-.+'
+    # White list all the licenses
+    # - '.+'
 
 notifications:
   email: false
@@ -68,31 +71,49 @@ env:
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-21  ANDROID_ABI=x86_64
+    - ANDROID_TARGET=android-21  ANDROID_ABI=x86
 
 before_install:
+  - pwd
+  - ls -al
+  # - ./android list sdk --no-ui --all --extended
+  - ./android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+
   # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
   - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
-  - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "$AVD_PATH"
-  - emulator -avd "$AVD_NAME" -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n test -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "$AVD_PATH"
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - pwd
   - ls avds -al
 
 install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # See http://docs.travis-ci.com/user/build-configuration/#install
   # - true
-  - TERM=dumb ./gradlew clean assemble check -PdisablePreDex
+  - TERM=dumb ./gradlew clean check assembleDebug -PdisablePreDex
 
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
-# If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
-# See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 script:
+  # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
+  # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   # - TERM=dumb ./gradlew build connectedCheck
+  - TERM=dumb ./gradlew signingReport
   - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
+
+after_failure:
+  - ~
+  - pwd
+  - ls -al
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  - cd /home/travis/build/ardock/iosched/android/build/outputs/reports/androidTests/connected/
+  - sudo apt-get install lynx
+  - lynx --dump index.html > mylog.txt
