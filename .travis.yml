@@ -65,10 +65,10 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations.
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 
