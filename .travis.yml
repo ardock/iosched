@@ -16,7 +16,7 @@ language: android
 
 jdk:
   # Test against one or more JDKs. (Travis CI provides openjdk6, openjdk7, oraclejdk7, and oraclejdk8).
-  # - openjdk7
+  - openjdk7
   - oraclejdk7
 
 android:
@@ -63,57 +63,51 @@ notifications:
   email: false
 
 env:
-  global:
-    - AVD_PATH=avds
-
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations.
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
     # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-21  ANDROID_ABI=x86_64
     - ANDROID_TARGET=android-21  ANDROID_ABI=x86
 
 before_install:
-  - pwd
-  - ls -al
-  # - ./android list sdk --no-ui --all --extended
-  - ./android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - pwd
+  # - ls -al
+  # - android list sdk --no-ui --all --extended
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - android list targets | grep -e '^\(\(id:\)\|\( Tag\)\)'
 
   # Create and start emulator. AVD name based on target, abi and random suffix (different name for multiple JDKs matrix).
   - AVD_NAME=test-"${ANDROID_TARGET}"-"${ANDROID_ABI}"-"${RANDOM}"
-  - echo no | android create avd --force -n test -t "$ANDROID_TARGET" --abi "$ANDROID_ABI" -p "$AVD_PATH"
+  - echo no | android create avd --force -n test -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd test -no-skin -no-audio -no-window &
   - pwd
   - ls avds -al
 
-install:
+# install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # See http://docs.travis-ci.com/user/build-configuration/#install
-  # - true
-  - TERM=dumb ./gradlew clean check assembleDebug -PdisablePreDex
+  #- true
+  # - TERM=dumb ./gradlew clean check assembleDebug -PdisablePreDex
 
 before_script:
   - ./scripts/wait_for_emulator.sh
+  - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
 script:
   # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
   # See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   # - TERM=dumb ./gradlew build connectedCheck
-  - TERM=dumb ./gradlew signingReport
-  - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
+  # - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
 
 after_failure:
-  - ~
-  - pwd
-  - ls -al
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
   - cd /home/travis/build/ardock/iosched/android/build/outputs/reports/androidTests/connected/
   - sudo apt-get install lynx
-  - lynx --dump index.html > mylog.txt
+  - lynx --dump index.html > connectedAndroidTest.log
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
