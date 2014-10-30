@@ -85,7 +85,7 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
   # Create and start emulator. Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
-  - ./AVD_NAME=test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
+  - ./AVD_NAME=test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}
   - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "$AVD_NAME" -no-skin -no-audio -no-window &
 
