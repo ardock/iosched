@@ -85,9 +85,10 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
   # Create and start emulator. Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
-  - ./AVD_NAME=test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}
-  - echo no | android create avd --force -n "$AVD_NAME" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
-  - emulator -avd "$AVD_NAME" -no-skin -no-audio -no-window &
+  - alias AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
+  # - AVD_NAME=test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}
+  - echo no | android create avd --force -n AVD_NAME -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
+  - emulator -avd AVD_NAME -no-skin -no-audio -no-window &
 
 install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
@@ -130,4 +131,5 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
+  # TODO: replace logs/beer dilemma by 'if TRAVIS_TEST_RESULT else...' more standard
 
