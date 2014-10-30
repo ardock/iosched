@@ -16,15 +16,15 @@ language: android
 
 jdk:
   # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
-  # Test against one or more JDKs: 'jdk' is  combined with 'env' to construct a build matrix.
+  # Test against one or more JDKs: 'jdk' is combined with 'env' to construct a build matrix.
   - openjdk7
   - oraclejdk7
 
 android:
   components:
     # Check the project requirements and the components included by default on Travis-ci vm image.
-    # Required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
-    # Defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
+    # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
+    # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
@@ -52,13 +52,13 @@ android:
     - sys-img-armeabi-v7a-android-21
 
   licenses:
-    # By default Travis will accept all the licenses, but it's also possible to define a white list.
-    # See http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
-    # License id: android-sdk-license-5be876d5 Used by Android SDK Platform-tools, rev 21 and other.
+    # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
+    # By default Travis will accept all the licenses, but it's also possible to define a white list:
+    # White list android-sdk-license used by Android SDK Platform-tools, rev 21 and other tools.
     - 'android-sdk-license-5be876d5'
-    # White list future android-sdk-license revisions
+    # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
-    # White list all the licenses
+    # White list all the licenses.
     # - '.+'
 
 notifications:
@@ -66,70 +66,73 @@ notifications:
 
 env:
   matrix:
-    # Travis CI will run your tests against a matrix of all possible combinations.
+    # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
-    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS=''
+    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS=''
+    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS=''
+    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS=''
+    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS=''
+    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS=''
+    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 before_install:
-  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
+  # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
-  # See Travis build lifecycle: http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
+
+  # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
+  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - sudo chmod +x gradlew
   # - pwd && ls -al && sudo apt-get update -qq
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
-  # Create and start emulator. Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
-  - alias AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
-  # - AVD_NAME=test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}
-  - echo no | android create avd --force -n AVD_NAME -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
-  - emulator -avd AVD_NAME -no-skin -no-audio -no-window &
+  # Uncomment and you can add pre-dexing option to build matrix and compare results.
+  - if [[ ${ARGS:-} == *-PdisablePreDex* ]] then; export DISABLE_PREDEX=$('-PdisablePreDex':-); fi
+  # Default avd name is test. Uncomment  and use,Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
+  - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${GRADLE_PREDEX:-}"
+  # Create and start emulator.
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
+  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
 install:
+  # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # See http://docs.travis-ci.com/user/build-configuration/#install
   - true
-  # - TERM=dumb ./gradlew clean check assembleDebug -PdisablePreDex
+  # - TERM=dumb ./gradlew clean check assembleDebug ${DISABLE_PREDEX:-}
 
 before_script:
   # - sudo chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
-  - adb shell input keyevent 26 &
+  # - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
 script:
   # Work in progress... TODO: add pre-dexing option to build matrix and compare results.
   # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
-  # - TERM=dumb ./gradlew build connectedCheck
-  - TERM=dumb ./gradlew build connectedCheck -PdisablePreDex
+  - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
 after_failure:
-  # Work in progress...Where are my logs? :(
-  - ./export LOOKING_FOR=logs
-  # Customized section, android is specific module of this project.
-  - alias mylog="cd /home/travis/ardock/iosched/android/build/outputs/reports/androidTests/connected/"
-  - pwd && mylog
-  - pwd && ls -al && sudo apt-get install -qq lynx
-  - lynx --dump index.html > myConnectedAndroidTest.log
+  # Customize this line, 'android' is the specific app module name of this project. Shows log.
+  - export MY_MOD="android"
+  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
+  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  - sudo apt-get install -qq lynx && lynx --dump index.html > myConnectedAndroidTest.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
 after_success:
-  # Work in progress... Where are my warm beers? :)
-  - ./export LOOKING_FOR=beers
-  # - echo "Lollipops for all!"
+  - echo "Lollipops for all!"
 
 after_script:
-  # Work in progress... Where are my keys?
-  # I found something but I'm still...
-  - echo "Looking for more ${LOOKING_FOR:-help}"
+  # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
-  # http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
-  # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
-  # TODO: replace logs/beer dilemma by 'if TRAVIS_TEST_RESULT else...' more standard
+  # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
+  - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
+  # TODO: 'if TRAVIS_TEST_RESULT else...'
 
