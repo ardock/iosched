@@ -35,7 +35,7 @@ android:
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
-    # - build-tools-21.0.2
+    - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile android are already included.
     # - android-20
@@ -49,7 +49,7 @@ android:
 
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-armeabi-v7a-android-wear-20
-    # - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-21
 
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
@@ -174,12 +174,12 @@ after_success:
   # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]] ; then echo "BUILD SUCCESSFUL" ; else echo "ERROR" ; fi
 
-
+  # @--@--@--@--@
   # @-- ERROR --@
-  #
+  # @--@--@--@--@
   # @-- 132.1 --@
   # Error occurred while compiling the build script: undefined method `empty?' for nil:NilClass
-  # @-- android-21 build-tools-21.0.2 (android: components:)
+  # @-- android-21 (android: components:)
   #
   # @-- 134.1 --@
   # Could not find any version that matches com.google.android.gms:play-services-wearable:6.1.+.
@@ -201,8 +201,16 @@ after_success:
   # The command "./gradlew build connectedCheck" exited with 137.
   # @-- Reload job, killed by Travis-ci, not an error, your build is slow or is a temporal issue.
   #
+  # @-- 142.1 --@
+  # Failed to find Build Tools revision 21.0.2
+  # @-- build-tools-21.0.2 (android: components:)
+  #
+  #
+  #
   # @-- TODO: --@
   # Failed to Initialize backend EGL display
-  # @-- TODO: --@ https://groups.google.com/forum/#!msg/adt-dev/gwcLeOTfxD4/kW-qebk0C-wJ  useful?
+  # @-- https://groups.google.com/forum/#!msg/adt-dev/gwcLeOTfxD4/kW-qebk0C-wJ  useful?
+  #
+  # @-- TODO: --@
   # Modules without test, gradle 0.13.2, connectedAndroidTest will fail ?
-  # @-- TODO: --@ https://code.google.com/p/android/issues/detail?id=76249
+  # @-- https://code.google.com/p/android/issues/detail?id=76249
