@@ -195,8 +195,9 @@ after_success:
   #
   # @-- 137.1 --@
   # Manifest merger failed : uses-sdk:minSdkVersion 14 cannot be smaller than version L declared in
-  # library com.android.support:support-v4:21.0.0-rc1
-
+  # library com.android.support:support-v4:21.0.0-rc1 (SDK tools 23.0.5 solve it or next link)
+  # @-- http://stackoverflow.com/questions/24438170/manifest-merger-failed-uses-sdkminsdkversion-14
+  #
 
 
   # @-- TODO: --@
