@@ -30,7 +30,7 @@ android:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
     # - platform-tools
-    # - tools
+    - tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
@@ -136,7 +136,6 @@ before_script:
   # Installs and runs tests fro Build 'debug' on connected devices
   # Remember add DISABLE_PREDEX flag always your gradle tasks perform predex to avoid dexing errors.
   # - TERM=dumb ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
-  # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
 
   # - echo " @-- DEBUG TEST FINISHED, NOW RELEASE TEST --@ "
 
@@ -148,7 +147,6 @@ before_script:
 
   # Comment out the line below to run all device checks on currently connected devices
   # - TERM=dumb ./gradlew connectedCheck ${DISABLE_PREDEX:-}
-  # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
 
   # - echo " @-- RELEASE TEST FINISHED --@ "
 
@@ -162,6 +160,9 @@ after_failure:
   - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
+  # UPDATE: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
+  # TODO: Offer known solutions after failure.
+
 
 after_success:
   - echo " @-- Success --@ "
@@ -208,7 +209,8 @@ after_success:
   #
   #
   # @-- TODO: --@
-  # Failed to Initialize backend EGL display
+  # Failed to Initialize backend EGL display.
+  # emulator: WARNING: Could not initialize OpenglES emulation, using software renderer.
   # @-- https://groups.google.com/forum/#!msg/adt-dev/gwcLeOTfxD4/kW-qebk0C-wJ  useful?
   #
   # @-- TODO: --@
