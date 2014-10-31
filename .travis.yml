@@ -35,11 +35,11 @@ android:
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
-    # - build-tools-21.0.2
+    - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile android are already included.
     # - android-20
-    # - android-21
+    - android-21
 
     # Comment the lines below if the latest additional components are included or not required.
     # - extra-google-google_play_services
@@ -55,7 +55,7 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list android-sdk-license used by Android SDK Platform-tools, rev 21 and other tools.
-    # - 'android-sdk-license-5be876d5'
+    - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
