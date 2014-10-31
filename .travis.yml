@@ -110,13 +110,6 @@ before_install:
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  - echo "GRADLE PRE BUILD"
-  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
-  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
-  # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
-  # Remember add disable predex flag always your gradle tasks perform predex to avoid dexing errors.
-  - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
-
 install:
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
@@ -128,8 +121,14 @@ before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
-script:
   - echo "GRADLE BUILD"
+  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
+  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
+  # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
+  # Remember add disable predex flag always your gradle tasks perform predex to avoid dexing errors.
+  - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
+
+script:
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
   # and if  ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
   # Otherwise pre-dexing enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
