@@ -83,14 +83,14 @@ env:
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 before_install:
-  - echo "EXTRA DEPENDENCIES"
+  - echo " @-- EXTRA DEPENDENCIES --@ "
   # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
 
-  - echo "GRADLE ANDROID DEPENDENCIES"
+  - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
   - sudo chmod +x gradlew
@@ -99,7 +99,7 @@ before_install:
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies
 
-  - echo "CREATE & START EMULATOR"
+  - echo " @-- CREATE & START EMULATOR --@ "
   # Comment out the line below to add +x permissions to wait for emulator script.
   - sudo chmod +x scripts/wait_for_emulator.sh
   # Comment out the line below to add Disable pre-dexing option to build matrix and gradle commands.
@@ -110,18 +110,18 @@ before_install:
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  - echo "DEBUG TEST WHILE EMULATOR STARTS"
+install:
+  - echo " @-- DEBUG TEST --@ "
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
 
-install:
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
   - TERM=dumb ./gradlew assembleDebug assembleDebugTest ${DISABLE_PREDEX:-}
 
 before_script:
-  - echo "WAIT FOR EMULATOR"
+  - echo " @-- WAIT FOR EMULATOR --@ "
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
@@ -135,7 +135,7 @@ script:
   # Remember add DISABLE_PREDEX flag always your gradle tasks perform predex to avoid dexing errors.
   - TERM=dumb ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
-  - echo "DEBUG TEST FINISHED, NOW RELEASE TEST
+  - echo " @-- DEBUG TEST FINISHED, NOW RELEASE TEST --@ "
 
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
   # - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
@@ -145,6 +145,8 @@ script:
 
   # Comment out the line below to run all device checks on currently connected devices
   - TERM=dumb ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+
+  - echo " @-- RELEASE TEST FINISHED --@ "
 
 after_failure:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
@@ -158,7 +160,7 @@ after_failure:
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
 
 after_success:
-  - echo "Lollipops for all!"
+  - echo " @-- @-- @-- Lollipops For All !!! --@ --@ --@ "
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
