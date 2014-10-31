@@ -90,15 +90,6 @@ before_install:
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
 
-  - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
-  - sudo chmod +x gradlew
-  # Comment out the lines below to show android SDK components installed and android dependencies.
-  # Travis downloads gradle first time is called and we download dependencies before avs start up.
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - TERM=dumb ./gradlew androidDependencies
-
   - echo " @-- CREATE & START EMULATOR --@ "
   # Comment out the line below to add +x permissions to wait for emulator script.
   - sudo chmod +x scripts/wait_for_emulator.sh
@@ -109,6 +100,15 @@ before_install:
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
+
+  - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
+  - sudo chmod +x gradlew
+  # Comment out the lines below to show android SDK components installed and android dependencies.
+  # Travis downloads gradle first time is called and we download dependencies before avs start up.
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - TERM=dumb ./gradlew androidDependencies
 
 install:
   - echo " @-- DEBUG TEST --@ "
