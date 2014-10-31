@@ -98,13 +98,17 @@ before_install:
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies
 
-  # Comment out the line below to download gradle wrapper, clean the project sources and prepare it.
-  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources generateReleaseSources
+  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
+  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
 
-  # Comment out the line below to add disable pre-dexing option to build matrix and gradle commands.
+  # Comment out the line below to add Disable pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
 
-  # Comment out the line below to custom avd name. Defaults to test if not used.
+  # Comment out the line below to prepare the Release project sources (predex wearable, be aware)
+  - Remember add disable predex flag always your gradle tasks perform predex or dexing will fail.
+  - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
+
+  # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
 
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
