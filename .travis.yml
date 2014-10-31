@@ -134,5 +134,5 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
-  # TODO: 'if TRAVIS_TEST_RESULT else...'
+  - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]] ; then echo "BUILD SUCCESSFUL" ; else echo "ERROR" ; fi
 
