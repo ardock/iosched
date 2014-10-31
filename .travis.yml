@@ -90,7 +90,7 @@ before_install:
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
 
-  - echo "GRADLE DEPENDENCIES"
+  - echo "GRADLE ANDROID DEPENDENCIES"
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
   - sudo chmod +x gradlew
@@ -117,16 +117,16 @@ install:
   # - TERM=dumb ./gradlew clean check assembleDebug ${DISABLE_PREDEX:-}
 
 before_script:
-  - echo "WAIT FOR EMULATOR"
-  - ./scripts/wait_for_emulator.sh
-  - adb shell input keyevent 82 &
-
-  - echo "GRADLE BUILD"
+  - echo "CLEAN PROJECT"
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
   # Remember add disable predex flag always your gradle tasks perform predex to avoid dexing errors.
   - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
+
+  - echo "WAIT FOR EMULATOR"
+  - ./scripts/wait_for_emulator.sh
+  - adb shell input keyevent 82 &
 
 script:
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
