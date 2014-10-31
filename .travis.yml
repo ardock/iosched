@@ -42,7 +42,7 @@ android:
     - android-21
 
     # Comment the lines below if the latest additional components are included or not required.
-    - extra-google-google_play_services
+    # - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
@@ -174,3 +174,7 @@ after_success:
   # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]] ; then echo "BUILD SUCCESSFUL" ; else echo "ERROR" ; fi
 
+  # ERRORS
+  # Could not find any version that matches com.google.android.gms:play-services-wearable:6.1.+.
+  # --@ Add extra android components
+  # Failed to Initialize backend EGL display
