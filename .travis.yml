@@ -92,11 +92,11 @@ before_install:
   # - pwd && ls -al && sudo apt-get update -qq
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
-  # Uncomment and you can add pre-dexing option to build matrix and compare results.
+  # Uncomment and you can add 'disble pre-dexing' option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
-  # Default avd name is test. Uncomment and use,Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
+  # Uncomment and you can custom avd name. Defaults to test if not used.
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-  # Create and start emulator.
+  # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
@@ -109,12 +109,12 @@ install:
 before_script:
   # - sudo chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
-  # - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
 script:
-  # Work in progress... TODO: add pre-dexing option to build matrix and compare results.
-  # If -PdisablePreDex option is added, disables pre-dexing on build server improving performance.
+  # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
+  # and if  ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
+  # Otherwise pre-dexing enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
@@ -123,7 +123,9 @@ after_failure:
   - export MY_MOD="android"
   - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
   - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
-  - sudo apt-get install -qq lynx && lynx --dump index.html > myConnectedAndroidTest.log
+  - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
+  - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
 after_success:
