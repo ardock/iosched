@@ -43,9 +43,9 @@ android:
 
     # Comment the lines below if the latest additional components are included or not required.
     - extra-google-google_play_services
-    # - extra-google-m2repository
-    # - extra-android-m2repository
-    # - extra-android-support
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - extra-android-support
 
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-armeabi-v7a-android-wear-20
