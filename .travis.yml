@@ -34,7 +34,7 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    # - build-tools-20.0.0
+    - build-tools-20.0.0
     - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile android are already included.
@@ -44,8 +44,8 @@ android:
     # Comment the lines below if the latest additional components are included or not required.
     # - extra-google-google_play_services
     - extra-google-m2repository
-    # - extra-android-m2repository
-    - extra-android-support
+    - extra-android-m2repository
+    # - extra-android-support
 
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-armeabi-v7a-android-wear-20
@@ -165,7 +165,7 @@ after_failure:
 
 after_success:
   - echo " @-- Success --@ "
-  # - echo " @-- @-- @-- Lollipops For All !!! --@ --@ --@ "
+  # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
 
 # after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
@@ -176,17 +176,27 @@ after_success:
 
 
   # @-- ERROR --@
+  #
+  # @-- 132.1 --@
   # Error occurred while compiling the build script: undefined method `empty?' for nil:NilClass
-  # @-- 132.1 --@ android: components: android-21 build-tools-21.0.2
+  # @-- android-21 build-tools-21.0.2 (android: components:)
+  #
+  # @-- 134.1 --@
   # Could not find any version that matches com.google.android.gms:play-services-wearable:6.1.+.
-  # @-- 134.1 --@ android: components: - extra-google-m2repository
-  # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
+  # @-- extra-google-m2repository (android: components:)
+  #
   # @-- 135.5 --@
-  # 135.6 Invalid --abi armeabi-v7a for the selected target. (android-21)
+  # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
+  # @--
+  #
   # @-- 135.6 --@
+  # 135.6 Invalid --abi armeabi-v7a for the selected target. (android-21)
+  # @--
+  #
+  # @-- 137.1 --@
   # Manifest merger failed : uses-sdk:minSdkVersion 14 cannot be smaller than version L declared in
   # library com.android.support:support-v4:21.0.0-rc1
-  # @--  --@
+
 
 
   # @-- TODO: --@
