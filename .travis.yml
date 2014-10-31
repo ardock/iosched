@@ -88,13 +88,14 @@ before_install:
 
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - sudo chmod +x gradlew
-  - TERM=dumb ./gradlew init
   - pwd && ls -al && sudo apt-get update -qq
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
   # Uncomment and you can add 'disble pre-dexing' option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+  # Uncomment and you can download gradle wrapper, set +x permission and clean project before avd
+    - sudo chmod +x gradlew
+    - TERM=dumb ./gradlew clean generateDebugSources generateTestSources ${DISABLE_PREDEX:-}
   # Uncomment and you can custom avd name. Defaults to test if not used.
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
@@ -117,8 +118,8 @@ script:
   # and if  ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
   # Otherwise pre-dexing enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
-  - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
-
+  - TERM=dumb ./gradlew build  ${DISABLE_PREDEX:-}
+  - TERM=dumb ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 after_failure:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
   - export MY_MOD="android"
@@ -128,6 +129,7 @@ after_failure:
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
 
 after_success:
   - echo "Lollipops for all!"
