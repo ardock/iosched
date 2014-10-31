@@ -88,9 +88,10 @@ before_install:
 
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  # - sudo chmod +x gradlew
-  # - pwd && ls -al && sudo apt-get update -qq
-  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - sudo chmod +x gradlew
+  - TERM=dumb ./gradlew init
+  - pwd && ls -al && sudo apt-get update -qq
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
   # Uncomment and you can add 'disble pre-dexing' option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
