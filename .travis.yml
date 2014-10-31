@@ -93,8 +93,8 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
   # Uncomment and you can add pre-dexing option to build matrix and compare results.
-  - if [ [[ ${ARGS:-} == *-PdisablePreDex* ]] ] then; export DISABLE_PREDEX=$('-PdisablePreDex':-); fi
-  # Default avd name is test. Uncomment  and use,Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
+  - if [ [[ ${ARGS:-} == *-PdisablePreDex* ]] ]; then export DISABLE_PREDEX=$('-PdisablePreDex':-); fi
+  # Default avd name is test. Uncomment and use,Custom name, test or "${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM}"
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${GRADLE_PREDEX:-}"
   # Create and start emulator.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
