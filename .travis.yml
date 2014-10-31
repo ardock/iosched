@@ -108,7 +108,7 @@ install:
   # - TERM=dumb ./gradlew clean check assembleDebug ${DISABLE_PREDEX:-}
 
 before_script:
-  # - sudo chmod +x scripts/wait_for_emulator.sh
+  - sudo chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
