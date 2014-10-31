@@ -83,37 +83,39 @@ env:
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 before_install:
+  - echo "EXTRA DEPENDENCIES"
   # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
-
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
 
-  # Comment out the lines below to add +x permissions to gradlew and/or emulator script.
+  - echo "GRADLE DEPENDENCIES"
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
   - sudo chmod +x gradlew
-  - sudo chmod +x scripts/wait_for_emulator.sh
-
   # Comment out the lines below to show android SDK components installed and android dependencies.
+  # Travis downloads gradle first time is called and we download dependencies before avs start up.
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies
 
-  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
-  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
-
+  - echo "CREATE & START EMULATOR"
+  # Comment out the line below to add +x permissions to wait for emulator script.
+  - sudo chmod +x scripts/wait_for_emulator.sh
   # Comment out the line below to add Disable pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
-
-  # Comment out the line below to prepare the Release project sources (predex wearable, be aware)
-  - Remember add disable predex flag always your gradle tasks perform predex or dexing will fail.
-  - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
-
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
+
+  - echo "GRADLE PRE BUILD"
+  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
+  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
+  # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
+  # Remember add disable predex flag always your gradle tasks perform predex to avoid dexing errors.
+  - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
 
 install:
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
@@ -122,10 +124,12 @@ install:
   # - TERM=dumb ./gradlew clean check assembleDebug ${DISABLE_PREDEX:-}
 
 before_script:
+  - echo "WAIT FOR EMULATOR"
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
 script:
+  - echo "GRADLE BUILD"
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
   # and if  ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
   # Otherwise pre-dexing enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
