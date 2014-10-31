@@ -34,7 +34,7 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    - build-tools-20.0.0
+    # - build-tools-20.0.0
     - build-tools-21.0.2
 
     # Comment the lines below if the SDK versions used to compile android are already included.
@@ -195,9 +195,9 @@ after_success:
   #
   # @-- 137.1 --@
   # Manifest merger failed : uses-sdk:minSdkVersion 14 cannot be smaller than version L declared in
-  # library com.android.support:support-v4:21.0.0-rc1 (SDK tools 23.0.5 solve it or next link)
-  # @-- http://stackoverflow.com/questions/24438170/manifest-merger-failed-uses-sdkminsdkversion-14
-  #
+  # library com.android.support:support-v4:21.0.0-rc1 (extra-android-m2repository or next link)
+  # http://stackoverflow.com/questions/24438170/manifest-merger-failed-uses-sdkminsdkversion-14
+  # @-- extra-android-m2repository
 
 
   # @-- TODO: --@
