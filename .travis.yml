@@ -42,7 +42,7 @@ android:
     - android-21
 
     # Comment the lines below if the latest additional components are included or not required.
-    # - extra-google-google_play_services
+    - extra-google-google_play_services
     # - extra-google-m2repository
     # - extra-android-m2repository
     # - extra-android-support
