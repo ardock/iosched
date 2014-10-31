@@ -110,7 +110,7 @@ before_install:
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  - echo "DEBUG TEST"
+  - echo "DEBUG TEST WHILE EMULATOR STARTS"
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
 
@@ -118,7 +118,7 @@ install:
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
-  - TERM=dumb ./gradlew assembleDebug assemlbeDebugTest ${DISABLE_PREDEX:-}
+  - TERM=dumb ./gradlew assembleDebug assembleDebugTest ${DISABLE_PREDEX:-}
 
 before_script:
   - echo "WAIT FOR EMULATOR"
