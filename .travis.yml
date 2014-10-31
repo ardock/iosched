@@ -42,7 +42,7 @@ android:
     - android-21
 
     # Comment the lines below if the latest additional components are included or not required.
-    # - extra-google-google_play_services
+    - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
@@ -89,16 +89,24 @@ before_install:
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
 
-  # Uncomment and you can add 'disble pre-dexing' option to build matrix and gradle commands.
-  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
-  # Uncomment and you can download gradle wrapper, set +x permission and clean project before avd
+  # Comment out the lines below to add +x permissions to gradlew and/or emulator script.
   - sudo chmod +x gradlew
-  - TERM=dumb ./gradlew clean generateDebugSources generateTestSources ${DISABLE_PREDEX:-}
+  - sudo chmod +x scripts/wait_for_emulator.sh
 
-  # Uncomment and you can custom avd name. Defaults to test if not used.
+  # Comment out the lines below to show android SDK components installed and android dependencies.
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - TERM=dumb ./gradlew androidDependencies
+
+  # Comment out the line below to download gradle wrapper, clean the project sources and prepare it.
+  - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources generateReleaseSources
+
+  # Comment out the line below to add disable pre-dexing option to build matrix and gradle commands.
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+
+  # Comment out the line below to custom avd name. Defaults to test if not used.
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
@@ -110,7 +118,6 @@ install:
   # - TERM=dumb ./gradlew clean check assembleDebug ${DISABLE_PREDEX:-}
 
 before_script:
-  - sudo chmod +x scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
@@ -121,6 +128,7 @@ script:
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   - TERM=dumb ./gradlew build  ${DISABLE_PREDEX:-}
   - TERM=dumb ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+
 after_failure:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
   - export MY_MOD="android"
