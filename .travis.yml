@@ -94,8 +94,9 @@ before_install:
   # Uncomment and you can add 'disble pre-dexing' option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Uncomment and you can download gradle wrapper, set +x permission and clean project before avd
-    - sudo chmod +x gradlew
-    - TERM=dumb ./gradlew clean generateDebugSources generateTestSources ${DISABLE_PREDEX:-}
+  - sudo chmod +x gradlew
+  - TERM=dumb ./gradlew clean generateDebugSources generateTestSources ${DISABLE_PREDEX:-}
+
   # Uncomment and you can custom avd name. Defaults to test if not used.
   - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
