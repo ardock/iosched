@@ -30,7 +30,7 @@ android:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
     # - platform-tools
-    - tools
+    # - tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
@@ -76,12 +76,12 @@ env:
     - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS=''
     - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS=''
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 before_install:
   # - echo " @-- EXTRA DEPENDENCIES --@ "
@@ -122,7 +122,10 @@ before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
-# script:
+script:
+  # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
+  - ./gradlew build connectedCheck
+
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   # - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
@@ -163,7 +166,6 @@ before_script:
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
   # UPDATE: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
   # TODO: Offer known solutions after failure.
-
 
 # after_success:
   # - echo " @-- Success --@ "
@@ -236,6 +238,6 @@ before_script:
   # Upgrade to Android Gradle plugin, 0.14.0
   # Check Android Gradle plugin 0.14.0 : http://tools.android.com/tech-docs/new-build-system
   # (quick fix button but changed plugin APIs, so you may need to tweak your build files)
-  # Requires Android Studio 0.9.0
+  # Requires Android Studio 0.9.0 (currently canary)
   # Check Android Studio 0.9.0: http://tools.android.com/recent/androidstudio090released
   # Requires Build-Tools 21.1.0, and Support repository rev 8.
