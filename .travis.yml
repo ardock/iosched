@@ -14,11 +14,12 @@
 
 language: android
 
-# jdk:
+jdk:
   # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
-  # Test against one or more JDKs: 'jdk' is combined with 'env' to construct a build matrix.
+  # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
+  # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   # - openjdk7
-  # - oraclejdk7
+  - oraclejdk7
 
 android:
   components:
@@ -36,7 +37,7 @@ android:
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
     - build-tools-21.0.2
-    # - build-tools-21.1
+    # - build-tools-21.1.0
 
     # Comment the lines below if the SDK versions used to compile android are already included.
     # - android-20
@@ -56,11 +57,11 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list android-sdk-license used by Android SDK Platform-tools, rev 21 and other tools.
-    - 'android-sdk-license-5be876d5'
+    # - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    # - '.+'
+    - '.+'
 
 notifications:
   email: false
@@ -70,69 +71,78 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS=''
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS=''
-    # - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 before_install:
-  # - echo " @-- EXTRA DEPENDENCIES --@ "
+  - echo " @-- EXTRA DEPENDENCIES --@ "
+  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
-  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  # - pwd && ls -al && sudo apt-get update -qq
+  - pwd && ls -al && sudo apt-get update -qq
 
-  # - echo " @-- CREATE & START EMULATOR --@ "
+  - echo " @-- CREATE & START AVD --@ "
   # Comment out the line below to add +x permissions to wait for emulator script.
   - chmod +x scripts/wait_for_emulator.sh
-  # Comment out the line below to add Disable pre-dexing option to build matrix and gradle commands.
+  # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
-  # - export AVD_NAME="test-${ANDROID_TARGET}-${ANDROID_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-  # Create and start emulator. If custom AVD_NAME is not found, defaults to 'test' name.
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$ANDROID_TARGET" --abi "$ANDROID_ABI"
+  - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
+  # Check android create avd: http://developer.android.com/tools/help/android.html
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
+  # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
-  - chmod +x gradlew
-  # Comment out the lines below to show android SDK components installed and android dependencies.
-  # Travis downloads gradle first time is called and we download dependencies before avs start up.
-  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  # - TERM=dumb ./gradlew androidDependencies
-
-# install:
+install:
+  # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
 
+  # OR
+
+  - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
+  - chmod +x gradlew
+  # Comment out the lines below to show android SDK components installed and android dependencies.
+  # Travis downloads gradle first time is called and it downloads the project dependencies.
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
 before_script:
-  # - echo " @-- WAIT FOR EMULATOR --@ "
+  # Use this to prepare your build for testing. You can also define scripts to be run before script.
+  # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
+
+  - echo " @-- WAIT FOR EMULATOR --@ "
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
 script:
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  - ./gradlew build connectedCheck
+  - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+
+  # OR
 
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   # - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
 
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
-  # and if  ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
-  # Otherwise pre-dexing enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
+  # and if ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
+  # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   # - TERM=dumb ./gradlew assembleDebug ${DISABLE_PREDEX:-}
   # - TERM=dumb ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
@@ -154,29 +164,29 @@ script:
 
   # - echo " @-- RELEASE TEST FINISHED --@ "
 
-# after_failure:
+after_failure:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
-  # - export MY_MOD="android"
-  # - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
-  # - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
-  # - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
-  # - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  # - lynx --dump com.android.builder.testing.html > myTesting.log
-  # - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  - export MY_MOD="android"
+  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
+  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
+  - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  - lynx --dump com.android.builder.testing.html > myTesting.log
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
-  # UPDATE: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
+  # TODO: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
   # TODO: Offer known solutions after failure.
 
-# after_success:
-  # - echo " @-- Success --@ "
+after_success:
+  - echo " @-- Success --@ "
   # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
 
-# after_script:
+after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
-  # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
-  # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]] ; then echo "BUILD SUCCESSFUL" ; else echo "ERROR" ; fi
+  - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
+  - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
 
   # @--@--@--@--@
   # @-- ERROR --@
@@ -195,7 +205,7 @@ script:
   # @-- Reload job?
   #
   # @-- 135.6 --@
-  # 135.6 Invalid --abi armeabi-v7a for the selected target. (android-21)
+  # Invalid --abi armeabi-v7a for the selected target. (android-21)
   # @-- tools (android: components:)
   #
   # @-- 137.1 --@
@@ -208,7 +218,7 @@ script:
   #
   # @-- 142.1 --@
   # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
-  # @-- build-tools-21.0.2 (android: components:)
+  # @-- build-tools-21.0.2 or build-tools-21.1 (android: components:)
   #
   # @-- 144.6 --@
   # com.android.ddmlib.InstallException. connectedAndroidTest run tests failed, (exceed timeout).
@@ -225,7 +235,7 @@ script:
   # @-- TODO: --@
   # Failed to Initialize backend EGL display.
   # emulator: WARNING: Could not initialize OpenglES emulation, using software renderer.
-  # ?
+  # can be used?
   # https://android-review.googlesource.com/#/c/112554/
   # https://groups.google.com/forum/#!msg/adt-dev/gwcLeOTfxD4/kW-qebk0C-wJ
   #
