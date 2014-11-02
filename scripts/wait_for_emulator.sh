@@ -33,7 +33,7 @@ set +e
 bootanim=""
 failcounter=0
 until [[ "$bootanim" =~ "stopped" ]]; do
-  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1`
+  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
   if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
     let "failcounter += 1"
     if [[ $failcounter -gt 10 ]]; then
@@ -41,7 +41,7 @@ until [[ "$bootanim" =~ "stopped" ]]; do
       exit 1
     fi
   elif [[ "$bootanim" =~ "running" ]]; then
-    echo "adb daemon is running. `adb devices`"
+    echo "adb daemon is running. `adb devices &`"
     sleep 5
   else
      echo "UI Ready: $bootanim"
