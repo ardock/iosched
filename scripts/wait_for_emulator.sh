@@ -28,6 +28,8 @@
   # - running: device is booting, connected to adb (device state). You can query it about state.
   # - stopped: ui appeared, it's safe to assume that emulator is running and ready to be used.
 
+set +e
+
 bootanim=""
 failcounter=0
 until [[ "$bootanim" =~ "stopped" ]]; do
@@ -40,8 +42,9 @@ until [[ "$bootanim" =~ "stopped" ]]; do
     fi
   elif [[ "$bootanim" =~ "running" ]]; then
     echo "adb daemon is running"
+    echo `adb devices`
   else
-     echo "Test: $bootanim"
+     echo "UI Ready: $bootanim"
   fi
   sleep 1
 done
