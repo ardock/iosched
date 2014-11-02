@@ -36,8 +36,8 @@ android:
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
-    - build-tools-21.0.2
-    # - build-tools-21.1.0
+    # - build-tools-21.0.2
+    - build-tools-21.1.0
 
     # Comment the lines below if the SDK versions used to compile android are already included.
     # - android-20
