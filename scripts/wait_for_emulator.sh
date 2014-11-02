@@ -35,12 +35,14 @@ until [[ "$bootanim" =~ "stopped" ]]; do
   echo "$bootanim"
   if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
     let "failcounter += 1"
-      if [[ $failcounter -gt 10 ]]; then
-        echo "Failed to start emulator"
-        exit 1
-      fi
+    if [[ $failcounter -gt 10 ]]; then
+      echo "Failed to start emulator"
+      exit 1
+    fi
   elif [[ "$bootanim" =~ "running" ]]; then
-    echo "Emulator is running but not ready"
+    echo "adb daemon is running"
+  else
+     echo "Test: $bootanim"
   fi
   sleep 1
 done
