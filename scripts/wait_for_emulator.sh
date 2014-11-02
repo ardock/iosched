@@ -1,5 +1,21 @@
 #!/bin/bash
 
+bootanim=""
+failcounter=0
+until [[ "$bootanim" =~ "stopped" ]]; do
+   bootanim=`adb -e shell getprop init.svc.bootanim 2>&1`
+   echo "$bootanim"
+   if [[ "$bootanim" =~ "not found" ]]; then
+      let "failcounter += 1"
+      if [[ $failcounter -gt 15 ]]; then
+        echo "Failed to start emulator"
+        exit 1
+      fi
+   fi
+   sleep 1
+done
+echo "Done"
+
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
   # adb -e: if only one device attached to adb, we can refer to it using this argument.
@@ -27,25 +43,3 @@
   # - device offline: wait until emulator connected to adb or timeout reached,
   # - running: device is booting, connected to adb (device state). You can query it about state.
   # - stopped: ui appeared, it's safe to assume that emulator is running and ready to be used.
-
-set +e
-
-bootanim=""
-failcounter=0
-until [[ "$bootanim" =~ "stopped" ]]; do
-  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
-  if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
-    let "failcounter += 1"
-    if [[ $failcounter -gt 10 ]]; then
-      echo "Failed to start emulator"
-      exit 1
-    fi
-  elif [[ "$bootanim" =~ "running" ]]; then
-    sleep 5
-  else
-     echo "UI Ready: $bootanim"
-     echo "adb daemon is running. `adb devices &`"
-  fi
-  sleep 2
-done
-echo "Done"
