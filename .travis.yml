@@ -103,7 +103,7 @@ before_install:
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window >/dev/null 2>/dev/null &
+  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
 install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
