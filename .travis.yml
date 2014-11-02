@@ -72,15 +72,15 @@ env:
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
@@ -125,6 +125,7 @@ install:
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
+  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
 
   - echo " @-- WAIT FOR EMULATOR --@ "
   - ./scripts/wait_for_emulator.sh
@@ -176,8 +177,6 @@ after_failure:
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
   # TODO: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
   # TODO: Offer known solutions after failure.
-  # TODO: mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export BAD_VM=1; fi
-  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export BAD_VM=1; fi
 
 after_success:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
@@ -188,7 +187,7 @@ after_success:
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-  #- echo " @-- Success --@ "
+  # - echo " @-- Success --@ "
   # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
 
 after_script:
@@ -197,8 +196,8 @@ after_script:
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
-  - echo "BAD_VM ${BAD_VM}"
-  - if [[ "${BAD_VM}" == "0" ]]; then echo "VM OK"; else echo "VM ISSUE"; fi
+  - echo "VM TEST RESULT ${VM_TEST_RESULT}"
+  - if [[ "${VM_TEST_RESULT}" == "0" ]]; then echo "VM OK"; else echo "VM ISSUE"; fi
 
   # @--@--@--@--@
   # @-- ERROR --@
