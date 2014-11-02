@@ -39,9 +39,9 @@ until [[ "$bootanim" =~ "stopped" ]]; do
         echo "Failed to start emulator"
         exit 1
       fi
-  elif [[ "$bootanim" =~ "running" ]]; then
-    echo "Emulator is ready"
-    exit 0
+  # elif [[ "$bootanim" =~ "running" ]]; then
+  #   echo "Emulator is ready"
+  #   exit 0
   fi
   sleep 1
 done
