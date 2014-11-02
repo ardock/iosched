@@ -103,7 +103,7 @@ before_install:
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
+  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window >/dev/null 2>/dev/null &
 
 install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
@@ -176,9 +176,19 @@ after_failure:
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
   # TODO: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
   # TODO: Offer known solutions after failure.
+  # TODO: mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export BAD_VM=1; fi
+  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export BAD_VM=1; fi
 
 after_success:
-  - echo " @-- Success --@ "
+  # Customize this line, 'android' is the specific app module name of this project. Shows log.
+  - export MY_MOD="android"
+  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
+  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
+  - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  - lynx --dump com.android.builder.testing.html > myTesting.log
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  #- echo " @-- Success --@ "
   # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
 
 after_script:
@@ -187,6 +197,8 @@ after_script:
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+  - echo "BAD_VM ${BAD_VM}"
+  - if [[ "${BAD_VM}" == "0" ]]; then echo "VM OK"; else echo "VM ISSUE"; fi
 
   # @--@--@--@--@
   # @-- ERROR --@

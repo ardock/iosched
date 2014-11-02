@@ -31,17 +31,16 @@
 bootanim=""
 failcounter=0
 until [[ "$bootanim" =~ "stopped" ]]; do
-  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
+  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1`
   echo "$bootanim"
   if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
     let "failcounter += 1"
-      if [[ $failcounter -gt 60 ]]; then
+      if [[ $failcounter -gt 10 ]]; then
         echo "Failed to start emulator"
         exit 1
       fi
-  # elif [[ "$bootanim" =~ "running" ]]; then
-  #   echo "Emulator is ready"
-  #   exit 0
+  elif [[ "$bootanim" =~ "running" ]]; then
+    echo "Emulator is running but not ready"
   fi
   sleep 1
 done
