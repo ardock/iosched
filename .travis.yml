@@ -124,18 +124,9 @@ install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # - true
+  - true
 
   # OR CUSTOM install
-
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
-  - chmod +x gradlew
-  # Comment out the lines below to show android SDK components installed and android dependencies.
-  # Travis downloads gradle first time is called and it downloads the project dependencies.
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  # - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
 
 before_script:
@@ -148,6 +139,16 @@ before_script:
 
 
 script:
+
+  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
+  - chmod +x gradlew
+  # Comment out the lines below to show android SDK components installed and android dependencies.
+  # Travis downloads gradle first time is called and it downloads the project dependencies.
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - ./gradlew androidDependencies
+
   # USE DEFAULT build + PreDex option (see below).
 
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
