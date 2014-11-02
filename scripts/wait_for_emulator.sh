@@ -41,10 +41,10 @@ until [[ "$bootanim" =~ "stopped" ]]; do
       exit 1
     fi
   elif [[ "$bootanim" =~ "running" ]]; then
-    echo "adb daemon is running. `adb devices &`"
     sleep 5
   else
      echo "UI Ready: $bootanim"
+     echo "adb daemon is running. `adb devices &`"
   fi
   sleep 2
 done

@@ -147,12 +147,12 @@ script:
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - ./gradlew androidDependencies
+  # - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
   # USE DEFAULT build + PreDex option (see below).
 
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR CUSTOM build (TODO: Custom build. work in progress...)
 
