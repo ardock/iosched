@@ -46,7 +46,7 @@ android:
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    - extra-google-google_play_services
+    # - extra-google-google_play_services
     - extra-google-m2repository
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -98,9 +98,9 @@ before_install:
 
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd && ls -al && sudo apt-get update -qq
+  # - pwd && ls -al && sudo apt-get update -qq
   # Tests VM to decide to skip a process or not: https://github.com/travis-ci/travis-ci/issues/2634
-  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
+  # - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
@@ -110,7 +110,7 @@ before_install:
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
-  - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
 
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
