@@ -141,6 +141,7 @@ before_script:
 
 
 script:
+  - gradlew -version
 
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
