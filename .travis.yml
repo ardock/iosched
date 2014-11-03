@@ -153,8 +153,7 @@ before_script:
 
   - echo " @-- WAIT FOR EMULATOR --@ "
   # Comment out the lines below to add +x permission to wait_for_emulator script and execute it.
-  # - sudo chmod +x scripts/wait_for_emulator.sh
-  - until []
+  - sudo chmod +x scripts/wait_for_emulator.sh
 
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
