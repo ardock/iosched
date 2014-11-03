@@ -47,7 +47,7 @@ android:
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
     # - extra-google-google_play_services
-    # - extra-google-m2repository
+    - extra-google-m2repository
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
