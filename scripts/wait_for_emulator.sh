@@ -15,7 +15,7 @@ until [[ "$bootanim" =~ "stopped" ]]; do
       echo "Timeout ($timeout_in_sec seconds) reached; failed to start emulator"
       exit 1
     fi
-  elif [[ "$bootanim" =~ "running" ]]; then
+  elif [[ "$bootanim" =~ "stopped" ]]; then
     echo "Emulator is ready"
     exit 0
   fi
@@ -55,6 +55,10 @@ done
 
   # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
   # TODO: Test results. I think need fixes. Create my own script or oneline .travis.yml command.
+  #
+  # FATAL EXCEPTION IN SYSTEM PROCESS: main
+  # E/AndroidRuntime(   87): java.lang.NullPointerException
+  # E/AndroidRuntime(   87): 	at com.android.commands.input.Input.sendKeyEvent(Input.java:124) ...
 
   # Error states and what to do (based on values returned by init.svc.bootanim property):
   # - device not found: wait until emulator has been created and started or timeout reached.
