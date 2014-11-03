@@ -170,7 +170,7 @@ script:
 
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
-  - echo "disable predex value: ${DISABLE_PREDEX:-}"
+  - echo "disable predex value ${DISABLE_PREDEX:-off}"
   - TERM=dumb ./gradlew build connectedCheck
 
   # OR CUSTOM build (TODO: Custom build. work in progress...)
