@@ -96,6 +96,12 @@ before_install:
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
+  # - echo " @-- EXPORT AVD ARGS --@ "
+  # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+  # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
+  - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
@@ -107,27 +113,36 @@ before_install:
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
-  #
-  # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
-  # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
-  # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-  #
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
+  # - echo " @-- WAIT FOR DEVICE --@ "
+  # Check adb commands: http://developer.android.com/tools/help/adb.html
+  # Comment out the line below to block execution until the emulator is online (device state).
+  - adb wait-for-device
+
 
 install:
+  # - echo " @-- SKIP INSTALL STAGE --@ "
   # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
-
-  # SKIP install stage
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  - true
+  # - true
 
-  # OR CUSTOM install
+  # OR
+
+  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Comment out the lines below to download, add execution permission and show gradlew version.
+  - TERM=dumb  sudo chmod +x gradlew
+  - TERM=dumb ./gradlew -version
+  # Comment out the lines below to show android SDK components installed and android dependencies.
+  # Travis downloads gradle first time is called and it downloads the project dependencies.
+  - android list targets
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
 
 before_script:
@@ -135,10 +150,6 @@ before_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
   # - echo " @-- WAIT FOR EMULATOR --@ "
-  # Check adb commands: http://developer.android.com/tools/help/adb.html
-  # Comment out the line below to block execution until the emulator is online (device state).
-  - adb wait-for-device
-
   # Comment out the lines below to add +x permission to wait_for_emulator script and execute it.
   - sudo chmod +x scripts/wait_for_emulator.sh
 
@@ -154,27 +165,14 @@ before_script:
 
 
 script:
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the lines below to download, add execution permission and show gradlew version.
-  - TERM=dumb  sudo chmod +x gradlew
-  - TERM=dumb ./gradlew -version
-
-  # Comment out the lines below to show android SDK components installed and android dependencies.
-  # Travis downloads gradle first time is called and it downloads the project dependencies.
-  - android list targets
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
-
-  # USE DEFAULT build + PreDex option (see below).
-
+  - echo " @-- Default build and disable pre-dexing option ${DISABLE_PREDEX:-disabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
   - echo "disable predex value ${DISABLE_PREDEX:-}"
   - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
-  # OR CUSTOM build (TODO: Custom build. work in progress...)
+  # OR
 
+  - echo " @-- Custom build + disable pre-dexing option  ${DISABLE_PREDEX:-disabled} --@ "
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
   # - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
