@@ -78,16 +78,16 @@ env:
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 
@@ -136,9 +136,7 @@ install:
   - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to download, add execution permission and show gradlew version.
-  - echo $GRADLE_HOME
-  - echo $PATH
-  - TERM=dumb  sudo chmod +x gradlew
+  - sudo chmod +x gradlew
   - TERM=dumb ./gradlew -version
   - echo $GRADLE_HOME
   - echo $PATH
@@ -155,17 +153,19 @@ before_script:
 
   - echo " @-- WAIT FOR EMULATOR --@ "
   # Comment out the lines below to add +x permission to wait_for_emulator script and execute it.
-  - sudo chmod +x scripts/wait_for_emulator.sh
+  # - sudo chmod +x scripts/wait_for_emulator.sh
+  - until []
 
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
-  - adb logcat | tee logcat.txt &
+  - adb logcat *:W | tee logcat.txt &
 
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
   - ./scripts/wait_for_emulator.sh
+  - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
 
@@ -282,11 +282,17 @@ after_script:
   # emulator: WARNING: Could not initialize OpenglES emulation, using software renderer.
   # @-- Check: http://developer.android.com/tools/devices/emulator.html#starting
   # @-- 157.3 --@  You cannot run a VM-accelerated emulator inside another virtual machine.
-
+  #
   # problem reading network stats ava.lang.IllegalStateException: problem parsing idx 1
   # at com.android.internal.net.NetworkStatsFactory.readNetworkStatsDetail(NetworkStatsFactory. 300)
   # @-- Check limitations: http://developer.android.com/tools/devices/emulator.html#limitations
+  # @-- Check network :http://developer.android.com/tools/devices/emulator.html#emulatornetworking
   # @-- 180.1 --@ No support for determining network connected state
+  #
+  # What is the meaning of return value 127 from $? in UNIX.
+  # @-- Check http://stackoverflow.com/questions/1763156
+  # @-- Value 127 is returned by /bin/sh when the given command is not found within your PATH
+
 
   # @--@--@--@--@
   # @-- TODO: --@
