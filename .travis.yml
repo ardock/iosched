@@ -102,6 +102,7 @@ before_install:
   # Tests VM to decide to skip a process or not: https://github.com/travis-ci/travis-ci/issues/2634
   # - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
   - sudo -i -u travis android list sdk --no-ui --all --extended | awk -F\" '/^id/ {print $2}' | sort
+  - sudo -i -u travis gradle -version
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
@@ -139,7 +140,7 @@ before_script:
   # - adb shell input keyevent 82 &
 
 
-script: true
+script:
 
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
