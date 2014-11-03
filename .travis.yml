@@ -141,12 +141,12 @@ before_script:
 
 
 script:
-  - gradlew -version
 
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
-  # - chmod +x gradlew
+  - ./gradlew -version
+  - sudo chmod +x gradlew
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
