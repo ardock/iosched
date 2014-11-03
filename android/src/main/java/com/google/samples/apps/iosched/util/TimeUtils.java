@@ -26,7 +26,10 @@ import com.google.samples.apps.iosched.R;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class TimeUtils {
     private static final int SECOND = 1000;

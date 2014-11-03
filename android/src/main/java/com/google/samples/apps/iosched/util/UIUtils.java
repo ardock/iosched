@@ -352,7 +352,6 @@ public class UIUtils {
      * <p>
      * <a href="http://stackoverflow.com/questions/13202805">Original code</a> by Dandre Allison.
      * @param context the current context of the device
-     * @see #isHoneycombTablet(android.content.Context)
      */
     public static void enableDisableActivitiesByFormFactor(Context context) {
         final PackageManager pm = context.getPackageManager();

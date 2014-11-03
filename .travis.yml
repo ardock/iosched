@@ -46,7 +46,7 @@ android:
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    # - extra-google-google_play_services
+    - extra-google-google_play_services
     - extra-google-m2repository
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -154,6 +154,7 @@ before_script:
   - sudo chmod +x scripts/wait_for_emulator.sh
 
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
+  # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
   - adb logcat | tee logcat.txt &
 
@@ -165,7 +166,7 @@ before_script:
 
 
 script:
-  - echo " @-- Default build - Pre-dexing  ${DISABLE_PREDEX:-enabled} --@ "
+  - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   - echo "disable predex value ${DISABLE_PREDEX:-}"
   - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
@@ -258,9 +259,6 @@ after_script:
   # Could not find any version that matches com.google.android.gms:play-services-wearable:6.1.+.
   # @-- 134.1 --@ extra-google-m2repository (android: components:)
   #
-  # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
-  # @-- 135.5 --@ Reload job?
-  #
   # Invalid --abi armeabi-v7a for the selected target. (android-21)
   # @-- 135.6 --@ tools (android: components:)
   #
@@ -286,7 +284,8 @@ after_script:
   # @-- TODO: --@
   # @--@--@--@--@
   #
-  # Modules without test, gradle 0.13.2, connectedAndroidTest will fail ?
+  #
+  # Modules without tests, gradle 0.13.2, connectedAndroidTest
   # Issue @-- https://code.google.com/p/android/issues/detail?id=76249
   # Solution: https://android-review.googlesource.com/#/c/112529/
   #
@@ -296,3 +295,17 @@ after_script:
   # Check Android Studio 0.9.0: http://tools.android.com/recent/androidstudio090released
   # Requires Build-Tools 21.1.0, and Support repository rev 8.
   # (quick fix button option but plugin APIs changed, so you may need to tweak your build files)
+  #
+  # Two Issues: https://code.google.com/p/android/issues/detail?id=77682
+  # Solution1: The gradle sync issue has to be fixed on the model side in Gradle 0.14.
+  # https://android-review.googlesource.com/#/c/111656/
+  # Solution2: The class loader issue is fixed for Android Studio 0.8.14.
+  # https://android-review.googlesource.com/#/c/111741/
+  #
+  # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
+  # @-- 135.5 --@ Reload job?
+  # @-- 179.6 --@ Gradle Dependencies aar inner jar?
+  #
+  # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
+  # E/ThrottleService(  278): Error reading data file
+  # http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
