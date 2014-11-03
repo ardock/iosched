@@ -78,15 +78,15 @@ env:
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
@@ -136,8 +136,12 @@ install:
   - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to download, add execution permission and show gradlew version.
+  - echo $GRADLE_HOME
+  - echo $PATH
   - TERM=dumb  sudo chmod +x gradlew
   - TERM=dumb ./gradlew -version
+  - echo $GRADLE_HOME
+  - echo $PATH
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   - android list targets
@@ -279,6 +283,10 @@ after_script:
   # @-- Check: http://developer.android.com/tools/devices/emulator.html#starting
   # @-- 157.3 --@  You cannot run a VM-accelerated emulator inside another virtual machine.
 
+  # problem reading network stats ava.lang.IllegalStateException: problem parsing idx 1
+  # at com.android.internal.net.NetworkStatsFactory.readNetworkStatsDetail(NetworkStatsFactory. 300)
+  # @-- Check limitations: http://developer.android.com/tools/devices/emulator.html#limitations
+  # @-- 180.1 --@ No support for determining network connected state
 
   # @--@--@--@--@
   # @-- TODO: --@
