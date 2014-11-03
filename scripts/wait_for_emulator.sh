@@ -24,7 +24,8 @@ done
 
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
-  # adb -e: if only one device attached to adb, we can refer to it using this argument.
+  # adb -e: direct an adb command to the only running emulator. Return an error if more than one.
+  # adb -d: direct an adb command to the only attached USB device. Return an error if more than one.
   # adb shell: starts a remote shell in a target emulator/device instance.
   # adb shell [shellCommand]: Issues a shell command in the target and then exits the remote shell.
   # adb shell getprop init.svc.bootanim: tell boot animation is running or not.
@@ -46,6 +47,9 @@ done
   # - no device: there is no emulator/device connected.
   # - offline: instance is not connected to adb or is not responding.
   # - device: instance is connected to the adb server but not implies fully booted and operational.
+  # adb wait-for-device: blocks execution until the device is online (instance state is device).
+  # adb start-server: checks whether the adb server process is running and starts it, if not.
+  # adb stop-server: terminates the adb server process.
   # Check direct commands: http://developer.android.com/tools/help/adb.html#directingcommands
   # adb -s <serialNumber> <command>: send an adb command directly to a target when more than one.
 

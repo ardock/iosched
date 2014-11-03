@@ -18,7 +18,7 @@ jdk:
   # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
-  # - openjdk7
+  - openjdk7
   - oraclejdk7
 
 android:
@@ -30,33 +30,33 @@ android:
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    # - platform-tools
-    # - tools
+    - platform-tools
+    - tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
     # - build-tools-21.0.2
-    # - build-tools-21.1.0
+    - build-tools-21.1.0
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
-    # - android-20
-    # - android-21
+    - android-20
+    - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    # - extra-google-google_play_services
+    - extra-google-google_play_services
     - extra-google-m2repository
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
-    # - extra-android-support
-    # - extra-android-m2repository
+    - extra-android-support
+    - extra-android-m2repository
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    # - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-wear-20
     - sys-img-armeabi-v7a-android-21
 
   licenses:
@@ -107,27 +107,25 @@ before_install:
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
-
-  # Comment out the line below to add +x permissions to wait for emulator script.
-  - sudo chmod +x scripts/wait_for_emulator.sh
+  #
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-
+  #
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
 
-install: true
-  # SKIP install stage
-
+install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
+
+  # SKIP install stage
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # - true
+  - true
 
   # OR CUSTOM install
 
@@ -137,6 +135,20 @@ before_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
   # - echo " @-- WAIT FOR EMULATOR --@ "
+  # Check adb commands: http://developer.android.com/tools/help/adb.html
+  # Comment out the line below to block execution until the emulator is online (device state).
+  - adb wait-for-device
+
+  # Comment out the lines below to add +x permission to wait_for_emulator script and execute it.
+  - sudo chmod +x scripts/wait_for_emulator.sh
+
+  # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
+  # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
+  - adb logcat | tee logcat.txt &
+
+  # Check emulator help: http://developer.android.com/tools/help/emulator.html
+  # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
+  # Comment out the lines below to execute the script and send input key constant 'Menu key'.
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
@@ -147,8 +159,10 @@ script:
   # Comment out the lines below to download, add execution permission and show gradlew version.
   - TERM=dumb  sudo chmod +x gradlew
   - TERM=dumb ./gradlew -version
+
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
+  - android list targets
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
@@ -156,6 +170,8 @@ script:
 
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  - echo "disable predex value: ${DISABLE_PREDEX:-}"
+  - TERM=dumb ./gradlew build connectedCheck
 
   # OR CUSTOM build (TODO: Custom build. work in progress...)
 
@@ -218,6 +234,10 @@ after_success:
 
 
 after_script:
+  # Uncomment the lines bellow to kill adb and tee if used before script
+  - pkill -KILL -f tee
+  - pkill -KILL -f adb
+
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
@@ -234,6 +254,7 @@ after_script:
   # @--@--@--@--@
   #
   # Error occurred while compiling the build script: undefined method `empty?' for nil:NilClass
+  # Error: Target id (android-21) is not valid. Use 'android list targets' to get the target ids.
   # @-- 132.1 --@ android-21 (android: components:)
   #
   # Could not find any version that matches com.google.android.gms:play-services-wearable:6.1.+.
