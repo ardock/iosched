@@ -14,12 +14,12 @@
 
 language: android
 
-# jdk:
+jdk:
   # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   # - openjdk7
-  # - oraclejdk7
+  - oraclejdk7
 
 android:
   components:
@@ -31,7 +31,7 @@ android:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
     # - platform-tools
-    - tools
+    # - tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
@@ -63,11 +63,11 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list android-sdk-license used by Android SDK Platform-tools, rev 21 and other tools.
-    # - 'android-sdk-license-5be876d5'
+    - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     - 'android-sdk-license-.+'
     # White list all the licenses.
-    # - '.+'
+    - '.+'
 
 notifications:
   email: false
@@ -78,17 +78,17 @@ env:
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -98,9 +98,10 @@ before_install:
 
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  # - pwd && ls -al && sudo apt-get update -qq
+  - pwd && ls -al && sudo apt-get update -qq
   # Tests VM to decide to skip a process or not: https://github.com/travis-ci/travis-ci/issues/2634
-  # - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
+  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
+  # Use this to show android SDK components and gradle version installed
   - sudo -i -u travis android list sdk --no-ui --all --extended | awk -F\" '/^id/ {print $2}' | sort
   - sudo -i -u travis gradle -version
 
@@ -108,16 +109,16 @@ before_install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
 
   # Comment out the line below to add +x permissions to wait for emulator script.
-  # - chmod +x scripts/wait_for_emulator.sh
+  - sudo chmod +x scripts/wait_for_emulator.sh
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
 
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  # - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  # - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
+  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
 
 install: true
@@ -136,21 +137,20 @@ before_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
   # - echo " @-- WAIT FOR EMULATOR --@ "
-  # - ./scripts/wait_for_emulator.sh
-  # - adb shell input keyevent 82 &
+  - ./scripts/wait_for_emulator.sh
+  - adb shell input keyevent 82 &
 
 
 script:
-
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the lines below to add execution permission to gradle on Travis VM linux machine.
-  - ./gradlew -version
-  - sudo chmod +x gradlew
+  # Comment out the lines below to download, add execution permission and show gradlew version.
+  - TERM=dumb  sudo chmod +x gradlew
+  - TERM=dumb ./gradlew -version
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
-  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  # - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
   # USE DEFAULT build + PreDex option (see below).
 

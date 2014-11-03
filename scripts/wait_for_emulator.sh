@@ -1,20 +1,26 @@
 #!/bin/bash
 
+set +e
+
 bootanim=""
 failcounter=0
+timeout_in_sec=60
+
 until [[ "$bootanim" =~ "stopped" ]]; do
-   bootanim=`adb -e shell getprop init.svc.bootanim 2>&1`
-   echo "$bootanim"
-   if [[ "$bootanim" =~ "device not found" ]]; then
-      let "failcounter += 1"
-      if [[ $failcounter -gt 15 ]]; then
-        echo "Failed to start emulator"
-        exit 1
-      fi
-   fi
-   sleep 1
+  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
+  if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
+    let "failcounter += 1"
+    echo "Waiting for emulator to start"
+    if [[ $failcounter -gt timeout_in_sec ]]; then
+      echo "Timeout ($timeout_in_sec seconds) reached; failed to start emulator"
+      exit 1
+    fi
+  elif [[ "$bootanim" =~ "running" ]]; then
+    echo "Emulator is ready"
+    exit 0
+  fi
+  sleep 1
 done
-echo "Done"
 
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
@@ -25,6 +31,12 @@ echo "Done"
   # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor and not a filename.
   # &: runs a command in the background, You can type other command while background job is running.
   # adb -e shell getprop init.svc.bootanim 2>&1 &: checks in the background if boot anim is running.
+
+  # Check  http://stackoverflow.com/questions/19622198/what-does-set-e-in-a-bash-script-mean
+  # Type help set in a terminal. Note: this no refers to the adb -e parameter. Refers to bash usage.
+  # set -e  Exit immediately if a command exits with a non-zero status.
+  # set -x  Print commands and their arguments as they are executed.
+  # Using + rather than - causes these flags to be turned off.
 
   # Check device status: http://developer.android.com/tools/help/adb.html#devicestatus
   # adb devices: Prints a list of all attached emulator/device instances by serial number and state.
@@ -38,6 +50,8 @@ echo "Done"
   # adb -s <serialNumber> <command>: send an adb command directly to a target when more than one.
 
   # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
+  # TODO: Test results. I think need fixes. Create my own script or oneline .travis.yml command.
+
   # Error states and what to do (based on values returned by init.svc.bootanim property):
   # - device not found: wait until emulator has been created and started or timeout reached.
   # - device offline: wait until emulator connected to adb or timeout reached,
