@@ -178,7 +178,7 @@ before_script:
 script:
   # - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  - TERM=dumb ./gradlew build connectedCheck --stacktrace ${DISABLE_PREDEX:-}
+  - TERM=dumb ./gradlew build connectedCheck --debug ${DISABLE_PREDEX:-}
 
   # - TERM=dumb ./gradlew clean assembleDebug --stacktrace ${DISABLE_PREDEX:-}
   # - TERM=dumb ./gradlew installDebug --stacktrace ${DISABLE_PREDEX:-}
