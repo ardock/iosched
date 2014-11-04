@@ -82,10 +82,10 @@ env:
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
@@ -161,7 +161,7 @@ before_script:
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
   # TODO: remove next line or custom it
   - adb -e logcat com.google.samples.apps.iosched:D *:S | tee logcat.txt &
-  # - adb logcat *:W | tee logcat.txt &
+  # - adb logcat *:W | tee logcat.log &
 
 
 
@@ -211,7 +211,9 @@ script:
 
 
 after_failure:
-  # Customize this line, 'android' is the specific app module name of this project. Shows log.
+  # Comment out the line below to show logcat log
+  - echo logcat.log && echo "=====================" && cat logcat.log
+  # Customize this line, 'android' is the specific app module name of this project. Shows logs.
   - export MY_MOD="android"
   - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
   - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
