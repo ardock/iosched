@@ -118,7 +118,7 @@ before_install:
   - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "$AVD_PATH" -c "AVD_CARD_SIZE"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "$AVD_PATH" -c "$AVD_CARD_SIZE"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
