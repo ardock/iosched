@@ -146,6 +146,8 @@ install:
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
+  - TERM=dumb ./gradlew clean assembleDebug ${DISABLE_PREDEX:-}
+
 
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
@@ -167,12 +169,14 @@ before_script:
   - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
+  - TERM=dumb ./gradlew installDebug ${DISABLE_PREDEX:-}
 
 script:
   - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  - echo "disable predex value ${DISABLE_PREDEX:-}"
-  - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+
+
 
   # OR
 
