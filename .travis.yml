@@ -73,6 +73,8 @@ notifications:
   email: false
 
 env:
+  global:
+    - ANDROID_SDKS=android-21
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -114,7 +116,7 @@ before_install:
   - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -c 100M -p "./avds/${AVD_NAME:-test}"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
@@ -323,3 +325,10 @@ after_script:
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
   # http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
+
+
+  # E/Trace   (  882): error opening trace file: No such file or directory (2)
+  # W/ActivityManager(  284): No content provider found for permission revoke:
+  # file:///data/local/tmp/Wearable-debug.apk
+  # W/PackageParser(  284): /data/app/vmdl1732774682.tmp (at Binary XML file line #22): Requires newer sdk version #20 (current version is #17)
+  # Failure [INSTALL_FAILED_OLDER_SDK]
