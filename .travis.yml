@@ -18,7 +18,7 @@ jdk:
   # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
-  # - openjdk7
+  - openjdk7
   - oraclejdk7
 
 android:
@@ -77,17 +77,17 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 
