@@ -30,8 +30,8 @@ android:
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    - platform-tools
     - tools
+    - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
@@ -44,15 +44,15 @@ android:
     # - android-20
     - android-21
 
-    # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
-    # Comment the lines below if the latest Google extras are included or not required.
-    - extra-google-google_play_services
-    - extra-google-m2repository
-
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
-    - extra-android-support
     - extra-android-m2repository
+    - extra-android-support
+
+    # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
+    # Comment the lines below if the latest Google extras are included or not required.
+    - extra-google-m2repository
+    - extra-google-google_play_services
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
@@ -141,8 +141,9 @@ install:
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Travis downloads gradle first time is called and it downloads the project dependencies.
-  # Comment out the line below to download, add execution permission and show gradlew version.
-  - sudo chmod +x gradlew && ./gradlew -version
+  # Comment out the lines belows to add execution permission, download and show gradlew version.
+  - sudo chmod +x gradlew
+  - ./gradlew -version
   # Comment out the line below to show the android project dependencies.
   - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
