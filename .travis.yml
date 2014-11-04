@@ -103,6 +103,7 @@ before_install:
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  - pwd && mkdir ./avds
   - export AVD_PATH="./avds/${AVD_NAME:-test}"
   - export AVD_CARD_SIZE="100M"
 
