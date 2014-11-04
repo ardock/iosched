@@ -160,7 +160,11 @@ before_script:
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
-  - adb logcat *:W | tee logcat.txt &
+  - adb -e logcat com.google.samples.apps.iosched:D *:S | tee logcat.txt &
+  # - adb logcat *:W | tee logcat.txt &
+
+
+
 
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
