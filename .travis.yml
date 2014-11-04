@@ -169,14 +169,12 @@ before_script:
   - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
 
-  - TERM=dumb ./gradlew installDebug ${DISABLE_PREDEX:-}
-
 script:
   - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
-
+  - TERM=dumb ./gradlew installDebug ${DISABLE_PREDEX:-}
 
   # OR
 
