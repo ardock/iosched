@@ -151,8 +151,7 @@ install:
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the lines belows to add execution permission, download and show gradlew version.
-  - sudo chmod +x gradlew
-  - ./gradlew -version
+  - chmod +x gradlew && ./gradlew -version
   # Comment out the line below to show the android project dependencies.
   - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
@@ -166,7 +165,7 @@ before_script:
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
   - chmod +x scripts/wait_for_emulator.sh && ls -l scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
-  - adb shell input keyevent 26 &
+  # - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
   - adb devices
 
@@ -175,8 +174,9 @@ before_script:
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
   # TODO: remove the line below or custom it and uncomment next line.
-  - adb logcat com.google.samples.apps.iosched:W | tee logcat.log &
-  # - adb logcat *:W | tee logcat.log &
+  # - adb logcat com.google.samples.apps.iosched:W | tee logcat.log &
+  - adb logcat | tee logcat.log &
+
 
 script:
   # - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
