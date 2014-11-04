@@ -82,12 +82,12 @@ env:
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS=''
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS=''
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
 
@@ -96,7 +96,7 @@ before_install:
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
-  - echo " @-- EXPORT AVD ARGS --@ "
+  # - echo " @-- EXPORT AVD ARGS --@ "
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
@@ -104,23 +104,23 @@ before_install:
   - pwd && mkdir ./avds
   - export AVD_PATH="./avds/${AVD_NAME:-test}"
 
-  - echo " @-- EXTRA DEPENDENCIES --@ "
+  # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
   # Tests VM to decide to skip a process or not: https://github.com/travis-ci/travis-ci/issues/2634
-  - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
+  # - mem=($(free -m | head -2 | tail -1)); if [ ${mem[6]} -eq 0 ]; then export VM_TEST_RESULT=1; fi
   # Use this to show android SDK components and gradle version installed
-  - sudo -i -u travis android list sdk --no-ui --all --extended | awk -F\" '/^id/ {print $2}' | sort
-  - sudo -i -u travis gradle -version
+  # - sudo -i -u travis android list sdk --no-ui --all --extended | awk -F\" '/^id/ {print $2}' | sort
+  # - sudo -i -u travis gradle -version
 
-  - echo " @-- CREATE & START AVD --@ "
+  # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "$AVD_PATH"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "{$AVD_PATH:-.}"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  - echo " @-- WAIT FOR DEVICE --@ "
+  # - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
   - adb wait-for-device
@@ -135,17 +135,17 @@ install:
 
   # OR
 
-  - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the lines below to download, add execution permission and show gradlew version.
-  - sudo chmod +x gradlew
-  - TERM=dumb ./gradlew -version
-  - echo $GRADLE_HOME
-  - echo $PATH
+  # - sudo chmod +x gradlew
+  - ./gradlew -version
+  # - echo $GRADLE_HOME
+  # - echo $PATH
   # Comment out the lines below to show android SDK components installed and android dependencies.
   # Travis downloads gradle first time is called and it downloads the project dependencies.
-  - android list targets
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - android list targets
+  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
 
@@ -153,13 +153,14 @@ before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
-  - echo " @-- WAIT FOR EMULATOR --@ "
+  # - echo " @-- WAIT FOR EMULATOR --@ "
   # Comment out the lines below to add +x permission to wait_for_emulator script and execute it.
-  - sudo chmod +x scripts/wait_for_emulator.sh
+  # - sudo chmod +x scripts/wait_for_emulator.sh
 
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
+  # TODO: remove next line or custom it
   - adb -e logcat com.google.samples.apps.iosched:D *:S | tee logcat.txt &
   # - adb logcat *:W | tee logcat.txt &
 
@@ -228,17 +229,17 @@ after_failure:
 
 after_success:
   # Customize this line, 'android' is the specific app module name of this project. Shows log.
-  - export MY_MOD="android"
-  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
-  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  # - export MY_MOD="android"
+  # - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
+  # - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
 
-  - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
-  - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  - lynx --dump com.android.builder.testing.html > myTesting.log
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  # - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
+  # - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  # - lynx --dump com.android.builder.testing.html > myTesting.log
+  # - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
   # TODO: Check tests are performed and build is successful. See after_script work-around. VM issue.
-  # - echo " @-- Success --@ "
+  - echo " @-- Success --@ "
   # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
 
 
@@ -250,12 +251,12 @@ after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
-  - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
-  - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+  # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
+  # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
 
   # TODO: Check VM state when fails and confirm build is successful.
-  - echo "VM TEST RESULT ${VM_TEST_RESULT}"
-  - if [[ "${VM_TEST_RESULT}" == "0" ]]; then echo "VM OK"; else echo "VM ISSUE"; fi
+  # - echo "VM TEST RESULT ${VM_TEST_RESULT}"
+  # - if [[ "${VM_TEST_RESULT}" == "0" ]]; then echo "VM OK"; else echo "VM ISSUE"; fi
 
 
   # @--@--@--@--@
