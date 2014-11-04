@@ -97,7 +97,7 @@ matrix:
   # Check blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
   # Check docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
   # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed.
-  #  fast_finish: true
+  # fast_finish: true
 
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
@@ -129,8 +129,7 @@ before_install:
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" \
-      -p "${AVD_PATH:-.}"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "${AVD_PATH:-.}"
   - pwd && ls "${AVD_PATH:-.}" -al && cat config.ini
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
