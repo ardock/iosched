@@ -82,15 +82,15 @@ env:
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
@@ -154,7 +154,7 @@ install:
   # Comment out the lines belows to add execution permission, download and show gradlew version.
   - chmod +x gradlew && ls -l gradlew && ./gradlew -version
   # Comment out the line below to show the android project dependencies.
-  - TERM=dumb ./gradlew androidDependencies ${DISABLE_PREDEX:-}
+  - ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
@@ -182,44 +182,44 @@ before_script:
 script:
   # - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
 
-  - TERM=dumb ./gradlew clean assembleDebug --stacktrace ${DISABLE_PREDEX:-}
-  - TERM=dumb ./gradlew installDebug --stacktrace ${DISABLE_PREDEX:-}
+  - ./gradlew clean assembleDebug ${DISABLE_PREDEX:-}
+  - ./gradlew installDebug ${DISABLE_PREDEX:-}
 
   # OR
 
   # - echo " @-- Custom build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
-  # - TERM=dumb ./gradlew clean generateDebugSources generateDebugTestSources
+  # - ./gradlew clean generateDebugSources generateDebugTestSources
 
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
   # and if ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
-  # - TERM=dumb ./gradlew assembleDebug ${DISABLE_PREDEX:-}
-  # - TERM=dumb ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
 
   # Installs and runs tests fro Build 'debug' on connected devices
   # Remember add DISABLE_PREDEX flag always your gradle tasks perform predex to avoid dexing errors.
-  # - TERM=dumb ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
+  # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
   # - echo " @-- DEBUG TEST FINISHED, NOW RELEASE TEST --@ "
 
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
-  # - TERM=dumb ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
+  # - ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
   # Assembles and tests this project
-  # - TERM=dumb ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
 
   # Comment out the line below to run all device checks on currently connected devices
-  # - TERM=dumb ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  # - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
   # - echo " @-- RELEASE TEST FINISHED --@ "
 
 
 after_failure:
-  - echo " @-- Success --@ "
+  - echo " @-- Failure --@ "
   # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
   # TODO: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
   # TODO: Offer known solutions after failure?. Delete ERROR and TODO sections.
@@ -237,10 +237,6 @@ after_script:
   # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
 
-  # Uncomment the line below to kill adb and tee (if used before script) and show the logcat log.
-  - pwd && ls -al
-  - echo " LOGCAT" && echo "=========" && cat logcat.log && pkill -KILL -f tee && pkill -KILL -f adb
-
   # TODO: Fix this. Detect log dir existence and don't show html index etc.
   # Shows logs. Customize first line, 'android' is the specific app module name of this project.
   - export MY_MOD="android"
@@ -250,6 +246,9 @@ after_script:
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+
+  # Uncomment the line below to kill adb and tee (if used before script) and show the logcat log.
+  - echo " LOGCAT" && echo "=========" && cat logcat.log && pkill -KILL -f tee && pkill -KILL -f adb
 
 
   # @--@--@--@--@
@@ -293,11 +292,8 @@ after_script:
   # @-- Check network :http://developer.android.com/tools/devices/emulator.html#emulatornetworking
   # @-- 180.1 --@ No support for determining network connected state
   #
-  # What is the meaning of return value 127 from $? in UNIX.
-  # @-- Check http://stackoverflow.com/questions/1763156
-  # @-- Value 127 is returned by /bin/sh when the given command is not found within your PATH
-
-
+  #
+  #
   # @--@--@--@--@
   # @-- TODO: --@
   # @--@--@--@--@

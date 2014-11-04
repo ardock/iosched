@@ -1,26 +1,20 @@
 #!/bin/bash
 
-set +e
-
 bootanim=""
 failcounter=0
-timeout_in_sec=60
-
 until [[ "$bootanim" =~ "stopped" ]]; do
-  bootanim=`adb -e shell getprop init.svc.bootanim 2>&1 &`
-  if [[ "$bootanim" =~ "device not found" || "$bootanim" =~ "device offline" ]]; then
-    let "failcounter += 1"
-    echo "Waiting for emulator to start"
-    if [[ $failcounter -gt timeout_in_sec ]]; then
-      echo "Timeout ($timeout_in_sec seconds) reached; failed to start emulator"
-      exit 1
-    fi
-  elif [[ "$bootanim" =~ "stopped" ]]; then
-    echo "Emulator is ready"
-    exit 0
-  fi
-  sleep 1
+   bootanim=`adb -e shell getprop init.svc.bootanim`
+   echo "$bootanim"
+   if [[ "$bootanim" =~ "device not found" ]]; then
+      let "failcounter += 1"
+      if [[ $failcounter -gt 3 ]]; then
+        echo "Failed to start emulator"
+        exit 1
+      fi
+   fi
+   sleep 1
 done
+echo "Emulator is ready"
 
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
