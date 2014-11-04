@@ -85,7 +85,7 @@ env:
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
@@ -100,6 +100,7 @@ matrix:
   #  fast_finish: true
 
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
+  # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
   allow_failures:
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
@@ -115,21 +116,22 @@ before_install:
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
-  # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not used.
-  - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}"
+  # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not set.
+  - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
   # Comment out the lines below to show android targets and SDK components installed
-  # - android list targets
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - android list targets
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "${AVD_PATH:-.}"
-  - pwd && ls "${AVD_PATH:-.}" -al
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" \
+      -p "${AVD_PATH:-.}"
+  - pwd && ls "${AVD_PATH:-.}" -al && cat config.ini
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
@@ -155,6 +157,7 @@ install:
   - chmod +x gradlew && ls -l gradlew && ./gradlew -version
   # Comment out the line below to show the android project dependencies.
   - ./gradlew androidDependencies ${DISABLE_PREDEX:-}
+
 
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
@@ -188,6 +191,7 @@ script:
 
   - ./gradlew clean assembleDebug ${DISABLE_PREDEX:-}
   - ./gradlew installDebug ${DISABLE_PREDEX:-}
+  - echo " @-- INSTALL FINISHED --@ "
 
   # OR
 
@@ -203,8 +207,8 @@ script:
   # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
 
-  # Installs and runs tests fro Build 'debug' on connected devices
-  # Remember add DISABLE_PREDEX flag always your gradle tasks perform predex to avoid dexing errors.
+  # Installs and runs tests for Build 'debug' on connected devices
+  # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
   # - echo " @-- DEBUG TEST FINISHED, NOW RELEASE TEST --@ "
 
