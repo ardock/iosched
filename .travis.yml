@@ -73,8 +73,6 @@ notifications:
   email: false
 
 env:
-  global:
-    - ANDROID_SDKS=android-21
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -105,7 +103,6 @@ before_install:
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   - pwd && mkdir ./avds
   - export AVD_PATH="./avds/${AVD_NAME:-test}"
-  - export AVD_CARD_SIZE="100M"
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
@@ -119,7 +116,7 @@ before_install:
   - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "$AVD_PATH" -c "$AVD_CARD_SIZE"
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "$AVD_PATH"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
@@ -175,10 +172,10 @@ before_script:
 script:
   - echo " @-- Default build - Pre-dexing ${DISABLE_PREDEX:-enabled} --@ "
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
-  # - TERM=dumb ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  - TERM=dumb ./gradlew build connectedCheck --stacktrace ${DISABLE_PREDEX:-}
 
-  - TERM=dumb ./gradlew clean assembleDebug --stacktrace ${DISABLE_PREDEX:-}
-  - TERM=dumb ./gradlew installDebug ${DISABLE_PREDEX:-}
+  # - TERM=dumb ./gradlew clean assembleDebug --stacktrace ${DISABLE_PREDEX:-}
+  # - TERM=dumb ./gradlew installDebug --stacktrace ${DISABLE_PREDEX:-}
 
   # OR
 
