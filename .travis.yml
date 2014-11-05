@@ -35,13 +35,13 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    - build-tools-20.0.0
+    # - build-tools-20.0.0
     # - build-tools-21.0.2
     - build-tools-21.1.0
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
-    - android-20
+    # - android-20
     - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -80,9 +80,9 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
@@ -90,7 +90,7 @@ env:
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
@@ -145,17 +145,7 @@ install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # - true
-
-  # OR
-
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Travis downloads gradle first time is called and it downloads the project dependencies.
-  # Comment out the lines belows to add execution permission, download and show gradlew version.
-  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
-  # Comment out the line below to show the android project dependencies.
-  - ./gradlew androidDependencies ${DISABLE_PREDEX:-}
+  - true
 
 
 before_script:
@@ -186,6 +176,14 @@ script:
   # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
+
+  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Travis downloads gradle first time is called and it downloads the project dependencies.
+  # Comment out the lines belows to add execution permission, download and show gradlew version.
+  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
+  # Comment out the line below to show the android project dependencies.
+  - ./gradlew androidDependencies ${DISABLE_PREDEX:-}
 
   - ./gradlew clean build connectedCheck ${DISABLE_PREDEX:-}
 
