@@ -175,10 +175,9 @@ before_script:
   # - echo " @-- LOGCAT --@ "
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
-  # Comment the line below to debug output and redirect it to a file using tee (See 'man tee').
-  # TODO: remove the line below or custom it and uncomment next line.
-  # - adb logcat com.google.samples.apps.iosched:W | tee logcat.log &
-  - adb logcat | tee logcat.log &
+  # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
+  - export ANDROID_LOG_TAGS="iosched_*:W *:S"
+  - adb logcat $ANDROID_LOG_TAGS -f logcat.log &
 
 
 script:
@@ -250,8 +249,8 @@ after_script:
   - lynx --dump com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
-  # Uncomment the line below to kill adb and tee (if used before script) and show the logcat log.
-  - echo " LOGCAT" && echo "=========" && cat logcat.log && pkill -KILL -f tee && pkill -KILL -f adb
+  # Uncomment the line below to kill adb (if used before script) and show the logcat log.
+  - echo " LOGCAT" && echo "=========" && cat logcat.log &&  pkill -KILL -f adb
 
 
   # @--@--@--@--@
