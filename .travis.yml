@@ -177,7 +177,7 @@ before_script:
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - export ANDROID_LOG_TAGS="iosched_*:W *:S"
-  - adb logcat $ANDROID_LOG_TAGS -f logcat.log &
+  - adb logcat -f logcat.log &
 
 
 script:
