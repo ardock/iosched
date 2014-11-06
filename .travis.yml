@@ -227,7 +227,7 @@ after_script:
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   # - echo "TRAVIS_TEST_RESULT ${TRAVIS_TEST_RESULT}"
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
-  - [ "${TRAVIS_TEST_RESULT}" ] && echo "BUILD SUCCESSFUL" || echo "ERROR"
+  - [[ "${TRAVIS_TEST_RESULT}" == "0" ]] && echo "BUILD SUCCESSFUL" || echo "ERROR"
 
   # TODO: Fix this. Detect log dir existence and don't show html index etc.
   # Shows logs. Customize first line, 'android' is the specific app module name of this project.
