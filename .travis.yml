@@ -125,7 +125,7 @@ before_install:
   # Comment out the lines below to show android SDK components and targets installed
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list targets
-  - android-update-sdk --components=tools --verbose --force --accept-licenses='.+'
+  - echo yes | android update sdk -- filter tools --no-ui --verbose --force
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
