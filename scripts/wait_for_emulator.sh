@@ -47,15 +47,22 @@ echo "Emulator is ready"
   # Check direct commands: http://developer.android.com/tools/help/adb.html#directingcommands
   # adb -s <serialNumber> <command>: send an adb command directly to a target when more than one.
 
-  # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
-  # TODO: Test results. I think need fixes. Create my own script or oneline .travis.yml command.
-  #
-  # FATAL EXCEPTION IN SYSTEM PROCESS: main
-  # E/AndroidRuntime(   87): java.lang.NullPointerException
-  # E/AndroidRuntime(   87): 	at com.android.commands.input.Input.sendKeyEvent(Input.java:124) ...
-
   # Error states and what to do (based on values returned by init.svc.bootanim property):
   # - device not found: wait until emulator has been created and started or timeout reached.
   # - device offline: wait until emulator connected to adb or timeout reached,
   # - running: device is booting, connected to adb (device state). You can query it about state.
   # - stopped: ui appeared, it's safe to assume that emulator is running and ready to be used.
+
+  # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
+  # TODO: Test new script. I think need fixes. Create my own script or oneline .travis.yml command.
+  # See issue: https://github.com/travis-ci/travis-ci/issues/2932
+  # UPDATE: They solved the main problem but need optimize the loop without increase the failcounter
+  # See Fix1: https://github.com/travis-ci/travis-cookbooks/pull/396
+  # See Fix2: https://github.com/travis-ci/travis-cookbooks/pull/397
+
+  # TODO: Support more than one emulator and test mobile and wearable together on travis servers.
+  # See issue, support more than one emulator: http://stackoverflow.com/questions/25330960/
+  # See work in progress, serial property: https://code.google.com/p/android/issues/detail?id=75407
+  # See work in progress, serial property: https://android-review.googlesource.com/#/c/108985/
+  # See work in progress, renaming AVD: https://code.google.com/p/android/issues/detail?id=78677
+  # See work in progress, renaming AVD: https://android-review.googlesource.com/#/c/113019/

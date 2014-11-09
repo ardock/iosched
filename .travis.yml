@@ -60,7 +60,6 @@ android:
     # - sys-img-x86-android-21
     - sys-img-armeabi-v7a-android-21
 
-
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
@@ -94,9 +93,10 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
-  # Check blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
-  # Check docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
+  # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
+  # Check fast finishing - docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
   # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed.
+  # I received emails about build status and i didn't activate notifications. Only a phew days.
   # fast_finish: true
 
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
@@ -122,13 +122,14 @@ before_install:
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
-  # Comment out the lines below to show android targets and SDK components installed
+  # Comment out the lines below to show android SDK components and targets installed
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list targets
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
+  # TODO: I tried to break command in two lines using \ but doesn't work?
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "${AVD_PATH:-.}"
   - pwd && ls "${AVD_PATH:-.}" -al && cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
@@ -147,17 +148,15 @@ install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
 
-  # OR
+  # XOR
 
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the lines belows to add execution permission, download and show gradlew version.
   - chmod +x gradlew && ls -l gradlew && ./gradlew -version
-  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
-  - ./gradlew clean generateDebugSources generateDebugTestSources ${DISABLE_PREDEX:-}
-  # Comment out the line below to show the android project dependencies.
-  - ./gradlew androidDependencies --refresh-dependencies ${DISABLE_PREDEX:-}
+  # Comment out the line below to clean project and show the android project dependencies.
+  - ./gradlew clean androidDependencies --refresh-dependencies --info ${DISABLE_PREDEX:-}
 
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
@@ -187,9 +186,12 @@ script:
 
   # OR
 
+  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
+  # - ./gradlew clean generateDebugSources generateDebugTestSources ${DISABLE_PREDEX:-}
+
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
-  # and if ${DISABLE_PREDEX:-} option is added on ./gradlew, disables pre-dexing on build server.
-  # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX not found.
+  # and if ${DISABLE_PREDEX:-} option is added on gradlew, pre-dexing on build server is disabled.
+  # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
@@ -202,7 +204,6 @@ script:
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
   # - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
-
 
 
 after_failure:
@@ -254,7 +255,7 @@ after_script:
   # @-- 137.1 --@ extra-android-m2repository (android: components:)
   #
   # The command "./gradlew build connectedCheck" exited with 137.
-  # @-- 141.5 --@ Reload job or optimize build. killed by Travis, Check concurrent jobs, emulator...
+  # @-- 141.5 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
   # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
   # @-- 142.1 --@ build-tools-21.0.2 or better build-tools-21.1.0 (android: components:)
@@ -265,7 +266,7 @@ after_script:
   #
   # emulator: WARNING: Could not initialize OpenglES emulation, using software renderer.
   # @-- Check: http://developer.android.com/tools/devices/emulator.html#starting
-  # @-- 157.3 --@  You cannot run a VM-accelerated emulator inside another virtual machine.
+  # @-- 157.3 --@  You cannot run a VM-accelerated emulator inside another virtual machine. Can?
   #
   # emulator: ERROR: x86 emulation currently requires hardware acceleration!
   # Please ensure KVM is properly installed and usable.
