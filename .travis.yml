@@ -38,6 +38,7 @@ android:
     # - build-tools-20.0.0
     # - build-tools-21.0.2
     # - build-tools-21.1.0
+    # - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
@@ -125,7 +126,8 @@ before_install:
   # Comment out the lines below to show android SDK components and targets installed
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list targets
-  - echo yes | android --verbose update sdk --filter tools --no-ui --force
+  - android list sdk --no-ui --all --extended
+  - echo yes | android --verbose --clear-cache update sdk --filter tools --no-ui --force > /dev/null
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
