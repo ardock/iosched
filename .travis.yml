@@ -139,6 +139,7 @@ before_install:
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
   - adb wait-for-device
+  - adb devices
 
 
 install:
@@ -148,6 +149,22 @@ install:
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   - true
   # TODO: Travis kills emulator a lot when concurrent jobs. Move other tasks to script  or ...?
+
+  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
+  # Travis downloads gradle first time is called and it downloads the project dependencies.
+  # Comment out the lines belows to add execution permission, download and show gradlew version.
+  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
+  # Comment out the line below to clean project and show the android project dependencies.
+  - ./gradlew androidDependencies --refresh-dependencies --info
+
+  # - echo " @-- CLEAN PROJECT --@ "
+  # Comment out the line below to prepare the Debug and DebugTest project sources.
+  - ./gradlew clean generateDebugSources generateDebugTestSources
+
+  # - echo " @-- REBUILD PROJECT --@ "
+  # Comment out the line below to prepare the Debug and DebugTest project sources.
+  - ./gradlew clean compileDebugJava
 
 
 before_script:
@@ -178,18 +195,6 @@ script:
   # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
-
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
-  # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Travis downloads gradle first time is called and it downloads the project dependencies.
-  # Comment out the lines belows to add execution permission, download and show gradlew version.
-  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
-  # Comment out the line below to clean project and show the android project dependencies.
-  - ./gradlew clean androidDependencies --refresh-dependencies --info ${DISABLE_PREDEX:-}
-
-  # - echo " @-- CLEAN PROJECT --@ "
-  # Comment out the line below to clean and prepare the Debug and DebugTest project sources.
-  - ./gradlew clean generateDebugSources generateDebugTestSources ${DISABLE_PREDEX:-}
 
   # - echo " @-- BUILD DEBUG AND TEST --@ "
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
@@ -343,3 +348,8 @@ after_script:
   #
   # /home/travis/build.sh: line 41:  3281 Killed  emulator -avd ... -no-skin -no-audio -no-window
   # @-- 219.8 --@  Move other tasks to script and prepare emulator before script. No concurrent jobs
+  #
+  #
+  # Download http://repo1.maven.org/maven2/com/google/apis/google-api-services-drive/v2-rev151-1.19.0/google-api-services-drive-v2-rev151-1.19.0.pom
+  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.pom]
+  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.jar]
