@@ -30,7 +30,7 @@ android:
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    - tools
+    # - tools
     - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
@@ -81,15 +81,15 @@ env:
     # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
@@ -125,6 +125,7 @@ before_install:
   # Comment out the lines below to show android SDK components and targets installed
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list targets
+  - android-update-sdk --components=tools --accept-licenses='.+' --verbose
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
