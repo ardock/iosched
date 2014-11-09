@@ -3,7 +3,7 @@
 bootanim=""
 failcounter=0
 until [[ "$bootanim" =~ "stopped" ]]; do
-   bootanim=`adb -e shell getprop init.svc.bootanim`
+   bootanim=`adb -e shell getprop init.svc.bootanim 2>&1`
    echo "$bootanim"
    if [[ "$bootanim" =~ "device not found" ]]; then
       let "failcounter += 1"
@@ -14,7 +14,7 @@ until [[ "$bootanim" =~ "stopped" ]]; do
    fi
    sleep 1
 done
-echo "Emulator is ready"
+echo "Done"
 
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
@@ -23,12 +23,12 @@ echo "Emulator is ready"
   # adb shell: starts a remote shell in a target emulator/device instance.
   # adb shell [shellCommand]: Issues a shell command in the target and then exits the remote shell.
   # adb shell getprop init.svc.bootanim: tell boot animation is running or not.
-  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor and not a filename.
+  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor (&) and not a filename.
   # &: runs a command in the background, You can type other command while background job is running.
   # adb -e shell getprop init.svc.bootanim 2>&1 &: checks in the background if boot anim is running.
 
   # Check  http://stackoverflow.com/questions/19622198/what-does-set-e-in-a-bash-script-mean
-  # Type help set in a terminal. Note: this no refers to the adb -e parameter. Refers to bash usage.
+  # Type 'help set' in a terminal. Note: '-e' refers to bash usage no to adb -e parameter.
   # set -e  Exit immediately if a command exits with a non-zero status.
   # set -x  Print commands and their arguments as they are executed.
   # Using + rather than - causes these flags to be turned off.
@@ -61,8 +61,11 @@ echo "Emulator is ready"
   # See Fix2: https://github.com/travis-ci/travis-cookbooks/pull/397
 
   # TODO: Support more than one emulator and test mobile and wearable together on travis servers.
+  # Check http://developer.android.com/tools/help/adb.html#directingcommands
   # See issue, support more than one emulator: http://stackoverflow.com/questions/25330960/
   # See work in progress, serial property: https://code.google.com/p/android/issues/detail?id=75407
   # See work in progress, serial property: https://android-review.googlesource.com/#/c/108985/
   # See work in progress, renaming AVD: https://code.google.com/p/android/issues/detail?id=78677
   # See work in progress, renaming AVD: https://android-review.googlesource.com/#/c/113019/
+
+  # TODO: error: protocol fault (no status). Use init.svc.bootanim 2>&1

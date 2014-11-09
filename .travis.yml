@@ -353,3 +353,5 @@ after_script:
   # Download http://repo1.maven.org/maven2/com/google/apis/google-api-services-drive/v2-rev151-1.19.0/google-api-services-drive-v2-rev151-1.19.0.pom
   # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.pom]
   # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.jar]
+  #
+  # http://stackoverflow.com/questions/26473929/android-gradle-dependency-resolution-order
