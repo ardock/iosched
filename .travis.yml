@@ -127,7 +127,7 @@ before_install:
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list targets
   - android list sdk --no-ui --all --extended
-  - echo yes | android --verbose --clear-cache update sdk --filter tools --no-ui --force 2>&1
+  - echo yes | android --verbose --clear-cache 2>&1 update sdk --filter tools --no-ui --force
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
