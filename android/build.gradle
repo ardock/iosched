@@ -73,19 +73,22 @@ android {
 
 dependencies {
     wearApp project(':Wearable')
-    compile 'com.google.android.gms:play-services:6.1.71'
+    compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
-    compile 'com.google.code.gson:gson:2.+'
-    compile('com.google.api-client:google-api-client:1.+') {
+    compile 'com.google.android.gms:play-services:6.1.71'
+
+    compile 'com.google.code.gson:gson:2.3'
+
+    compile('com.google.api-client:google-api-client:1.19.0') {
         exclude group: 'xpp3', module: 'shared'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
         exclude group: 'junit', module: 'junit'
         exclude group: 'com.google.android', module: 'android'
     }
-    compile 'com.google.api-client:google-api-client-android:1.17.+'
-    compile 'com.google.apis:google-api-services-plus:+'
+    compile 'com.google.api-client:google-api-client-android:1.19.0'
+    compile 'com.google.apis:google-api-services-plus:v1-rev193-1.19.0'
     compile 'com.github.japgolly.android:svg-android:2.0.6'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile files('../third_party/glide/library/libs/glide-3.2.0a.jar')
@@ -99,6 +102,6 @@ dependencies {
     /* The two dependencies below are only required while we are using http
        Drive appdata. When we start using AppData through GMS,
        they should be removed. */
-    compile 'com.google.http-client:google-http-client-gson:+'
-    compile 'com.google.apis:google-api-services-drive:+'
+    compile 'com.google.http-client:google-http-client-gson:1.19.0'
+    compile 'com.google.apis:google-api-services-drive:v2-rev151-1.19.0'
 }
