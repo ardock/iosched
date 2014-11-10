@@ -124,13 +124,11 @@ before_install:
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
-  # Comment out the lines below to show android SDK components and targets available
+  # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
   - android list targets
-  - echo $ANDROID_HOME
-  - echo $GRADLE_USER_HOME
-  - echo $GRADLE_HOME
+  - echo $ANDROID_HOME && ls $ANDROID_HOME -al
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
@@ -144,8 +142,7 @@ before_install:
   # - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  - adb wait-for-device
-  - adb devices
+  - adb wait-for-device && adb devices && sleep 10
 
 
 install:
