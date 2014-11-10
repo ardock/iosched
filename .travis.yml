@@ -27,39 +27,38 @@ android:
     # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
     # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
-    # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
+    # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    # - tools
-    # - platform-tools
+    - tools
+    - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
     # - build-tools-20.0.0
     # - build-tools-21.0.2
-    # - build-tools-21.1.0
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
     # - android-20
-    # - android-21
+    - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
-    # - extra-android-m2repository
-    # - extra-android-support
+    - extra-android-m2repository
+    - extra-android-support
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    # - extra-google-m2repository
-    # - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-google-google_play_services
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-armeabi-v7a-android-wear-20
     # - sys-img-x86-android-21
-    # - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-21
 
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
@@ -76,6 +75,9 @@ notifications:
 
 
 env:
+  global:
+    - TERM=dumb
+
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -96,8 +98,7 @@ env:
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
   # Check fast finishing - docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
-  # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed.
-  # I received emails about build status and i didn't activate notifications. Only a phew days.
+  # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
   # fast_finish: true
 
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
@@ -123,11 +124,13 @@ before_install:
   # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
-  # Comment out the lines below to show android SDK components and targets installed
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list targets
+  # Comment out the lines below to show android SDK components and targets available
+  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
-  - echo yes | android --verbose --clear-cache 2>&1 update sdk --filter tools --no-ui --force
+  - android list targets
+  - echo $ANDROID_HOME
+  - echo $GRADLE_USER_HOME
+  - echo $GRADLE_HOME
 
   # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
@@ -150,16 +153,16 @@ install:
   # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  - true
-  # TODO: Travis kills emulator a lot when concurrent jobs. Move other tasks to script  or ...?
+  # - true
+  # TODO: Travis often kills emulator when concurrent jobs. Move other tasks to script  or ...?
 
   # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Travis downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the lines belows to add execution permission, download and show gradlew version.
-  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
+  - chmod +x gradlew && ls -l gradlew && ./gradlew -version --refresh-dependencies
   # Comment out the line below to clean project and show the android project dependencies.
-  - ./gradlew androidDependencies --refresh-dependencies --info
+  - ./gradlew androidDependencies --info
 
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
