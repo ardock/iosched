@@ -15,7 +15,7 @@
 language: android
 
 jdk:
-  # Check Travis JDKs http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
+  # Check Travis JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   # - openjdk7
@@ -63,7 +63,7 @@ android:
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
-    # White list android-sdk-license used by Android SDK Platform-tools, rev 21 and other tools.
+    # White list current android-sdk-license revision.
     # - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
@@ -81,17 +81,18 @@ env:
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
-    # See http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
+    # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    # Disable pre-dexing improves performance (see below):
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
@@ -103,6 +104,7 @@ matrix:
 
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
+  # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   allow_failures:
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
@@ -113,15 +115,15 @@ before_install:
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
-  # - echo " @-- EXPORT AVD ARGS --@ "
+  - echo " @-- EXPORT AVD ARGS --@ "
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
-  # Comment out the line below to custom avd name. Defaults to test if not used (:- ads default '').
+  # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not set.
   - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
-  # - echo " @-- EXTRA DEPENDENCIES --@ "
+  - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq
   # Comment out the lines below to show android SDK components, targets available and android home.
@@ -130,16 +132,18 @@ before_install:
   - android list targets
   - echo $ANDROID_HOME && ls $ANDROID_HOME -al
 
-  # - echo " @-- CREATE & START AVD --@ "
+  - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  # TODO: I tried to break command in two lines using \ but doesn't work?
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI" -p "${AVD_PATH:-.}"
+  # TODO: Break next command in two lines. Tried using '\' but didn't work and produced an error.
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"\
+                                         "-p ${AVD_PATH:-.}"
+  # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - pwd && ls "${AVD_PATH:-.}" -al && cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  # - echo " @-- WAIT FOR DEVICE --@ "
+  - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
   - adb wait-for-device && adb devices && sleep 10
@@ -151,23 +155,25 @@ install:
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
-  # TODO: Travis often kills emulator when concurrent jobs. Move other tasks to script  or ...?
+  # TODO: Travis often kills emulator when there are concurrent jobs. Move other tasks to script or?
 
-  # - echo " @-- GRADLE ANDROID DEPENDENCIES --@ "
+  # - echo " @-- GRADLE WRAPPER --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Travis downloads gradle first time is called and it downloads the project dependencies.
-  # Comment out the line below to add execution permission, download and show gradlew version.
+  # Comment out the line below to set executable permission to gradle, download it and show version.
   - chmod +x gradlew && ls -l gradlew && ./gradlew -version
-  # Comment out the line below to show the android project dependencies.
+
+  # - echo " @-- ANDROID DEPENDENCIES --@ "
+  # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
+  # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies --info
 
   # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew clean generateDebugSources generateDebugTestSources
 
-  # - echo " @-- REBUILD PROJECT --@ "
+  # - echo " @-- BUILD PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
-  - ./gradlew clean compileDebugJava
+  - ./gradlew compileDebugSources compileDebugTestSources
 
 
 before_script:
@@ -200,8 +206,8 @@ script:
   # OR
 
   # - echo " @-- BUILD DEBUG AND TEST --@ "
-  # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex'
-  # and if ${DISABLE_PREDEX:-} option is added on gradlew, pre-dexing on build server is disabled.
+  # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
+  # If ${DISABLE_PREDEX:-} option is added on gradlew, pre-dexing is disabled on build server.
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
@@ -246,14 +252,13 @@ after_script:
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
   # Uncomment the line below to kill adb (if used before script) and show the logcat log.
-  - echo " LOGCAT" && echo "=========" && cat logcat.log &&  pkill -KILL -f adb
+  # - echo " LOGCAT" && echo "=========" && cat logcat.log &&  pkill -KILL -f adb
 
 
   # @--@--@--@--@
   # @-- ERROR --@
   # @--@--@--@--@
   #
-  # Error occurred while compiling the build script: undefined method `empty?' for nil:NilClass
   # Error: Target id (android-21) is not valid. Use 'android list targets' to get the target ids.
   # @-- 132.1 --@ android-21 (android: components:)
   #
@@ -270,7 +275,7 @@ after_script:
   # @-- 141.5 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
   # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
-  # @-- 142.1 --@ build-tools-21.0.2 or better build-tools-21.1.0 (android: components:)
+  # @-- 142.1 --@ build-tools-21.0.2 or better build-tools-21.1.1 (android: components:)
   #
   # com.android.ddmlib.InstallException. connectedAndroidTest run tests failed, (exceed timeout).
   # @-- Issue: https://code.google.com/p/android/issues/detail?id=69735  (now optimize/reload job).
@@ -280,79 +285,52 @@ after_script:
   # @-- Check: http://developer.android.com/tools/devices/emulator.html#starting
   # @-- 157.3 --@  You cannot run a VM-accelerated emulator inside another virtual machine. Can?
   #
-  # emulator: ERROR: x86 emulation currently requires hardware acceleration!
-  # Please ensure KVM is properly installed and usable.
-  # @-- 200.3 --@  CPU acceleration status: KVM is not installed (/dev/kvm is missing).
-  #
   # problem reading network stats ava.lang.IllegalStateException: problem parsing idx 1
   # at com.android.internal.net.NetworkStatsFactory.readNetworkStatsDetail(NetworkStatsFactory. 300)
   # @-- Check limitations: http://developer.android.com/tools/devices/emulator.html#limitations
   # @-- Check network :http://developer.android.com/tools/devices/emulator.html#emulatornetworking
   # @-- 180.1 --@ No support for determining network connected state
   #
+  # emulator: ERROR: x86 emulation currently requires hardware acceleration!
+  # Please ensure KVM is properly installed and usable.
+  # @-- 200.3 --@  CPU acceleration status: KVM is not installed (/dev/kvm is missing).
+  #
+  # Resource missing via repository com/android/support/support-v4/21.0.0/support-v4-21.0.0.pom ...
+  # @-- 219.4 --@ Android and Google extras are downloaded via android SDK. Use components section.
+  #
+  # /home/travis/build.sh: line 41:  3281 Killed  emulator -avd ... -no-skin -no-audio -no-window
+  # @-- 219.8 --@  Move other tasks to script and prepare emulator before script. No concurrent jobs
+  #
   # Two Issues solved upgrading tools: https://code.google.com/p/android/issues/detail?id=77682
-  # Solution1: The gradle sync issue is fixed for Gradle 0.14.0.
-  # https://android-review.googlesource.com/#/c/111656/
-  # Solution2: The class loader issue is fixed for Android Studio 0.8.14.
-  # https://android-review.googlesource.com/#/c/111741/
+  # Gradle sync issue is fixed for Gradle 0.14.+ https://android-review.googlesource.com/#/c/111656/
+  # Class loader issue fixed for A.Studio 0.8.14 https://android-review.googlesource.com/#/c/111741/
+  # Check Android Gradle plugin 0.14.0+: http://tools.android.com/tech-docs/new-build-system
+  # Requires Android Studio 0.9.0+ canary: http://tools.android.com/recent/androidstudio090released
+  # Requires Build-Tools 21.1.0+, and Support repository rev 8.
+  # Use quick fix button option but plugin APIs changed, so you may need to tweak your build files.
+  # @-- 224.1 --@ Upgrade to Android Gradle plugin, 0.14.0+ and Android Studio 0.9.0+
+  #
   #
   # @--@--@--@--@
   # @-- TODO: --@
   # @--@--@--@--@
   #
-  #
-  # Modules without tests, gradle 0.13.2, connectedAndroidTest
+  # Error testing modules without tests, gradle 0.13.2+, connectedAndroidTest
+  # When running connectedCheck and no tests are found, it should be considered a failure.
   # Issue @-- https://code.google.com/p/android/issues/detail?id=76249
   # Solution: https://android-review.googlesource.com/#/c/112529/
-  #
-  # Upgrade to Android Gradle plugin, 0.14.0
-  # Check Android Gradle plugin 0.14.0 : http://tools.android.com/tech-docs/new-build-system
-  # Requires Android Studio 0.9.0 (currently canary)
-  # Check Android Studio 0.9.0: http://tools.android.com/recent/androidstudio090released
-  # Requires Build-Tools 21.1.0, and Support repository rev 8.
-  # (quick fix button option but plugin APIs changed, so you may need to tweak your build files)
+  #  or connectedAndroidTest.enabled = false ?
   #
   # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
-  # @-- 135.5 --@ Reload job?
-  # @-- 179.6 --@ Gradle Dependencies aar inner jar?
+  # @-- 135.5 --@ Reload job can solve the issue for a job but better optimize dependencies.
+  # @-- 179.6 --@ Gradle Dependencies. Exclude unused or conflictive dependencies.
+  #
+  # Download http://repo1.maven.org/maven2/ ... google-api-services-drive-v2-rev151-1.19.0.pom
+  # Resource missing. ... com/android/support/support-v4/20.0.0/support-v4-20.0.0.pom]
+  # Resource missing. ... com/android/support/support-v4/20.0.0/support-v4-20.0.0.jar]
+  # Check http://stackoverflow.com/questions/26473929/android-gradle-dependency-resolution-order
   #
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
-  # http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
+  # Check http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
   #
-  # E/Trace   (  882): error opening trace file: No such file or directory (2)
-  # W/ActivityManager(  284): No content provider found for permission revoke:
-  # file:///data/local/tmp/Wearable-debug.apk
-  # W/PackageParser(  284): /data/app/vmdl1732774682.tmp (at Binary XML file line #22):
-  # Requires newer sdk version #20 (current version is #17)
-  # Failure [INSTALL_FAILED_OLDER_SDK]
-  #
-  #
-  # Download http://repo1.maven.org/maven2/net/sf/kxml/kxml2/2.3.0/kxml2-2.3.0.pom
-  # Download http://repo1.maven.org/maven2/kxml2/kxml2/2.3.0/kxml2-2.3.0.pom
-  # kxml2#kxml2;2.3.0 is relocated to net.sf.kxml#kxml2;2.3.0. Please update your dependencies.
-  # @-- 219.4 --@
-  #
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-v13/21.0.0/support-v13-21.0.0.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-v13/21.0.0/support-v13-21.0.0.jar]
-  # Relying on packaging to define the extension of the main artifact has been deprecated and is scheduled to be removed in Gradle 2.0
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/google/android/support/wearable/1.0.0/wearable-1.0.0.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/google/android/support/wearable/1.0.0/wearable-1.0.0.jar]
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/google/android/gms/play-services-wearable/6.1.71/play-services-wearable-6.1.71.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/google/android/gms/play-services-wearable/6.1.71/play-services-wearable-6.1.71.jar]
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-v4/21.0.0/support-v4-21.0.0.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-v4/21.0.0/support-v4-21.0.0.jar]
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar]
-  # /home/travis/build.sh: line 41:  3582 Killed   ./gradlew clean androidDependencies --refresh-dependencies --info ${DISABLE_PREDEX:-}
-  # @-- 219.4 --@
-  #
-  # /home/travis/build.sh: line 41:  3281 Killed  emulator -avd ... -no-skin -no-audio -no-window
-  # @-- 219.8 --@  Move other tasks to script and prepare emulator before script. No concurrent jobs
-  #
-  #
-  # Download http://repo1.maven.org/maven2/com/google/apis/google-api-services-drive/v2-rev151-1.19.0/google-api-services-drive-v2-rev151-1.19.0.pom
-  # Resource missing. [HTTP GET: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.pom]
-  # Resource missing. [HTTP HEAD: http://repo1.maven.org/maven2/com/android/support/support-v4/20.0.0/support-v4-20.0.0.jar]
-  #
-  # http://stackoverflow.com/questions/26473929/android-gradle-dependency-resolution-order
