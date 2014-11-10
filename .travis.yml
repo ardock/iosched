@@ -290,7 +290,11 @@ after_script:
   # @-- Check network :http://developer.android.com/tools/devices/emulator.html#emulatornetworking
   # @-- 180.1 --@ No support for determining network connected state
   #
-  #
+  # Two Issues solved upgrading tools: https://code.google.com/p/android/issues/detail?id=77682
+  # Solution1: The gradle sync issue is fixed for Gradle 0.14.0.
+  # https://android-review.googlesource.com/#/c/111656/
+  # Solution2: The class loader issue is fixed for Android Studio 0.8.14.
+  # https://android-review.googlesource.com/#/c/111741/
   #
   # @--@--@--@--@
   # @-- TODO: --@
@@ -307,12 +311,6 @@ after_script:
   # Check Android Studio 0.9.0: http://tools.android.com/recent/androidstudio090released
   # Requires Build-Tools 21.1.0, and Support repository rev 8.
   # (quick fix button option but plugin APIs changed, so you may need to tweak your build files)
-  #
-  # Two Issues: https://code.google.com/p/android/issues/detail?id=77682
-  # Solution1: The gradle sync issue has to be fixed on the model side in Gradle 0.14.
-  # https://android-review.googlesource.com/#/c/111656/
-  # Solution2: The class loader issue is fixed for Android Studio 0.8.14.
-  # https://android-review.googlesource.com/#/c/111741/
   #
   # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
   # @-- 135.5 --@ Reload job?
