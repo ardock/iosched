@@ -50,10 +50,10 @@ echo "Done"
 
   # TODO: Test new default. I think need fixes. Create a new script or oneline .travis.yml command.
   # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
-  # See issue,new default needs be fixed: https://github.com/travis-ci/travis-ci/issues/2932
+  # See issue 1, new default needs be fixed: https://github.com/travis-ci/travis-ci/issues/2932
   # See Fix 1: https://github.com/travis-ci/travis-cookbooks/pull/396
   # UPDATE: They solved the main problem but need optimize the loop without increase the failcounter
-  # See issue, emulator loading slow: https://code.google.com/p/android/issues/detail?id=77283
+  # See issue 2, emulator loading slow: https://code.google.com/p/android/issues/detail?id=77283
   # See Fix 2: https://github.com/travis-ci/travis-cookbooks/pull/397
 
   # Check  http://stackoverflow.com/questions/19622198/what-does-set-e-in-a-bash-script-mean
