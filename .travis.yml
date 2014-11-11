@@ -129,7 +129,7 @@ before_install:
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd; ls -al; sudo apt-get update -y
+  # - pwd; ls -al; sudo apt-get update -y -qq
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
@@ -250,6 +250,7 @@ after_script:
   - export MY_MOD="android"
   - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
   - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  - pwd; ls -al; sudo apt-get update -y -qq
   - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
