@@ -123,7 +123,7 @@ before_install:
   # - echo "EXPORT AVD ARGS"
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+  # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
@@ -217,7 +217,8 @@ script:
 
   # - echo "BUILD DEBUG AND TEST"
   # Comment out the line below to assemble the Debug build and the Test build for the Debug build
-  - ./gradlew assembleDebug assembleDebugTest ${DISABLE_PREDEX:-}
+  - ./gradlew assembleDebug assembleDebugTest
+  # ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
@@ -227,7 +228,8 @@ script:
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
-  - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  - ./gradlew connectedCheck
+  # ${DISABLE_PREDEX:-}
 
 
 # after_failure:
