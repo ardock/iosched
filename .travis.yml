@@ -19,7 +19,7 @@ jdk:
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   - openjdk7
-  # - oraclejdk7
+  - oraclejdk7
 
 android:
   components:
@@ -35,13 +35,13 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    # - build-tools-20.0.0
-    # - build-tools-21.0.2
+    - build-tools-20.0.0
+    - build-tools-21.0.2
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
-    # - android-20
+    - android-20
     - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -56,7 +56,7 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    # - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-wear-20
     - sys-img-x86-android-21
     - sys-img-armeabi-v7a-android-21
 
@@ -64,11 +64,11 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
-    - 'android-sdk-license-5be876d5'
+    # - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    # - '.+'
+    - '.+'
 
 notifications:
   email: false
@@ -125,16 +125,16 @@ before_install:
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not set.
-  - pwd; mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
+  - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
-  # Use this to prepare the system to install prerequisites or dependencies.
+  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
+  - pwd && ls -al && sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
   - android list targets
-  - echo $ANDROID_HOME
-  - ls $ANDROID_HOME -al
+  - echo $ANDROID_HOME && ls $ANDROID_HOME -al
 
   - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
@@ -142,24 +142,22 @@ before_install:
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" -b "$AVD_ABI"
                                          -p "${AVD_PATH:-.}"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
-  - pwd; ls "${AVD_PATH:-.}" -al; cat "${AVD_PATH:-.}/config.ini"
+  - pwd && ls "${AVD_PATH:-.}" -al && cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
   - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  - adb wait-for-device
-  - adb devices
+  - adb wait-for-device && adb devices && sleep 10
 
 
 install:
   # - echo " @-- SKIP INSTALL STAGE --@ "
-  # Use this to install any prerequisites or dependencies necessary to run your build.
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
-  # TODO: Travis often kills emulator when there are concurrent jobs. Move other tasks to script or?
+  # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
 
   - echo " @-- GRADLE WRAPPER --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
@@ -276,6 +274,9 @@ after_script:
   #
   # Manifest merger failed : uses-sdk:minSdkVersion 14 cannot be smaller than version L declared ...
   # @-- 137.1 --@ Add extra-android-m2repository to android: components:
+  #
+  # The command "./gradlew build connectedCheck" exited with 137.
+  # @-- 141.5 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
   # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
   # @-- 142.1 --@ Add build-tools-21.0.2 or better build-tools-21.1.1 to android: components:
