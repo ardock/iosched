@@ -23,24 +23,22 @@ echo "Done"
   # adb shell: starts a remote shell in a target emulator/device instance.
   # adb shell [shellCommand]: Issues a shell command in the target and then exits the remote shell.
   # adb shell getprop init.svc.bootanim: tell boot animation is running or not.
-  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor (&) and not a filename.
-  # &: runs a command in the background, You can type other command while background job is running.
-  # adb -e shell getprop init.svc.bootanim 2>&1 &: checks in the background if boot anim is running.
+  # `adb -e shell getprop init.svc.bootanim 2>&1`: checks in a subshell if boot anim is running.
 
-  # Check  http://stackoverflow.com/questions/19622198/what-does-set-e-in-a-bash-script-mean
-  # Type 'help set' in a terminal. Note: '-e' refers to bash usage no to adb -e parameter.
-  # set -e  Exit immediately if a command exits with a non-zero status.
-  # set -x  Print commands and their arguments as they are executed.
-  # Using + rather than - causes these flags to be turned off.
+  # Backticks (`) runs the command in a subshell and returns the standard output from that command,
+  # we only get the standard output (stdout) but we do not get the standard error (stderr).
+  # Use 2>&1, so errors as 'protocol fault (no status)' are redirected to stdout.
+  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor (&) and not a filename.
 
   # Check device status: http://developer.android.com/tools/help/adb.html#devicestatus
   # adb devices: Prints a list of all attached emulator/device instances by serial number and state.
   # serial number: adb uniquely identify the target with the format <device/emulator>-<consolePort>.
-  # Check command summary: http://developer.android.com/tools/help/adb.html#commandsummary
-  # adb get-state: Prints the adb state of an emulator/device instance.
+  # adb get-state: Prints the adb state of an emulator/device instance:
   # - no device: there is no emulator/device connected.
   # - offline: instance is not connected to adb or is not responding.
   # - device: instance is connected to the adb server but not implies fully booted and operational.
+
+  # Check command summary: http://developer.android.com/tools/help/adb.html#commandsummary
   # adb wait-for-device: blocks execution until the device is online (instance state is device).
   # adb start-server: checks whether the adb server process is running and starts it, if not.
   # adb stop-server: terminates the adb server process.
@@ -53,12 +51,23 @@ echo "Done"
   # - running: device is booting, connected to adb (device state). You can query it about state.
   # - stopped: ui appeared, it's safe to assume that emulator is running and ready to be used.
 
+
   # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
   # TODO: Test new script. I think need fixes. Create my own script or oneline .travis.yml command.
   # See issue: https://github.com/travis-ci/travis-ci/issues/2932
   # UPDATE: They solved the main problem but need optimize the loop without increase the failcounter
   # See Fix1: https://github.com/travis-ci/travis-cookbooks/pull/396
   # See Fix2: https://github.com/travis-ci/travis-cookbooks/pull/397
+
+  # Check  http://stackoverflow.com/questions/19622198/what-does-set-e-in-a-bash-script-mean
+  # Type 'help set' in a terminal. Note: '-e' refers to bash usage no to adb -e parameter.
+  # set -e  Exit immediately if a command exits with a non-zero status.
+  # set -x  Print commands and their arguments as they are executed.
+  # Using + rather than - causes these flags to be turned off.
+
+  # &: runs a command in the background, You can type other command while background job is running.
+  # adb -e shell getprop init.svc.bootanim 2>&1 &: checks in the background if boot anim is running.
+
 
   # TODO: Support more than one emulator and test mobile and wearable together on travis servers.
   # Check http://developer.android.com/tools/help/adb.html#directingcommands
@@ -68,4 +77,4 @@ echo "Done"
   # See work in progress, renaming AVD: https://code.google.com/p/android/issues/detail?id=78677
   # See work in progress, renaming AVD: https://android-review.googlesource.com/#/c/113019/
 
-  # TODO: error: protocol fault (no status). Use init.svc.bootanim 2>&1
+

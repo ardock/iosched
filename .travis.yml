@@ -136,7 +136,7 @@ before_install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Break next command in two lines. Tried using '\' but didn't work and produced an error.
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" --abi "$AVD_ABI"\
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" -b "$AVD_ABI" +
                                          -p "${AVD_PATH:-.}"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - pwd && ls "${AVD_PATH:-.}" -al && cat "${AVD_PATH:-.}/config.ini"
