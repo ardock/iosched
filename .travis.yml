@@ -164,6 +164,20 @@ install:
   # - true
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
 
+  # Stop other services trying to avoid java.lang.OutOfMemoryError
+  # Check http://stackoverflow.com/questions/16789288
+  - sudo service postgresql stop || true
+  - sudo service mysql stop || true
+  - sudo service memcached stop || true
+  - sudo service bootlogd stop || true
+  - sudo service elasticsearch stop || true
+  - sudo service mongodb stop || true
+  - sudo service neo4j stop || true
+  - sudo service cassandra stop || true
+  - sudo service riak stop || true
+  - sudo service rsync stop || true
+  - sudo service x11-common stop || true
+
   # - echo "GRADLE WRAPPER"
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the line below to set executable permission to gradle, download it and show version.
@@ -360,4 +374,6 @@ after_script:
   #
   # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
   # change to "minifyEnabled" instead
-
+  #
+  # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
+  # @-- 268.4 --@
