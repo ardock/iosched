@@ -164,7 +164,7 @@ install:
   # - echo " @-- GRADLE WRAPPER --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the line below to set executable permission to gradle, download it and show version.
-  - sudo chmod +x gradlew && ls -l gradlew && ./gradlew -version
+  - ./gradlew -version
 
   # - echo " @-- ANDROID DEPENDENCIES --@ "
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
