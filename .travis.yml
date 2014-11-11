@@ -135,7 +135,6 @@ before_install:
   - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  # TODO: Break next command in two lines. Tried using '\' but didn't work and produced an error.
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" -b "$AVD_ABI"
                                          -p "${AVD_PATH:-.}"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
@@ -157,21 +156,21 @@ install:
   # - true
   # TODO: Travis often kills emulator when there are concurrent jobs. Move other tasks to script or?
 
-  # - echo " @-- GRADLE WRAPPER --@ "
+  - echo " @-- GRADLE WRAPPER --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the line below to set executable permission to gradle, download it and show version.
   - chmod +x gradlew && ls -l gradlew && ./gradlew -version
 
-  # - echo " @-- ANDROID DEPENDENCIES --@ "
+  - echo " @-- ANDROID DEPENDENCIES --@ "
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies --info
 
-  # - echo " @-- CLEAN PROJECT --@ "
+  - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew clean generateDebugSources generateDebugTestSources
 
-  # - echo " @-- BUILD PROJECT --@ "
+  - echo " @-- BUILD PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew compileDebugSources compileDebugTestSources
 
@@ -180,7 +179,7 @@ before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
-  # - echo " @-- WAIT FOR EMULATOR --@ "
+  - echo " @-- WAIT FOR EMULATOR --@ "
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
@@ -190,12 +189,13 @@ before_script:
   - adb shell input keyevent 82 &
   - adb devices
 
-  # - echo " @-- LOGCAT --@ "
+  - echo " @-- LOGCAT --@ "
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb logcat *:W | tee logcat.log &
 
+  - echo " @-- SCRIPT --@ "
 
 script:
   # - echo " @-- DEFAULT TRAVIS BUILD --@ "
