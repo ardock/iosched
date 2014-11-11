@@ -17,7 +17,7 @@ done
 echo "Done"
 
 
-  # TODO: Optimize wait-for-emulator.sh script. Added "device " to "not found" as a quick fix.
+  # TODO: Optimize wait_for_emulator script. (Added "device " to "not found" string as a quick fix).
   # Check android device bridge, adb: http://developer.android.com/tools/help/adb.html
   # adb is a versatile command line tool that lets you communicate with an emulator.
   # adb -e: direct an adb command to the only running emulator. Return an error if more than one.
@@ -30,7 +30,7 @@ echo "Done"
   # Backticks (`) runs the command in a subshell and returns the standard output from that command,
   # we only get the standard output (stdout) but we do not get the standard error (stderr).
   # Use 2>&1, so errors as 'protocol fault (no status)' are redirected to stdout.
-  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor (&) and not a filename.
+  # 2>&1: 2:stderr redirected to 1:stdout indicating 1 is a file descriptor '&1' and not a filename.
 
   # Check device status: http://developer.android.com/tools/help/adb.html#devicestatus
   # adb devices: Prints a list of all attached emulator/device instances by serial number and state.
@@ -48,7 +48,7 @@ echo "Done"
 
   #
 
-  # TODO: Test new default. I think need fixes. Create a new script or oneline .travis.yml command.
+  # TODO: Test new default script. Currently needs fixes. Create a new script or travis.yml command.
   # Check new default/android-wait-for-emulator: https://github.com/travis-ci/travis-cookbooks ...
   # See issue 1, new default needs be fixed: https://github.com/travis-ci/travis-ci/issues/2932
   # See Fix 1: https://github.com/travis-ci/travis-cookbooks/pull/396
@@ -67,8 +67,7 @@ echo "Done"
 
   #
 
-  # TODO: Support more than one emulator and test mobile and wearable together on travis servers.
-  # Check http://developer.android.com/tools/help/adb.html#directingcommands
+  # TODO: Support more than one emulator simultaneously (test mobile and wearable at the same time).
   # See issue, support more than one emulator: http://stackoverflow.com/questions/25330960/
   # See work in progress, serial property: https://code.google.com/p/android/issues/detail?id=75407
   # See work in progress, serial property: https://android-review.googlesource.com/#/c/108985/
