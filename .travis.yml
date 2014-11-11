@@ -129,7 +129,7 @@ before_install:
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd && ls -al && sudo apt-get update -y -f
+  - pwd && ls -al && echo "apt-get update -y -f" && sudo apt-get update -y -f
   # Comment out the lines below to show android SDK components, targets available and android home.
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
