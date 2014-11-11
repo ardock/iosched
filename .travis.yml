@@ -128,8 +128,7 @@ before_install:
   - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
-  # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd; ls -al; sudo apt-get update -y
+  # Use this to prepare the system to install prerequisites or dependencies.
   # Comment out the lines below to show android SDK components, targets available and android home.
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
@@ -250,7 +249,7 @@ after_script:
   - export MY_MOD="android"
   - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
   - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
-  - sudo apt-get update -y -qq
+  # - sudo apt-get update -qq
   - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
@@ -334,6 +333,9 @@ after_script:
   #
   # No output has been received in the last 10 minutes ... indicates ...something wrong ...
   # @-- 253.1 --@ Travis CI killed the job, probably the emulator. Reload the job or alterate order.
+  #
+  # The command "pwd; ls -al; sudo apt-get update -y" failed and exited with 137 during .
+  # @-- 254.5 --@ Travis CI killed the job. Reload job or remove apt-get update if is not required.
   #
   # @--@--@--@--@
   # @-- TODO: --@
