@@ -19,7 +19,7 @@ jdk:
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   - openjdk7
-  - oraclejdk7
+  # - oraclejdk7
 
 android:
   components:
@@ -98,7 +98,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # TODO: Test using x86
-    - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -129,7 +129,10 @@ before_install:
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd && ls -al && echo "apt-get update -y -f" && sudo apt-get update -y -f
+  - pwd; ls -al
+  - echo "apt-get update -y -f"
+  - sudo apt-get update -y -f
+  - echo "Done"
   # Comment out the lines below to show android SDK components, targets available and android home.
   - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
