@@ -130,7 +130,6 @@ before_install:
   - sudo service mongodb stop || true
   - sudo service rsync stop || true
   - ulimit -a
-  - sudo ulimit -u 4096
 
   # - echo "EXPORT AVD ARGS"
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
