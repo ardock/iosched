@@ -18,7 +18,7 @@ jdk:
   # Check Travis JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
   # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
   # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
-  - openjdk7
+  # - openjdk7
   - oraclejdk7
 
 android:
@@ -35,13 +35,13 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    - build-tools-20.0.0
-    - build-tools-21.0.2
+    # - build-tools-20.0.0
+    # - build-tools-21.0.2
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
-    - android-20
+    # - android-20
     - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -56,19 +56,19 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    - sys-img-armeabi-v7a-android-wear-20
-    - sys-img-x86-android-21
+    # - sys-img-armeabi-v7a-android-wear-20
+    # - sys-img-x86-android-21
     - sys-img-armeabi-v7a-android-21
 
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
-    # - 'android-sdk-license-5be876d5'
+    - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    - '.+'
+    # - '.+'
 
 notifications:
   email: false
@@ -82,12 +82,12 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
@@ -97,7 +97,7 @@ env:
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
-    # TODO: Test using x86
+    # Test using ABI x86 allowing failure (see below):
     - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 matrix:
@@ -109,6 +109,7 @@ matrix:
   # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
+  # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
@@ -120,19 +121,20 @@ before_install:
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
   - echo " @-- EXPORT AVD ARGS --@ "
+  # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not set.
-  - pwd && mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
+  - pwd; mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
   - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   - pwd && ls -al && sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list sdk --no-ui --all --extended
+  - android list sdk --no-ui --all --extended || true
   - android list targets
   - echo $ANDROID_HOME && ls $ANDROID_HOME -al
 
@@ -214,15 +216,15 @@ script:
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
   - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
-  - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
-  - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
+  # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
   # - echo " @-- BUILD RELEASE AND TEST --@ "
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
-  - ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
+  # - ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
   # Comment out the line below to assemble and test this project for Build 'release'
-  - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
   - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
