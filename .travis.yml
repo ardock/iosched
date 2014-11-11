@@ -82,25 +82,25 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
-    - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
-matrix:
+# matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
   # Check fast finishing - docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
   # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
@@ -110,48 +110,48 @@ matrix:
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
-  allow_failures:
+  # allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 before_install:
   # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
-  - echo " @-- EXPORT AVD ARGS --@ "
+  # - echo " @-- EXPORT AVD ARGS --@ "
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+  # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to ./avds/test if AVD_NAME not set.
-  - pwd; mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
+  # - pwd; mkdir ./avds && export AVD_PATH="./avds/${AVD_NAME:-test}" && echo "$AVD_PATH"
 
-  - echo " @-- EXTRA DEPENDENCIES --@ "
+  # - echo " @-- EXTRA DEPENDENCIES --@ "
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd && ls -al && sudo apt-get update -qq || true
+  # - pwd && ls -al && sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list sdk --no-ui --all --extended || true
-  - android list targets
-  - echo $ANDROID_HOME && ls $ANDROID_HOME -al
+  # - android list sdk --no-ui --all --extended || true
+  # - android list targets
+  # - echo $ANDROID_HOME && ls $ANDROID_HOME -al
 
-  - echo " @-- CREATE & START AVD --@ "
+  # - echo " @-- CREATE & START AVD --@ "
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" -b "$AVD_ABI"
                                          -p "${AVD_PATH:-.}"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
-  - pwd && ls "${AVD_PATH:-.}" -al && cat "${AVD_PATH:-.}/config.ini"
+  # - pwd; ls "${AVD_PATH:-.}" -al; cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
-  - echo " @-- WAIT FOR DEVICE --@ "
+  # - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  - adb wait-for-device && adb devices && sleep 10
+  # - adb wait-for-device && adb devices && sleep 10
 
 
 install:
@@ -161,21 +161,21 @@ install:
   # - true
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
 
-  - echo " @-- GRADLE WRAPPER --@ "
+  # - echo " @-- GRADLE WRAPPER --@ "
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the line below to set executable permission to gradle, download it and show version.
-  - chmod +x gradlew && ls -l gradlew && ./gradlew -version
+  - sudo chmod +x gradlew && ls -l gradlew && ./gradlew -version
 
-  - echo " @-- ANDROID DEPENDENCIES --@ "
+  # - echo " @-- ANDROID DEPENDENCIES --@ "
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies --info
 
-  - echo " @-- CLEAN PROJECT --@ "
+  # - echo " @-- CLEAN PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew clean generateDebugSources generateDebugTestSources
 
-  - echo " @-- BUILD PROJECT --@ "
+  # - echo " @-- BUILD PROJECT --@ "
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew compileDebugSources compileDebugTestSources
 
@@ -184,23 +184,22 @@ before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
-  - echo " @-- WAIT FOR EMULATOR --@ "
+  # - echo " @-- WAIT FOR EMULATOR --@ "
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
-  - chmod +x scripts/wait_for_emulator.sh && ls -l scripts/wait_for_emulator.sh
+  - sudo chmod +x scripts/wait_for_emulator.sh; ls -l scripts/wait_for_emulator.sh
   - ./scripts/wait_for_emulator.sh
-  # - adb shell input keyevent 26 &
   - adb shell input keyevent 82 &
-  - adb devices
+  # - adb devices
 
-  - echo " @-- LOGCAT --@ "
+  # - echo " @-- LOGCAT --@ "
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
-  - adb logcat *:W | tee logcat.log &
+  # - adb logcat *:W | tee logcat.log &
 
-  - echo " @-- SCRIPT --@ "
+  # - echo " @-- SCRIPT --@ "
 
 script:
   # - echo " @-- DEFAULT TRAVIS BUILD --@ "
@@ -229,28 +228,24 @@ script:
   - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
-after_failure:
-  - echo " @-- Failure --@ "
-  # TODO: Solve issue (timeout api-21) https://code.google.com/p/android/issues/detail?id=69735
-  # TODO: Solution coming soon :) https://android-review.googlesource.com/#/c/112780/
-  # TODO: Offer known solutions after failure?. Delete ERROR and TODO sections.
+# after_failure:
+  # - echo "Failure"
 
 
-after_success:
-  - echo " @-- Success --@ "
-  # - echo " @-- @-- @-- Lollipops For All --@ --@ --@ "
+# after_success:
+  # - echo "Success"
 
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
-  - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+  # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
 
   # Shows logs. Customize first line, 'android' is the specific app module name of this project.
   - export MY_MOD="android"
   - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/outputs/reports/androidTests/connected/"
-  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+  # - pwd; cd "${MY_LOG_DIR:-.}"; pwd; ls -al
   - sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
   - lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
   - lynx --dump com.android.builder.testing.html > myTesting.log
