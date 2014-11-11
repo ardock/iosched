@@ -35,13 +35,13 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the latest BuildTools revisions required for building are included.
-    - build-tools-20.0.0
-    - build-tools-21.0.2
+    # - build-tools-20.0.0
+    # - build-tools-21.0.2
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile android are already included.
-    - android-20
+    # - android-20
     - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -56,7 +56,7 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    - sys-img-armeabi-v7a-android-wear-20
+    # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-x86-android-21
     - sys-img-armeabi-v7a-android-21
 
@@ -98,7 +98,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # TODO: Test using x86
-    # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -149,7 +149,8 @@ before_install:
   - echo " @-- WAIT FOR DEVICE --@ "
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  - adb wait-for-device && adb devices && sleep 9
+  - adb wait-for-device
+  - adb devices
 
 
 install:
