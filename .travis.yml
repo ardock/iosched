@@ -121,6 +121,7 @@ before_install:
   # Stop other services trying to avoid java.lang.OutOfMemoryError
   # Check http://stackoverflow.com/questions/16789288
   # CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
+  - service --status-all
   - sudo service postgresql stop || true
   - sudo service mysql stop || true
   - sudo service memcached stop || true
@@ -138,8 +139,8 @@ before_install:
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
   # - pwd; mkdir avds && export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
-  # Set TERM=dumb for gradle output style
-  - TERM=dumb
+  # Comment out the line below to export TERM=dumb for gradle output style
+  - export TERM=dumb
 
   # - echo "EXTRA DEPENDENCIES"
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
