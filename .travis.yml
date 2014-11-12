@@ -75,9 +75,6 @@ notifications:
 
 
 env:
-  global:
-    - TERM=dumb
-
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -95,7 +92,7 @@ env:
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
     # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
@@ -110,9 +107,9 @@ env:
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
-  # allow_failures:
+  allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
-    # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 before_install:
@@ -123,6 +120,7 @@ before_install:
   # - echo "FREE RESOURCES"
   # Stop other services trying to avoid java.lang.OutOfMemoryError
   # Check http://stackoverflow.com/questions/16789288
+  # CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
   - sudo service postgresql stop || true
   - sudo service mysql stop || true
   - sudo service memcached stop || true
@@ -132,13 +130,16 @@ before_install:
   - ulimit -a
 
   # - echo "EXPORT AVD ARGS"
+  # Environment variables: http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  # - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
   # - pwd; mkdir avds && export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
+  # Set TERM=dumb for gradle output style
+  - TERM=dumb
 
   # - echo "EXTRA DEPENDENCIES"
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
@@ -157,7 +158,7 @@ before_install:
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   # - pwd; ls "${AVD_PATH:-.}" -al; cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - echo no | android create avd --force -n test -t $AVD_TARGET --abi $AVD_ABI
+  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t $AVD_TARGET -b $AVD_ABI
   - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
 
   # - echo "WAIT FOR DEVICE"
@@ -255,6 +256,7 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+  # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Shows logs. Customize first line, 'android' is the specific app module name of this project.
   - export MY_MOD=android
   - export MY_DIR=`pwd`/"${MY_MOD}"/build/outputs/reports/androidTests/connected/
