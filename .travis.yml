@@ -131,7 +131,7 @@ before_install:
   - ulimit -a
 
   # - echo "EXPORT AVD ARGS"
-  # Environment variables: http://docs.travis-ci.com/user/ci-environment/#Environment-variables
+  # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
