@@ -166,6 +166,7 @@ before_install:
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
   # - adb wait-for-device && adb devices && sleep 10
+  - adb wait-for-device
 
 
 
@@ -229,8 +230,7 @@ script:
 
   # - echo "BUILD DEBUG AND TEST"
   # Comment out the line below to assemble the Debug build and the Test build for the Debug build
-  - ./gradlew assembleDebug assembleDebugTest
-  # ${DISABLE_PREDEX:-}
+  - ./gradlew assembleDebug assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
@@ -240,8 +240,7 @@ script:
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
-  - ./gradlew connectedCheck
-  # ${DISABLE_PREDEX:-}
+  - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
 # after_failure:
@@ -347,6 +346,10 @@ after_script:
   # The command "... sudo apt-get update ..." failed and exited with 137 during .
   # @-- 254.5 --@ Travis CI killed the job. Reload job or try don't update if is not required.
   #
+  # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
+  # @-- 268.4 --@ Stop unused services like data stores before run the script.
+  #
+  #
   # @--@--@--@--@
   # @-- TODO: --@
   # @--@--@--@--@
@@ -374,5 +377,4 @@ after_script:
   # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
   # change to "minifyEnabled" instead
   #
-  # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
-  # @-- 268.4 --@
+
