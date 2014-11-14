@@ -24,28 +24,29 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    compileSdkVersion rootProject.ext.androidCompileSdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.google.samples.apps.iosched"
+        applicationId rootProject.ext.androidApplicationId
         minSdkVersion 20
-        targetSdkVersion 21
+        targetSdkVersion rootProject.ext.androidTargetSdkVersion
         versionCode 1
         versionName "1.0"
     }
+
     signingConfigs {
         debug {
-            storeFile file(iosched14_android_debugkey_storefile)
-            storePassword iosched14_android_debugkey_storePassword
-            keyAlias iosched14_android_debugkey_keyAlias
-            keyPassword iosched14_android_debugkey_keyPassword
+            storeFile file(rootProject.ext.debugStoreFile)
+            storePassword rootProject.ext.debugStorePassword
+            keyAlias rootProject.ext.debugKeyAlias
+            keyPassword rootProject.ext.debugKeyPassword
         }
         release {
-            storeFile file(iosched14_android_releasekey_storefile)
-            storePassword iosched14_android_releasekey_storePassword
-            keyAlias iosched14_android_releasekey_keyAlias
-            keyPassword iosched14_android_releasekey_keyPassword
+            storeFile file(rootProject.ext.releaseStoreFile)
+            storePassword rootProject.ext.releaseStorePassword
+            keyAlias rootProject.ext.releaseKeyAlias
+            keyPassword rootProject.ext.releaseKeyPassword
         }
     }
 
@@ -65,13 +66,24 @@ android {
 }
 
 dependencies {
+    compile 'com.android.support:support-annotations:21.0.0'
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:support-v13:21.0.0'
-    compile 'com.google.android.support:wearable:1.0.0'
-    compile 'com.google.android.gms:play-services-wearable:6.1.71'
+    compile(group: 'com.google.android.support', name: 'wearable', version: '1.0.0') {
+        // Conflicting module version com.android.support:support-v4:20.0.0 on v.1.0.0.
+        exclude (group: 'com.android.support', module: 'support-v4')
+        // Conflicting module version com.android.support:support-v13:20.0.0 on v.1.0.0.
+        exclude (group: 'com.android.support', module: 'support-v13')
+    }
+    compile(group: 'com.google.android.gms', name: 'play-services-wearable', version: '6.1.71') {
+        // Conflicting module version com.android.support:support-v4:20.0.0 on v.6.1.71.
+        exclude (group: 'com.android.support', module: 'support-v4')
+    }
 }
 
-// TODO: Add tests and delete this
+// TODO: Add tests and delete this. Valorate to add extra time for tests.
+// See https://code.google.com/p/android/issues/detail?id=69735
+// See https://code.google.com/p/android/issues/detail?id=76249
 project.gradle.taskGraph.whenReady {
     connectedAndroidTest {
         ignoreFailures = true

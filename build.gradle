@@ -24,11 +24,33 @@ buildscript {
     }
 }
 
-// See http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
+// Control Android properties of all your modules from the main project.
+// See Tip 1: http://tools.android.com/tech-docs/new-build-system/tips
+// Parameterise values so they can be overridden by environment level or command line properties.
+// See gradle.properties file for more information on the overriding system and the custom values.
+project.ext {
+    // 'Wearable' and 'android' modules share these values.
+    androidCompileSdkVersion = 21
+    androidBuildToolsVersion = "21.1.1"
+    androidApplicationId = CUSTOM_ANDROID_APPLICATION_ID
+    androidTargetSdkVersion = 21
+    debugStoreFile = CUSTOM_DEBUG_STORE_FILE
+    debugStorePassword = CUSTOM_DEBUG_STORE_PASSWORD
+    debugKeyAlias = CUSTOM_DEBUG_KEY_ALIAS
+    debugKeyPassword = CUSTOM_DEBUG_KEY_PASSWORD
+    releaseStoreFile = CUSTOM_RELEASE_STORE_FILE
+    releaseStorePassword = CUSTOM_RELEASE_STORE_PASSWORD
+    releaseKeyAlias = CUSTOM_RELEASE_KEY_ALIAS
+    releaseKeyPassword = CUSTOM_RELEASE_KEY_PASSWORD
+    // 'Updater' and 'gcm-server' modules share these values.
+}
+
+// Improve Build Server performance.
+// See Tip 3: http://tools.android.com/tech-docs/new-build-system/tips
 project.ext.preDexLibs = !project.hasProperty('disablePreDex')
 
 subprojects {
-    // Disable pre-dexing only on your build server
+    // Disable pre-dexing only on your build server.
     project.plugins.whenPluginAdded { plugin ->
         if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
             project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs

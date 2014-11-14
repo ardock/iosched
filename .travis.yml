@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This is a configuration file for Travis CI specific to Android SDK projects.
+# http://docs.travis-ci.com/user/languages/android/
+
 language: android
 
 jdk:
@@ -23,7 +26,7 @@ jdk:
 
 android:
   components:
-    # Check the project requirements and the components included by default on Travis-ci vm image.
+    # Check your project requirements and the components included by default on Travis-ci VM images.
     # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
     # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
@@ -34,13 +37,13 @@ android:
     - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
-    # Comment the lines below if the latest BuildTools revisions required for building are included.
+    # Comment the lines below if the BuildTools required for building your project are included.
     # - build-tools-20.0.0
     # - build-tools-21.0.2
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
-    # Comment the lines below if the SDK versions used to compile android are already included.
+    # Comment the lines below if the SDK versions used to compile your project are already included.
     # - android-20
     - android-21
 
@@ -72,7 +75,6 @@ android:
 
 notifications:
   email: false
-
 
 env:
   matrix:
@@ -112,15 +114,17 @@ matrix:
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
+
 before_install:
   # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
   # - echo "FREE RESOURCES"
-  # Stop other services trying to avoid java.lang.OutOfMemoryError
-  # Check http://stackoverflow.com/questions/16789288
-  # CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
+  # Stop unused services trying to avoid java.lang.OutOfMemoryError
+  # Check issue: http://stackoverflow.com/questions/16789288
+  # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
+  # - ulimit -a
   - service --status-all
   - sudo service postgresql stop || true
   - sudo service mysql stop || true
@@ -128,7 +132,7 @@ before_install:
   - sudo service elasticsearch stop || true
   - sudo service mongodb stop || true
   - sudo service rsync stop || true
-  - ulimit -a
+
 
   # - echo "EXPORT AVD ARGS"
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
@@ -139,8 +143,10 @@ before_install:
   # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
   # - pwd; mkdir avds && export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
-  # Comment out the line below to export TERM=dumb for gradle output style
+  # Comment out the line below to export TERM=dumb for fix gradle output style.
   - export TERM=dumb
+  # Comment out the line below to custom the app module name. Required to show logs of your app.
+  - export MOD_NAME=android
 
   # - echo "EXTRA DEPENDENCIES"
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
@@ -154,20 +160,20 @@ before_install:
   # - echo "CREATE & START AVD"
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
+  # TODO: Revise bash syntax used here. I'm not sure if Yaml parser understand it as correspond.
   # - echo no | android create avd --force -n "${AVD_NAME:-test}" -t "$AVD_TARGET" -b "$AVD_ABI"
   #                                        -p "${AVD_PATH:-.}"
+  - "echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   # - pwd; ls "${AVD_PATH:-.}" -al; cat "${AVD_PATH:-.}/config.ini"
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - echo no | android create avd --force -n "${AVD_NAME:-test}" -t $AVD_TARGET -b $AVD_ABI
-  - emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &
+  - "emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &"
 
   # - echo "WAIT FOR DEVICE"
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  # - adb wait-for-device && adb devices && sleep 10
+  # TODO: Avoid emulator killed: - adb wait-for-device && adb devices && sleep 10
   - adb wait-for-device
-
 
 
 install:
@@ -203,6 +209,7 @@ before_script:
   # - echo "WAIT FOR EMULATOR"
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
+  # TODO: Improve wait_for_emulator.sh script. Support more than one emulator simultaneously.
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
   - sudo chmod +x scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
@@ -211,7 +218,7 @@ before_script:
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
-  # - adb logcat *:W | tee logcat.log &
+  - adb logcat *:W | tee logcat.log &
 
   # - echo "SCRIPT"
 
@@ -256,14 +263,15 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
-  # Shows logs. Customize first line, 'android' is the specific app module name of this project.
-  - export MY_MOD=android
-  - export MY_DIR=`pwd`/"${MY_MOD}"/build/outputs/reports/androidTests/connected/
   - sudo apt-get install -qq lynx
-  - lynx --dump "${MY_DIR}"com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  - lynx --dump "${MY_DIR}"com.android.builder.testing.html > myTesting.log
+  # Shows logs. Customize first line, 'android' is the specific app module name of this project.
+  - export LOG_DIR=`pwd`/"${MOD_NAME}"/build/outputs/reports/androidTests/connected/
+  - lynx --dump "${LOG_DIR}"com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  - lynx --dump "${LOG_DIR}"com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+
   # Uncomment the line below to kill adb (if used before script) and show the logcat log.
   # - echo " LOGCAT"; echo "========="; cat logcat.log; pkill -KILL -f adb
 
@@ -341,13 +349,13 @@ after_script:
   # @-- 250.1 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
   # No output has been received in the last 10 minutes ... indicates ...something wrong ...
-  # @-- 253.1 --@ Travis CI killed the job, probably the emulator. Reload the job or alterate order.
+  # @-- 253.1 --@ Travis CI killed the job, probably the emulator. Reload the job or optimize build.
   #
   # The command "... sudo apt-get update ..." failed and exited with 137 during .
-  # @-- 254.5 --@ Travis CI killed the job. Reload job or try don't update if is not required.
+  # @-- 254.5 --@ Travis CI killed the job. Reload job or try don't update it if is not required.
   #
   # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
-  # @-- 268.4 --@ Stop unused services like data stores before run the script.
+  # @-- 268.4 --@ Stop unused services like data stores before run the script, etc.
   #
   #
   # @--@--@--@--@
@@ -356,7 +364,7 @@ after_script:
   #
   # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
   # @-- 135.5 --@ Reload job can solve the issue for a job but better optimize dependencies.
-  # @-- 179.6 --@ Gradle Dependencies. Exclude unused or conflictive transitive dependencies.
+  # @-- 179.6 --@ Gradle Dependencies. Exclude unused or conflicting transitive dependencies.
   # /usr/local/android-sdk/build-tools/21.1.1/dx --dex --output
   #	/home/travis/build/.../iosched/android/build/intermediates/dex/debug --input-list=
   # /home/travis/build/.../iosched/android/build/intermediates/tmp/dex/debug/libraryList.txt
@@ -377,4 +385,26 @@ after_script:
   # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
   # change to "minifyEnabled" instead
   #
+  # LoggedErrorException: Failed to run command:  dex/debug libraryList.txt Error Code: 2 Output:
+  # UNEXPECTED TOP-LEVEL EXCEPTION: com.android.dex.DexIndexOverflowException:
+  # method ID not in [0, 0xffff]: 65536
+  # Check classes.dex method count helper: https://gist.github.com/JakeWharton/6002797
+  # apk= /path/to/android-debug.apk
+  # unzip -p $apk classes.dex | head -c 92 | tail -c 4 | hexdump -e '1/4 "%d\n"'
+  # TODO: Count by package. 32K Before changes, proguard on, release. 64k after, no proguard, debug.
+  # TODO: Use proguard for all buids: https://github.com/pocorall/scaloid/issues/86
+  # Check multiple dex file error: http://stackoverflow.com/questions/25984426
+  # ./gradlew -q :android:dependencies
+  # Check exclude module: http://stackoverflow.com/questions/25993974/
+  # ./gradlew -q :android:dependencyInsight --dependency guava --configuration compile
+  #
+  # TODO: [] [] [] [] [] [] ?? Quiet output after upgrade to gradle plugin 0.14.2. Ignore it?
+  #
+  # TODO: Fix increased method count before adding multi-dex support.
+  #
+  # TODO: Add Multi-Dex support. Requires Build-Tools 21.1.0, and Support repository rev 8.
+  # multiDexEnabled = true on defaultConfig, ProductFlavor, or BuildType, See multiDex samples.
+  # Works for minSdkVersion 21+ (native) or <21 (legacy mode, com.android.support:multidex:1.0.0)
+  #
+
 
