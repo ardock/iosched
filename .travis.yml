@@ -191,7 +191,7 @@ install:
   # - echo "ANDROID DEPENDENCIES"
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
-  - ./gradlew androidDependencies --info
+  - ./gradlew androidDependencies
 
   # - echo "CLEAN PROJECT"
   # Comment out the line below to prepare the Debug and DebugTest project sources.
@@ -236,8 +236,9 @@ script:
   # OR
 
   # - echo "BUILD DEBUG AND TEST"
-  # Comment out the line below to assemble the Debug build and the Test build for the Debug build
-  - ./gradlew assembleDebug assembleDebugTest ${DISABLE_PREDEX:-}
+  # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
+  - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
@@ -250,9 +251,15 @@ script:
   - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
-# after_failure:
+after_failure:
   # - echo "FAILURE"
-
+  # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
+  - sudo apt-get install -qq lynx
+  # Shows logs. Customize first line, 'android' is the specific app module name of this project.
+  - export LOG_DIR=`pwd`/"${MOD_NAME}"/build/outputs/reports/androidTests/connected/
+  - lynx --dump "${LOG_DIR}"com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+  - lynx --dump "${LOG_DIR}"com.android.builder.testing.html > myTesting.log
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
 # after_success:
   # - echo "SUCCESS"
@@ -263,17 +270,8 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
-
-  # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
-  - sudo apt-get install -qq lynx
-  # Shows logs. Customize first line, 'android' is the specific app module name of this project.
-  - export LOG_DIR=`pwd`/"${MOD_NAME}"/build/outputs/reports/androidTests/connected/
-  - lynx --dump "${LOG_DIR}"com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  - lynx --dump "${LOG_DIR}"com.android.builder.testing.html > myTesting.log
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-
   # Uncomment the line below to kill adb (if used before script) and show the logcat log.
-  # - echo " LOGCAT"; echo "========="; cat logcat.log; pkill -KILL -f adb
+  - echo " LOGCAT"; echo "========="; cat logcat.log; pkill -KILL -f adb
 
 
 
