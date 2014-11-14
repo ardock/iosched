@@ -89,11 +89,11 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
@@ -134,13 +134,13 @@ before_install:
   - sudo service rsync stop || true
 
 
-  # - echo "EXPORT AVD ARGS"
+  # - echo "EXPORT VARIABLES"
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  # - export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  - "export AVD_NAME=test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
   # - pwd; mkdir avds && export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
   # Comment out the line below to export TERM=dumb for fix gradle output style.
@@ -255,11 +255,11 @@ after_failure:
   # - echo "FAILURE"
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   - sudo apt-get install -qq lynx
-  # Shows logs. Customize first line, 'android' is the specific app module name of this project.
-  - export LOG_DIR=`pwd`/"${MOD_NAME}"/build/outputs/reports/androidTests/connected/
-  - lynx --dump "${LOG_DIR}"com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  - lynx --dump "${LOG_DIR}"com.android.builder.testing.html > myTesting.log
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  # Shows logs about connected device tests. Remember custom app module name on exports section.
+  - "export LOG_DIR=`pwd`/${MOD_NAME}/build/outputs/reports/androidTests/connected/"
+  - "lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log"
+  - "lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log"
+  - "for file in *.log; do echo $file; echo "====================="; cat $file; done || true"
 
 # after_success:
   # - echo "SUCCESS"
