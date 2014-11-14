@@ -259,7 +259,7 @@ after_failure:
   - "export LOG_DIR=`pwd`/${MOD_NAME}/build/outputs/reports/androidTests/connected/"
   - "lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log"
   - "lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log"
-  - "for file in *.log; do echo $file; echo "====================="; cat $file; done || true"
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
 
 # after_success:
   # - echo "SUCCESS"
