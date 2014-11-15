@@ -142,7 +142,7 @@ before_install:
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - "export AVD_NAME=test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
-  - pwd; mkdir avds; export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
+  - pwd; mkdir avds; "export AVD_PATH=avds/${AVD_NAME:-test}"; echo "$AVD_PATH"
   # Comment out the line below to export TERM=dumb for fix gradle output style.
   - export TERM=dumb
   # Comment out the line below to custom the app module name. Required to show logs of your app.
