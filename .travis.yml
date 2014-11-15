@@ -140,9 +140,9 @@ before_install:
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  - "export AVD_NAME=test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
+  - 'export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
-  - "pwd; mkdir avds; export AVD_PATH=avds/${AVD_NAME:-test}; echo $AVD_PATH"
+  - 'pwd; mkdir avds; export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
   # Comment out the line below to export TERM=dumb for fix gradle output style.
   - export TERM=dumb
   # Comment out the line below to custom the app module name. Required to show logs of your app.
@@ -161,11 +161,11 @@ before_install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here.
-  - "echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -p ${AVD_PATH:-.}"
+  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - "emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &"
+  - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
 
   # - echo "WAIT FOR DEVICE"
   # Check adb commands: http://developer.android.com/tools/help/adb.html
