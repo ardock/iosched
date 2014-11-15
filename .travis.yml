@@ -168,10 +168,10 @@ before_install:
 
   # - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - sudo apt-get update -qq || true
+  - sudo apt-get update -qq
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list sdk --no-ui --all --extended || true
+  - android list sdk --no-ui --all --extended
   - android list targets
   - 'echo ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
   - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
@@ -186,7 +186,7 @@ install:
 
   # - echo 'INSTALL DEPENDENCIES'
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
-  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get install -qq kvm || true; fi'
+  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get install -qq kvm; fi'
 
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
