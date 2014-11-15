@@ -100,7 +100,7 @@ env:
     # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android wear app
-    - AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-20  AVD_ABI=-android-wear-20  ARGS=''
     - AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
@@ -165,9 +165,9 @@ before_install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here.
-  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -p ${AVD_PATH:-.}'
+  # - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
-  - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
+  # - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
 
