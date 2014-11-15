@@ -81,27 +81,27 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
     # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android wear app
-    - AVD_TARGET=android-20  AVD_ABI=-android-wear-20  ARGS=''
-    - AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a-android-wear  ARGS=''
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a-android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -115,8 +115,8 @@ matrix:
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS=''
-    - env: AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a-android-wear  ARGS=''
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a-android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
