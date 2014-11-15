@@ -83,6 +83,10 @@ notifications:
   email: false
 
 env:
+  global:
+    - TERM=dumb
+    - MOD_NAME=android
+
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -148,24 +152,23 @@ before_install:
   - sudo service mongodb stop || true
   - sudo service rsync stop || true
 
-
   # - echo 'EXPORT VARIABLES'
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  - 'export AVD_NAME="test-${AVD_TARGET}-${AVD_ABI}-${AVD_TAG:-default}-${RANDOM:-}${DISABLE_PREDEX:-}"'
-  # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
+  - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
+  # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
   - 'pwd; mkdir avds; export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
   # Comment out the line below to export TERM=dumb for fix gradle output style.
-  - export TERM=dumb
+  # - export TERM=dumb
   # Comment out the line below to custom the app module name. Required to show logs of your app.
-  - export MOD_NAME=android
+  # - export MOD_NAME=android
 
   # - echo 'EXTRA DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd; ls -al; sudo apt-get update -qq; sudo apt-get install kvm -qq || true
+  - pwd; ls -al; sudo apt-get update -qq; sudo apt-get install kvm -y || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended || true
@@ -178,7 +181,8 @@ before_install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round" -s AndroidWearRound for wear.
-  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI
+                                          -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
@@ -285,7 +289,7 @@ after_script:
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of '0' means the build passed; everything else is treated as failure.
   # - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
-  # Uncomment the line below to kill adb (if used before script) and show the logcat log.
+  # Uncomment the line below to kill adb and show logcat output.
   - echo " LOGCAT "; echo "========"; cat logcat.log; pkill -KILL -f adb
 
 
