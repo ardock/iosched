@@ -59,7 +59,7 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    # - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-wear-20
     # - sys-img-x86-android-21
     - sys-img-armeabi-v7a-android-21
 
@@ -86,7 +86,6 @@ env:
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
@@ -95,11 +94,14 @@ env:
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
     # - AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+
+    # TODO: Work in progress... Test android wear app
+    - AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS=''
+    - AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -112,9 +114,9 @@ matrix:
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
   allow_failures:
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  ARGS=''
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS=''
+    - env: AVD_TARGET=android-20  AVD_ABI=android-wear/armeabi-v7a  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -156,7 +158,7 @@ before_install:
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list sdk --no-ui --all --extended || true
-  # - android list targets
+  - android list targets
   # - echo $ANDROID_HOME; ls $ANDROID_HOME -al
 
   # - echo 'CREATE & START AVD'
@@ -220,7 +222,7 @@ before_script:
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb logcat *:W | tee logcat.log &
 
-  # - echo 'SCRIPT'
+  - echo 'SCRIPT'
 
 script:
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
@@ -231,14 +233,14 @@ script:
   # - echo 'DEFAULT TRAVIS BUILD'
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
-  # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
 
   # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
-  - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
-  - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
@@ -248,14 +250,14 @@ script:
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
-  - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  # - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
 after_failure:
   # - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
+  # Comment out the lines below to show log about tests with app name customized on exports section.
   - sudo apt-get install -qq lynx
-  # Shows logs about connected device tests. Remember custom app module name on exports section.
   - 'export LOG_DIR=`pwd`/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
@@ -269,7 +271,7 @@ after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of '0' means the build passed; everything else is treated as failure.
-  # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
+  # - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
   # Uncomment the line below to kill adb (if used before script) and show the logcat log.
   - echo " LOGCAT"; echo "========="; cat logcat.log; pkill -KILL -f adb
 
