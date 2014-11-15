@@ -122,7 +122,7 @@ matrix:
   # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
-  # TODO: Work in progress... Test tags and abis for x86, x86_64, google_apis and android-wear
+  # TODO: Work in progress... Test tags and abis for x86, x86_64, google_apis and android-wear.
   allow_failures:
     - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -170,7 +170,14 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list sdk --no-ui --all --extended || true
   - android list targets
-  # - echo $ANDROID_HOME; ls $ANDROID_HOME -al
+  - echo "$ANDROID_HOME"
+  - 'ls $ANDROID_HOME -al'
+  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET} -al'
+  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG} -al'
+  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
+  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
+  - echo " build.prop"; echo "============";
+  - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
 
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
