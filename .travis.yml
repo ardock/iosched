@@ -120,7 +120,7 @@ before_install:
   # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
   # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
-  # - echo "FREE RESOURCES"
+  # - echo 'FREE RESOURCES'
   # Stop unused services trying to avoid java.lang.OutOfMemoryError
   # Check issue: http://stackoverflow.com/questions/16789288
   # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
@@ -134,7 +134,7 @@ before_install:
   - sudo service rsync stop || true
 
 
-  # - echo "EXPORT VARIABLES"
+  # - echo 'EXPORT VARIABLES'
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
@@ -148,7 +148,7 @@ before_install:
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - export MOD_NAME=android
 
-  # - echo "EXTRA DEPENDENCIES"
+  # - echo 'EXTRA DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - pwd; ls -al; sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
@@ -157,7 +157,7 @@ before_install:
   # - android list targets
   # - echo $ANDROID_HOME; ls $ANDROID_HOME -al
 
-  # - echo "CREATE & START AVD"
+  # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here.
@@ -167,7 +167,7 @@ before_install:
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
 
-  # - echo "WAIT FOR DEVICE"
+  # - echo 'WAIT FOR DEVICE'
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
   # TODO: Avoid emulator killed: - adb wait-for-device && adb devices && sleep 10
@@ -175,27 +175,27 @@ before_install:
 
 
 install:
-  # - echo "SKIP INSTALL STAGE"
+  # - echo 'SKIP INSTALL STAGE'
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
   # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
   # - true
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
 
-  # - echo "GRADLE WRAPPER"
+  # - echo 'GRADLE WRAPPER'
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Comment out the line below to set executable permission to gradle, download it and show version.
   - chmod +x gradlew; ls -l gradlew; ./gradlew -version
 
-  # - echo "ANDROID DEPENDENCIES"
+  # - echo 'ANDROID DEPENDENCIES'
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies
 
-  # - echo "CLEAN PROJECT"
+  # - echo 'CLEAN PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew clean generateDebugSources generateDebugTestSources
 
-  # - echo "BUILD PROJECT"
+  # - echo 'BUILD PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew compileDebugSources compileDebugTestSources
 
@@ -204,7 +204,7 @@ before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
-  # - echo "WAIT FOR EMULATOR"
+  # - echo 'WAIT FOR EMULATOR'
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # TODO: Improve wait_for_emulator.sh script. Support more than one emulator simultaneously.
@@ -212,13 +212,13 @@ before_script:
   - sudo chmod +x scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
-  # - echo "LOGCAT"
+  # - echo 'LOGCAT'
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb logcat *:W | tee logcat.log &
 
-  # - echo "SCRIPT"
+  # - echo 'SCRIPT'
 
 script:
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
@@ -226,21 +226,21 @@ script:
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 
-  # - echo "DEFAULT TRAVIS BUILD"
+  # - echo 'DEFAULT TRAVIS BUILD'
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
   # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
 
-  # - echo "BUILD DEBUG AND TEST"
+  # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
   - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
   - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
-  # - echo "BUILD RELEASE AND TEST"
+  # - echo 'BUILD RELEASE AND TEST'
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
   # - ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
   # Comment out the line below to assemble this project for Build 'release'
@@ -250,7 +250,7 @@ script:
 
 
 after_failure:
-  # - echo "FAILURE"
+  # - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   - sudo apt-get install -qq lynx
   # Shows logs about connected device tests. Remember custom app module name on exports section.
@@ -260,13 +260,13 @@ after_failure:
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
 
 # after_success:
-  # - echo "SUCCESS"
+  # - echo 'SUCCESS'
 
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
-  # Standard Unix exit code of "0" means the build passed; everything else is treated as failure.
+  # Standard Unix exit code of '0' means the build passed; everything else is treated as failure.
   # - if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi
   # Uncomment the line below to kill adb (if used before script) and show the logcat log.
   - echo " LOGCAT"; echo "========="; cat logcat.log; pkill -KILL -f adb
@@ -289,7 +289,7 @@ after_script:
   # Manifest merger failed : uses-sdk:minSdkVersion 14 cannot be smaller than version L declared ...
   # @-- 137.1 --@ Add extra-android-m2repository to android: components:
   #
-  # The command "./gradlew build connectedCheck" exited with 137.
+  # The command './gradlew build connectedCheck' exited with 137.
   # @-- 141.5 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
   # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
@@ -347,7 +347,7 @@ after_script:
   # No output has been received in the last 10 minutes ... indicates ...something wrong ...
   # @-- 253.1 --@ Travis CI killed the job, probably the emulator. Reload the job or optimize build.
   #
-  # The command "... sudo apt-get update ..." failed and exited with 137 during .
+  # The command '... sudo apt-get update ...' failed and exited with 137 during .
   # @-- 254.5 --@ Travis CI killed the job. Reload job or try don't update it if is not required.
   #
   # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
@@ -379,14 +379,14 @@ after_script:
   # plus Fragment#setArguments(Bundle) instead [ValidFragment]
   #
   # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
-  # change to "minifyEnabled" instead
+  # change to 'minifyEnabled' instead
   #
   # LoggedErrorException: Failed to run command:  dex/debug libraryList.txt Error Code: 2 Output:
   # UNEXPECTED TOP-LEVEL EXCEPTION: com.android.dex.DexIndexOverflowException:
   # method ID not in [0, 0xffff]: 65536
   # Check classes.dex method count helper: https://gist.github.com/JakeWharton/6002797
   # apk= /path/to/android-debug.apk
-  # unzip -p $apk classes.dex | head -c 92 | tail -c 4 | hexdump -e '1/4 "%d\n"'
+  # unzip -p $apk classes.dex | head -c 92 | tail -c 4 | hexdump -e "1/4 '%d\n"'
   # TODO: Count by package. 32K Before changes, proguard on, release. 64k after, no proguard, debug.
   # TODO: Use proguard for all buids: https://github.com/pocorall/scaloid/issues/86
   # Check multiple dex file error: http://stackoverflow.com/questions/25984426
