@@ -175,7 +175,7 @@ before_install:
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  # TODO: Revise bash syntax used here.
+  # TODO: Revise bash syntax used here. Add -d "Android Wear Round" -s AndroidWearRound for wear.
   - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
@@ -231,7 +231,7 @@ before_script:
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
-  - adb logcat *:W | tee logcat.log /dev/null 2>&1 &
+  - adb logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
   - echo 'SCRIPT'
 
