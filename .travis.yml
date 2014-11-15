@@ -73,11 +73,11 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
-    - 'android-sdk-license-5be876d5'
+    # - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    # - '.+'
+    - '.+'
 
 notifications:
   email: false
@@ -167,8 +167,8 @@ before_install:
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - pwd; ls -al; sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
-  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  - android list sdk --no-ui --all --extended || true
+  # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  # - android list sdk --no-ui --all --extended || true
   - android list targets
   # - echo $ANDROID_HOME; ls $ANDROID_HOME -al
 
@@ -231,7 +231,7 @@ before_script:
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
-  - adb logcat *:W | tee logcat.log &
+  - adb logcat *:W | tee logcat.log /dev/null 2>&1 &
 
   - echo 'SCRIPT'
 
