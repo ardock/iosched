@@ -138,7 +138,7 @@ before_install:
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  - "if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi"
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - "export AVD_NAME=test-${AVD_TARGET}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"
   # Comment out the line below to custom avd path. Defaults to avds/test if AVD_NAME not set.
