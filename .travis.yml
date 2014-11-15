@@ -83,17 +83,17 @@ env:
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS=''
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
 
     # Disable pre-dexing improves performance (see below):
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
 
     # Test using ABI x86 allowing failure (see below):
@@ -112,7 +112,7 @@ matrix:
   allow_failures:
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS=''
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21  AVD_ABI=x86  ARGS='-PdisablePreDex'
 
 
 before_install:
