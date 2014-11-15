@@ -163,7 +163,7 @@ before_install:
   # TODO: Revise bash syntax used here.
   - "echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -p ${AVD_PATH:-.}"
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
-  - pwd; ls '${AVD_PATH:-.}' -al; echo ' CONFIG'; echo '========'; cat '${AVD_PATH:-.}/config.ini'
+  - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - "emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &"
 
