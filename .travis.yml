@@ -107,7 +107,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test google_apis allowing failure (see below).
-    - AVD_TARGET=9  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear TAG allowing failure (see below).
     - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
@@ -126,7 +126,7 @@ matrix:
   allow_failures:
     - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=9  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
@@ -165,18 +165,14 @@ before_install:
 
   # - echo 'EXTRA DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  # - pwd; ls -al; sudo apt-get update -qq || true
+  - pwd; ls -al; sudo apt-get update -qq sudo; apt-get install kvm -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  # - android list sdk --no-ui --all --extended || true
-  - android list targets
-  - echo "$ANDROID_HOME"
-  - 'ls $ANDROID_HOME -al'
-  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET} -al'
-  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG} -al'
+  - android list sdk --no-ui --all --extended || true
+  - android list targets;
+  - echo "${ANDROID_HOME}"
+  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
   - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
-  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
-  - echo " build.prop"; echo "============";
   - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
 
   # - echo 'CREATE & START AVD'
