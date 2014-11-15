@@ -63,7 +63,7 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    - sys-img-armeabi-v7a-android-wear-20
+    # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-x86-android-21
     - sys-img-x86_64-android-21
     - sys-img-armeabi-v7a-android-21
@@ -91,7 +91,7 @@ env:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
@@ -99,7 +99,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
 
     # Disable pre-dexing improves performance (see below).
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -166,9 +166,9 @@ before_install:
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   # - export MOD_NAME=android
 
-  # - echo 'EXTRA DEPENDENCIES'
+  # - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - pwd; ls -al; sudo apt-get update -qq; sudo apt-get install kvm -y || true
+  - sudo apt-get update -qq || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended || true
@@ -177,12 +177,22 @@ before_install:
   - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
   - 'cat ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
 
+
+install:
+  # - echo 'SKIP INSTALL STAGE'
+  # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
+  # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
+  # - true
+
+  # - echo 'INSTALL DEPENDENCIES'
+  # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
+  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get install -qq kvm || true; fi'
+
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round" -s AndroidWearRound for wear.
-  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI
-                                          -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
@@ -193,14 +203,6 @@ before_install:
   # Comment out the line below to block execution until the emulator is online (device state).
   # TODO: Avoid emulator killed: - adb wait-for-device && adb devices && sleep 10
   - adb wait-for-device
-
-
-install:
-  # - echo 'SKIP INSTALL STAGE'
-  # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
-  # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # - true
-  # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
 
   # - echo 'GRADLE WRAPPER'
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
