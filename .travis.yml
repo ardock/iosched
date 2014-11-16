@@ -89,7 +89,7 @@ env:
     # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
@@ -97,7 +97,7 @@ env:
     # Disable pre-dexing improves performance (see below).
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -110,7 +110,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear TAG allowing failure (see below).
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -127,7 +127,7 @@ matrix:
     - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -152,7 +152,7 @@ before_install:
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Comment out the line below to export TERM=dumb for fix gradle output style.
-  - export TERM=dumb
+  # - export TERM=dumb
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - export MOD_NAME=android
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
@@ -164,7 +164,7 @@ before_install:
 
   # - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  # - sudo apt-get update -qq || true
+  - sudo apt-get --yes --force-yes update || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   - android list sdk --no-ui --all --extended
@@ -172,6 +172,7 @@ before_install:
   - 'echo ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
   - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
   - 'cat ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
+  - ls /usr/local/bin -al
 
 
 install:
@@ -182,7 +183,7 @@ install:
 
   # - echo 'INSTALL DEPENDENCIES'
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
-  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get install -qq kvm; fi'
+  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get --yes --force-yes install kvm; fi'
 
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
