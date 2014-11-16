@@ -1,19 +1,48 @@
 # Copyright 2014 Google Inc. All rights reserved.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This is a configuration file for Travis CI specific to Android SDK projects.
-# http://docs.travis-ci.com/user/languages/android/
+
+# This is a third party contribution without warranties and originally forked from Google IOSched.
+#
+#     https://github.com/google/iosched
+#
+# Google I/O is a developer conference held each year with two days of deep technical content.
+# The Google I/O app is an open source project updated with material design and the Android 5.0 SDK.
+# Their Android app supports devices running Android 4.0+ and contains an Android Wear integration.
+# It is also a great design sample optimized for phones and tablets of all shapes and sizes.
+# You can customize IOSched for your own conference or app. Further information can be found here.
+#
+#     https://github.com/google/iosched/blob/master/doc/CUSTOM.md
+#
+# Fork it and contribute!. If you find this file, contributions are also highly appreciated!.
+
+
+# This is a configuration file for Travis CI specific to build Android SDK projects (Beta).
+#
+#     http://docs.travis-ci.com/user/languages/android/
+#
+# You have unlimited Build Minutes, Repositories and Collaborators but Concurrency can be limited.
+# Reload the build when a background job (e.g. emulator) is killed or you see the error code 137.
+# Avoid concurrency if this happens often or try to optimize your build and the resources usage.
+# Travis-ci offers fair use for open source projects by free. They also offer other plans. Check it!
+#
+#     https://travis-ci.com/plans
+#
+# It's full commented. You can delete the extra comments or use only the parts that consider useful.
+# .travis.yml can be very minimalistic but I added a lot of customization in it for new users as me.
+# I'm not familiar with Yaml/Bash/Ruby syntax or fluent in English, so be careful and improve it!
+
 
 language: android
 
@@ -52,12 +81,12 @@ android:
     - extra-android-m2repository
     - extra-android-support
 
-    # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
+    # Check more extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
     - extra-google-m2repository
     - extra-google-google_play_services
 
-    # Check addons:
+    # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
     # Comment the lines below if the latest Google apis addons are included or not required.
     - addon-google_apis-google-21
 
@@ -94,7 +123,7 @@ env:
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
 
-    # Disable pre-dexing improves performance (see below).
+    # Disable pre-dexing improves performance on CI build servers (see below).
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -109,7 +138,7 @@ env:
     # TODO: Work in progress... Test google_apis allowing failure (see below).
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
-    # TODO: Work in progress... Test android-wear TAG allowing failure (see below).
+    # TODO: Work in progress... Test android-wear allowing failure (see below).
     - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
@@ -167,7 +196,7 @@ before_install:
   - sudo apt-get --yes --force-yes update || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
-  # - android list sdk --no-ui --all --extended
+  # - android list sdk --no-ui --all --extended || true
   - android list targets
   - 'echo ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
   - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
@@ -178,6 +207,7 @@ before_install:
   - cat /ust/local/bin/android-accept-licenses
   - cat /ust/local/bin/android-update-sdk
   - cat /ust/local/bin/android-wait-for-emulator
+
 
 install:
   # - echo 'SKIP INSTALL STAGE'
@@ -240,7 +270,7 @@ before_script:
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
-  - adb logcat *:W | tee logcat.log > /dev/null 2>&1 &
+  - adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
   # - echo 'SCRIPT'
 
@@ -282,6 +312,8 @@ after_failure:
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
+  # TODO Fix dependencies and delete this
+  - 'cat `pwd`/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
 
 # after_success:
   # - echo 'SUCCESS'
