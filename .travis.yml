@@ -63,11 +63,11 @@ android:
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    # - sys-img-armeabi-v7a-android-wear-20
     - sys-img-x86-android-21
     - sys-img-x86_64-android-21
-    - sys-img-armeabi-v7a-android-21
     - sys-img-armeabi-v7a-addon-google_apis-google-21
+    - sys-img-armeabi-v7a-android-21
+    # - sys-img-armeabi-v7a-android-wear-20
 
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
@@ -173,6 +173,8 @@ before_install:
   - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
   - 'cat ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
   - ls /usr/local/bin -al
+  - ls /dev/kvm -al
+  - echo "$PATH"
 
 
 install:
