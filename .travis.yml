@@ -121,14 +121,14 @@ env:
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
 
     # Disable pre-dexing improves performance on CI build servers (see below).
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test x86 and x86_64 ABIs allowing failure (see below).
@@ -193,13 +193,13 @@ before_install:
 
   # - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
-  - sudo apt-get --yes --force-yes update || true
+  # - sudo apt-get --yes --force-yes update || true
   # Comment out the lines below to show android SDK components, targets available and android home.
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list sdk --no-ui --all --extended || true
-  - android list targets
+  # - android list targets || true
   - 'echo ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
-  - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
+  # - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
   - 'cat ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
   # Comment out the lines below to check default android scripts and PATH
   - echo "$PATH"
