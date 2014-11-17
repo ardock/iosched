@@ -62,7 +62,7 @@ android:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    # - tools
+    - tools
     - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
@@ -74,7 +74,7 @@ android:
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile your project are already included.
     # - android-20
-    - android-21
+    # - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
@@ -94,8 +94,8 @@ android:
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-x86-android-21
     # - sys-img-x86_64-android-21
-    #- sys-img-armeabi-v7a-addon-google_apis-google-21
-    - sys-img-armeabi-v7a-android-21
+    # - sys-img-armeabi-v7a-addon-google_apis-google-21
+    # - sys-img-armeabi-v7a-android-21
     # - sys-img-armeabi-v7a-android-wear-20
 
   licenses:
@@ -121,7 +121,7 @@ env:
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
 
     # Disable pre-dexing improves performance on CI build servers (see below).
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
