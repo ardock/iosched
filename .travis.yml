@@ -63,7 +63,7 @@ android:
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
     - tools
-    - platform-tools
+    # - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the BuildTools required for building your project are included.
