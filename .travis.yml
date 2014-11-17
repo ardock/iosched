@@ -95,7 +95,7 @@ android:
     # - sys-img-x86-android-21
     # - sys-img-x86_64-android-21
     #- sys-img-armeabi-v7a-addon-google_apis-google-21
-    # - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-21
     # - sys-img-armeabi-v7a-android-wear-20
 
   licenses:
@@ -217,7 +217,7 @@ install:
 
   # - echo 'INSTALL DEPENDENCIES'
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
-  - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get --yes --force-yes install kvm; ls /dev/kvm -al || true ; fi'
+  # - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get --yes --force-yes install kvm; ls /dev/kvm -al || true ; fi'
 
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
