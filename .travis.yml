@@ -62,8 +62,8 @@ android:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    - tools
-    - platform-tools
+    # - tools
+    # - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the BuildTools required for building your project are included.
@@ -74,27 +74,27 @@ android:
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile your project are already included.
     # - android-20
-    - android-21
+    # - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
-    - extra-android-m2repository
-    - extra-android-support
+    # - extra-android-m2repository
+    # - extra-android-support
 
     # Check more extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    - extra-google-m2repository
-    - extra-google-google_play_services
+    # - extra-google-m2repository
+    # - extra-google-google_play_services
 
     # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
     # Comment the lines below if the latest Google apis addons are included or not required.
-    - addon-google_apis-google-21
+    # - addon-google_apis-google-21
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    - sys-img-x86-android-21
-    - sys-img-x86_64-android-21
-    - sys-img-armeabi-v7a-addon-google_apis-google-21
+    # - sys-img-x86-android-21
+    # - sys-img-x86_64-android-21
+    #- sys-img-armeabi-v7a-addon-google_apis-google-21
     # - sys-img-armeabi-v7a-android-21
     # - sys-img-armeabi-v7a-android-wear-20
 
@@ -102,11 +102,11 @@ android:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
-    # - 'android-sdk-license-5be876d5'
+    - 'android-sdk-license-5be876d5'
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    - '.+'
+    # - '.+'
 
 notifications:
   email: false
@@ -124,22 +124,22 @@ env:
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
 
     # Disable pre-dexing improves performance on CI build servers (see below).
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test x86 and x86_64 ABIs allowing failure (see below).
-    - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test google_apis allowing failure (see below).
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -152,11 +152,11 @@ matrix:
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
   # TODO: Work in progress... Test tags and abis for x86, x86_64, google_apis and android-wear.
-  allow_failures:
-    - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+  # allow_failures:
+    # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -283,14 +283,14 @@ script:
   # - echo 'DEFAULT TRAVIS BUILD'
   # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
-  # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
 
   # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
-  - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
-  - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
 
@@ -300,7 +300,7 @@ script:
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
-  - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  # - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
 after_failure:
