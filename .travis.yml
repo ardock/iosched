@@ -205,9 +205,9 @@ before_install:
   # - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
   # - android list sdk --no-ui --all --extended || true
   - android list targets || true
-  - 'echo ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
-  # - 'ls ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
-  - 'cat ${ANDROID_HOME}system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
+  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
+  # - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
+  - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
   # Comment out the lines below to check default android scripts and PATH
   - echo "$PATH"
   - ls /usr/local/bin -al
