@@ -67,13 +67,13 @@ android:
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
     # Comment the lines below if the BuildTools required for building your project are included.
-    # - build-tools-20.0.0
+    - build-tools-20.0.0
     # - build-tools-21.0.2
     - build-tools-21.1.1
 
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile your project are already included.
-    # - android-20
+    - android-20
     - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
@@ -95,8 +95,8 @@ android:
     # - sys-img-x86-android-21
     # - sys-img-x86_64-android-21
     - sys-img-armeabi-v7a-addon-google_apis-google-21
-    # - sys-img-armeabi-v7a-android-21
-    # - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-wear-20
 
   licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
@@ -126,9 +126,9 @@ env:
     # Disable pre-dexing improves performance on CI build servers (see below).
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test x86 and x86_64 ABIs allowing failure (see below).
@@ -139,7 +139,7 @@ env:
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
-    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -156,7 +156,7 @@ matrix:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -184,12 +184,12 @@ before_install:
   # Comment out the line below to export TERM=dumb for fix gradle output style
   # - export TERM=dumb
   # Comment out the lines below to custom gradle user home and export it to path.
-  - export GRADLE_USER_HOME=`pwd`/gradle-2.1
+  - export GRADLE_USER_HOME=`pwd`/gradle
   - export PATH=${GRADLE_USER_HOME}/bin/:${PATH}
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
   # Comment out the lines below to custom android sdk home and export it to path.
-  - export ANDROID_HOME=`pwd`/sdk
+  - export ANDROID_HOME=/usr/local/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - export MOD_NAME=android
@@ -291,16 +291,17 @@ script:
   # - echo 'DEFAULT TRAVIS BUILD'
   # By default Travis-ci executes './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
-  - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
+  # - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 
   # OR
 
   # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
-  # - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
+  - ./gradlew installDebug ${DISABLE_PREDEX:-}
 
   # - echo 'BUILD RELEASE AND TEST'
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
@@ -322,6 +323,7 @@ after_failure:
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
   - 'cat `pwd`/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
+
 
 # after_success:
   # - echo 'SUCCESS'

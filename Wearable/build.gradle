@@ -24,13 +24,15 @@ repositories {
 }
 
 android {
-    compileSdkVersion rootProject.ext.androidCompileSdkVersion
-    buildToolsVersion rootProject.ext.androidBuildToolsVersion
-
+    // compileSdkVersion rootProject.ext.androidCompileSdkVersion
+    compileSdkVersion 20
+    // buildToolsVersion rootProject.ext.androidBuildToolsVersion
+    buildToolsVersion "20.0.0"
     defaultConfig {
         applicationId rootProject.ext.androidDefaultApplicationId
         minSdkVersion 20
-        targetSdkVersion rootProject.ext.androidDefaultTargetSdkVersion
+        // targetSdkVersion rootProject.ext.androidDefaultTargetSdkVersion
+        targetSdkVersion 20
         versionCode 1
         versionName "1.0"
     }
