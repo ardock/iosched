@@ -74,27 +74,27 @@ android:
     # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
     # Comment the lines below if the SDK versions used to compile your project are already included.
     # - android-20
-    # - android-21
+    - android-21
 
     # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
     # Comment the lines below if the latest Android extras are included or not required.
-    # - extra-android-m2repository
-    # - extra-android-support
+    - extra-android-m2repository
+    - extra-android-support
 
     # Check more extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
     # Comment the lines below if the latest Google extras are included or not required.
-    # - extra-google-m2repository
-    # - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-google-google_play_services
 
     # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
     # Comment the lines below if the latest Google apis addons are included or not required.
-    # - addon-google_apis-google-21
+    - addon-google_apis-google-21
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
     # - sys-img-x86-android-21
     # - sys-img-x86_64-android-21
-    # - sys-img-armeabi-v7a-addon-google_apis-google-21
+    - sys-img-armeabi-v7a-addon-google_apis-google-21
     # - sys-img-armeabi-v7a-android-21
     # - sys-img-armeabi-v7a-android-wear-20
 
@@ -136,7 +136,7 @@ env:
     # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test google_apis allowing failure (see below).
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
     # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
@@ -152,10 +152,10 @@ matrix:
   # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
   # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
   # TODO: Work in progress... Test tags and abis for x86, x86_64, google_apis and android-wear.
-  # allow_failures:
+  allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
@@ -180,12 +180,19 @@ before_install:
   # - echo 'EXPORT VARIABLES'
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
-  # Comment out the line below to export TERM=dumb for fix gradle output style.
+  # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
+  # Comment out the line below to export TERM=dumb for fix gradle output style
   # - export TERM=dumb
-  # Comment out the line below to custom the app module name. Required to show logs of your app.
-  - export MOD_NAME=android
+  # Comment out the lines below to custom gradle user home and export it to path.
+  - export GRADLE_USER_HOME=`pwd`/gradle-2.1
+  - export PATH=${GRADLE_USER_HOME}/bin/:${PATH}
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
+  # Comment out the lines below to custom android sdk home and export it to path.
+  - export ANDROID_HOME=`pwd`/sdk
+  - export PATH=${ANDROID_HOME}/:${PATH}
+  # Comment out the line below to custom the app module name. Required to show logs of your app.
+  - export MOD_NAME=android
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
@@ -237,8 +244,9 @@ install:
 
   # - echo 'GRADLE WRAPPER'
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
-  # Comment out the line below to set executable permission to gradle, download it and show version.
-  - chmod +x gradlew; ls -l gradlew; ./gradlew -version
+  # Check Gradle command line: http://www.gradle.org/docs/current/userguide/gradle_command_line.html
+  # Comment out the line below to set executable permission, download gradle and show the version.
+  - chmod +x ./gradlew; ls -l gradlew; ./gradlew -version
 
   # - echo 'ANDROID DEPENDENCIES'
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
@@ -263,7 +271,7 @@ before_script:
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # TODO: Improve wait_for_emulator.sh script. Support more than one emulator simultaneously.
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
-  - sudo chmod +x scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
+  - sudo chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
   # - echo 'LOGCAT'
@@ -281,7 +289,7 @@ script:
   # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 
   # - echo 'DEFAULT TRAVIS BUILD'
-  # By default Travis-ci execute './gradlew build connectedCheck' if no 'script:' section found.
+  # By default Travis-ci executes './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
   - ./gradlew build connectedCheck ${DISABLE_PREDEX:-}
 

@@ -28,25 +28,25 @@ android {
     buildToolsVersion rootProject.ext.androidBuildToolsVersion
 
     defaultConfig {
-        applicationId rootProject.ext.androidApplicationId
+        applicationId rootProject.ext.androidDefaultApplicationId
         minSdkVersion 20
-        targetSdkVersion rootProject.ext.androidTargetSdkVersion
+        targetSdkVersion rootProject.ext.androidDefaultTargetSdkVersion
         versionCode 1
         versionName "1.0"
     }
 
     signingConfigs {
         debug {
-            storeFile file(rootProject.ext.debugStoreFile)
-            storePassword rootProject.ext.debugStorePassword
-            keyAlias rootProject.ext.debugKeyAlias
-            keyPassword rootProject.ext.debugKeyPassword
+            storeFile file(rootProject.ext.androidDebugStoreFile)
+            storePassword rootProject.ext.androidDebugStorePassword
+            keyAlias rootProject.ext.androidDebugKeyAlias
+            keyPassword rootProject.ext.androidDebugKeyPassword
         }
         release {
-            storeFile file(rootProject.ext.releaseStoreFile)
-            storePassword rootProject.ext.releaseStorePassword
-            keyAlias rootProject.ext.releaseKeyAlias
-            keyPassword rootProject.ext.releaseKeyPassword
+            storeFile file(rootProject.ext.androidReleaseStoreFile)
+            storePassword rootProject.ext.androidReleaseStorePassword
+            keyAlias rootProject.ext.androidReleaseKeyAlias
+            keyPassword rootProject.ext.androidReleaseKeyPassword
         }
     }
 
@@ -66,9 +66,16 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:21.0.0'
-    compile 'com.android.support:support-v4:21.0.0'
-    compile 'com.android.support:support-v13:21.0.0'
+    compile ('com.android.support:support-annotations:21.0.2') {
+        force = true
+    }
+    compile ('com.android.support:support-v4:21.0.2') {
+        force = true
+    }
+    compile('com.android.support:support-v13:21.0.0') {
+        // Conflicting module version com.android.support:support-v4:21.0.0 on v.21.0.0.
+        exclude (group: 'com.android.support', module: 'support-v4')
+    }
     compile(group: 'com.google.android.support', name: 'wearable', version: '1.0.0') {
         // Conflicting module version com.android.support:support-v4:20.0.0 on v.1.0.0.
         exclude (group: 'com.android.support', module: 'support-v4')
