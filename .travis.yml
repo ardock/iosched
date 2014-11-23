@@ -210,6 +210,13 @@ before_install:
   - android list avd || true
   - android list || true
   - android update sdk -u -n || true
+  - android update sdk -u -n -t platform || true
+  - android update sdk -u -n -t system-image || true
+  - android update sdk -u -n -t tool || true
+  - android update sdk -u -n -t platform-tool || true
+  - android update sdk -u -n -t doc || true
+  - android update sdk -u -n -t sample || true
+  - android update sdk -u -n -t source || true
   - android update sdk -u -a -n || true
   - android update sdk -u -a -n -t platform || true
   - android update sdk -u -a -n -t system-image || true
