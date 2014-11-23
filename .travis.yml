@@ -209,6 +209,7 @@ before_install:
   - android list target || true
   - android list avd || true
   - android list || true
+  # Check recommended by filter
   - android update sdk -u -n || true
   - android update sdk -u -n -t platform || true
   - android update sdk -u -n -t system-image || true
@@ -217,6 +218,7 @@ before_install:
   - android update sdk -u -n -t doc || true
   - android update sdk -u -n -t sample || true
   - android update sdk -u -n -t source || true
+  # Check all by filter
   - android update sdk -u -a -n || true
   - android update sdk -u -a -n -t platform || true
   - android update sdk -u -a -n -t system-image || true
@@ -225,6 +227,35 @@ before_install:
   - android update sdk -u -a -n -t doc || true
   - android update sdk -u -a -n -t sample || true
   - android update sdk -u -a -n -t source || true
+  # Update tools
+  - android update sdk -u -t tool || true
+  # Comment out the lines below to show android SDK components, targets available and android home.
+  - android list sdk --no-ui --all --extended | grep -E '^id:' | awk -F '"' '{$1=""; print $2}'
+  - android list sdk -a -e || true
+  - android list sdk -e || true
+  - android list device || true
+  - android list target || true
+  - android list avd || true
+  - android list || true
+  # Check recommended by filter
+  - android update sdk -u -n || true
+  - android update sdk -u -n -t platform || true
+  - android update sdk -u -n -t system-image || true
+  - android update sdk -u -n -t tool || true
+  - android update sdk -u -n -t platform-tool || true
+  - android update sdk -u -n -t doc || true
+  - android update sdk -u -n -t sample || true
+  - android update sdk -u -n -t source || true
+  # Check all by filter
+  - android update sdk -u -a -n || true
+  - android update sdk -u -a -n -t platform || true
+  - android update sdk -u -a -n -t system-image || true
+  - android update sdk -u -a -n -t tool || true
+  - android update sdk -u -a -n -t platform-tool || true
+  - android update sdk -u -a -n -t doc || true
+  - android update sdk -u -a -n -t sample || true
+  - android update sdk -u -a -n -t source || true
+  # Comment out the lines below to show system image properties
   - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
   # - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
   - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
