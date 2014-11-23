@@ -221,21 +221,23 @@ before_install:
   - android list sdk -e || true
   - android list || true
 
-  # Check recommended by filter
+  # Check suggested components by filter
   - android update sdk -u -n || true
   - android update sdk -u -n -t platform || true
   - android update sdk -u -n -t system-image || true
+  - android update sdk -u -n -t add-on || true
+  - android update sdk -u -n -t extra || true
   - android update sdk -u -n -t tool || true
   - android update sdk -u -n -t platform-tool || true
-  - android update sdk -u -n -t build-tool || true
 
-  # Check all by filter
+  # Check all components by filter
   - android update sdk -u -a -n || true
   - android update sdk -u -a -n -t platform || true
   - android update sdk -u -a -n -t system-image || true
+  - android update sdk -u -a -n -t add-on || true
+  - android update sdk -u -a -n -t extra || true
   - android update sdk -u -a -n -t tool || true
   - android update sdk -u -a -n -t platform-tool || true
-  - android update sdk -u -a -n -t build-tool || true
 
   - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
