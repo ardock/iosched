@@ -199,7 +199,8 @@ before_install:
   # - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
-  - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && $WEAR_MOD_NAME || $MOBI_MOD_NAME`
+  - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`
+  - echo $MOD_NAME
   # - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo "Wearable" || echo "android"`
   # - export MOD_NAME=android
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
