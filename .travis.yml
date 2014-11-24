@@ -112,6 +112,11 @@ notifications:
   email: false
 
 env:
+  global:
+    #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    - ANDROID_HOME=/usr/local/android-sdk
+    - BUILD_TOOLS=build-tools-21.1.1
+    - MOD_NAME=( [[ $AVD_TARGET == android-20 ]] && echo "Wearable" || echo "android" )
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -140,11 +145,7 @@ env:
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
     # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
-  global:
-    #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-    - ANDROID_HOME=/usr/local/android-sdk
-    - BUILD_TOOLS=build-tools-21.1.1
-    - "[[ $AVD_TARGET == android-20 ]] && MOD_NAME=Wearable || MOD_NAME=android"
+
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
