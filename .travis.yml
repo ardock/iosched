@@ -141,7 +141,7 @@ env:
     # - AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -158,7 +158,7 @@ matrix:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -180,26 +180,25 @@ before_install:
   - sudo service rsync stop || true
 
   - echo 'EXPORT VARIABLES'
-  - echo "$TRAVIS_BUILD_DIR"
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
   # Comment out the line below to export TERM=dumb for fix gradle output style (Added by default...)
   # - export TERM=dumb
   # Comment out the lines below to custom gradle user home and export it to path.
-  - export GRADLE_USER_HOME=`pwd`/gradle
+  - export GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
   - export PATH=${GRADLE_USER_HOME}/bin/:${PATH}
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
   # Comment out the lines below to custom android sdk home and export it to path.
-  - export ANDROID_HOME=/usr/local/android-sdk
+  - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - export MOD_NAME=android
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
-  - 'pwd; mkdir avds; export AVD_PATH="avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
+  - 'mkdir avds; export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
 
   # - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
@@ -219,7 +218,7 @@ before_install:
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
   - echo yes | android update sdk -u -t tool || true
   - echo yes | android update sdk -u -t platform-tool || true
-  - echo yes | android update sdk -u -t $BUILD_TOOLS || true
+  - echo yes | android update sdk -a -u -t $BUILD_TOOLS || true
 
   - echo 'AFTER UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components. Check remaining entries.
@@ -254,7 +253,7 @@ before_install:
   - echo 'DEFAULT SCRIPTS'
   # Comment out the lines below to check default android scripts and PATH
   - echo "$PATH"
-  - ls /usr/local/bin -al
+  - ls /usr/local/bin -Al
   - cat /usr/local/bin/android-accept-licenses
   - cat /usr/local/bin/android-update-sdk
   - cat /usr/local/bin/android-wait-for-emulator
@@ -276,7 +275,7 @@ install:
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round" -s AndroidWearRound for wear.
   - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
-  - 'pwd; ls "${AVD_PATH:-.}" -al; echo " CONFIG"; echo "========"; cat "${AVD_PATH:-.}/config.ini"'
+  - 'echo "${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
 
@@ -361,12 +360,12 @@ after_failure:
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
   - sudo apt-get install -qq lynx
-  - 'export LOG_DIR=`pwd`/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
+  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
-  - 'cat `pwd`/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
+  - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
 
 
 # after_success:
