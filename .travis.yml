@@ -219,6 +219,8 @@ before_install:
   - echo yes | android update sdk -u -t tool || true
   - echo yes | android update sdk -u -t platform-tool || true
   - echo yes | android update sdk -a -u -t $BUILD_TOOLS || true
+  - echo yes | android update sdk -u -t extra-android-m2repository,extra-android-support || true
+  - echo yes | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
 
   - echo 'AFTER UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components. Check remaining entries.
@@ -228,21 +230,17 @@ before_install:
   # Comment out the lines below to list available AVDs, Android targets and device definitions.
   - android list || true
   # Comment out the lines below to check suggested components by filter (no doc, sample or source)
-  - android update sdk -u -n -t platform,system-image,add-on,extra,tool,platform-tool || true
+  - android update sdk -u -n -t platform,system-image,add-on,extra || true
   - android update sdk -u -n -t platform || true
   - android update sdk -u -n -t system-image || true
   - android update sdk -u -n -t add-on || true
   - android update sdk -u -n -t extra || true
-  - android update sdk -u -n -t tool || true
-  - android update sdk -u -n -t platform-tool || true
   # Comment out the lines below to check all components available by filter (including installed).
-  - android update sdk -a -u -n -t platform,system-image,add-on,extra,tool,platform-tool || true
+  - android update sdk -a -u -n -t platform,system-image,add-on,extra || true
   - android update sdk -a -u -n -t platform || true
   - android update sdk -a -u -n -t system-image || true
   - android update sdk -a -u -n -t add-on || true
   - android update sdk -a -u -n -t extra || true
-  - android update sdk -a -u -n -t tool || true
-  - android update sdk -a -u -n -t platform-tool || true
 
   - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
@@ -462,6 +460,9 @@ after_script:
   # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
   # @-- 268.4 --@ Stop unused services like data stores before run the script, etc.
   #
+  # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
+  # change to 'minifyEnabled' instead
+  #
   #
   # @--@--@--@--@
   # @-- TODO: --@
@@ -487,8 +488,6 @@ after_script:
   # Error: Avoid non-default constructors in fragments: use a default constructor
   # plus Fragment#setArguments(Bundle) instead [ValidFragment]
   #
-  # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
-  # change to 'minifyEnabled' instead
   #
   # LoggedErrorException: Failed to run command:  dex/debug libraryList.txt Error Code: 2 Output:
   # UNEXPECTED TOP-LEVEL EXCEPTION: com.android.dex.DexIndexOverflowException:
