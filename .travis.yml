@@ -113,10 +113,11 @@ notifications:
 
 env:
   global:
-    #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    # - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - ANDROID_HOME=/usr/local/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
-    - MOD_NAME="( [[ $AVD_TARGET == android-20 ]] && echo 'Wearable' || echo 'android' )"
+    - MOBI_MOD_NAME=android
+    - WEAR_MOD_NAME=Wearable
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -144,7 +145,7 @@ env:
     # - AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
-    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 matrix:
@@ -162,7 +163,7 @@ matrix:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -198,7 +199,8 @@ before_install:
   # - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
-  # - export MOD_NAME=`[[ $AVD_TARGET = android-20 ]] && echo "Wearable" || echo "android"`
+  - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && $WEAR_MOD_NAME || $MOBI_MOD_NAME`
+  # - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo "Wearable" || echo "android"`
   # - export MOD_NAME=android
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
