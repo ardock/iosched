@@ -113,6 +113,7 @@ notifications:
 
 env:
   global:
+    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
@@ -191,7 +192,7 @@ before_install:
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
   # Comment out the lines below to custom android sdk home and export it to path.
-  - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+  # - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - export MOD_NAME=android
