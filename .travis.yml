@@ -116,7 +116,7 @@ env:
     #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - ANDROID_HOME=/usr/local/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
-    - MOD_NAME=`[[ $AVD_TARGET = android-20 ]] && echo "Wearable" || echo "android"`
+    - 'MOD_NAME=`[[ $AVD_TARGET = android-20 ]] && echo "Wearable" || echo "android"`'
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
