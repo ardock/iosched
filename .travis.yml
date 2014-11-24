@@ -106,12 +106,14 @@ android:
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    - '.+'
+    # - '.+'
 
 notifications:
   email: false
 
 env:
+  global:
+    - BUILD_TOOLS=build-tools-21.1.1
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -139,7 +141,7 @@ env:
     # - AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
-    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
@@ -156,7 +158,7 @@ matrix:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
 before_install:
@@ -178,6 +180,7 @@ before_install:
   - sudo service rsync stop || true
 
   - echo 'EXPORT VARIABLES'
+  - echo "$TRAVIS_BUILD_DIR"
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
@@ -203,41 +206,44 @@ before_install:
   # - sudo apt-get --yes --force-yes update || true
 
   - echo 'BEFORE UPDATE SDK'
-  # Comment out the lines below to list android SDK components available.
-  - android list sdk -a -e || true
-  # Comment out the lines below to list android SDK components suggested.
+  # Comment out the lines below to list suggested Android SDK components.
   - android list sdk -e || true
-  # Comment out the lines below to list avds, targets and devices available.
-  - android list || true
+  # Comment out the lines below to list available Android SDK components.
+  - android list sdk -a -e || true
+  # Comment out the lines below to list avalaible AVDs, Android targets and device definitions.
+  - android list avd -c || true
+  - android list target -c || true
+  - android list device -c || true
 
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
   - echo yes | android update sdk -u -t tool || true
   - echo yes | android update sdk -u -t platform-tool || true
+  - echo yes | android update sdk -u -t $BUILD_TOOLS || true
 
   - echo 'AFTER UPDATE SDK'
-  # Comment out the lines below to list android SDK components available.
-  - android list sdk -a -e || true
-  # Comment out the lines below to list android SDK components suggested.
+  # Comment out the lines below to list suggested Android SDK components. Check remaining entries.
   - android list sdk -e || true
-  # Comment out the lines below to list avds, targets and devices available.
+  # Comment out the lines below to list available Android SDK components. Check new entries.
+  - android list sdk -a -e || true
+  # Comment out the lines below to list available AVDs, Android targets and device definitions.
   - android list || true
-  # Comment out the lines below to check suggested components by filter.
-  - android update sdk -u -n || true
+  # Comment out the lines below to check suggested components by filter (no doc, sample or source)
+  - android update sdk -u -n -t platform,system-image,add-on,extra,tool,platform-tool || true
   - android update sdk -u -n -t platform || true
   - android update sdk -u -n -t system-image || true
   - android update sdk -u -n -t add-on || true
   - android update sdk -u -n -t extra || true
   - android update sdk -u -n -t tool || true
   - android update sdk -u -n -t platform-tool || true
-  # Comment out the lines below to check all components available by filter (include installed).
-  - android update sdk -u -a -n || true
-  - android update sdk -u -a -n -t platform || true
-  - android update sdk -u -a -n -t system-image || true
-  - android update sdk -u -a -n -t add-on || true
-  - android update sdk -u -a -n -t extra || true
-  - android update sdk -u -a -n -t tool || true
-  - android update sdk -u -a -n -t platform-tool || true
+  # Comment out the lines below to check all components available by filter (including installed).
+  - android update sdk -a -u -n -t platform,system-image,add-on,extra,tool,platform-tool || true
+  - android update sdk -a -u -n -t platform || true
+  - android update sdk -a -u -n -t system-image || true
+  - android update sdk -a -u -n -t add-on || true
+  - android update sdk -a -u -n -t extra || true
+  - android update sdk -a -u -n -t tool || true
+  - android update sdk -a -u -n -t platform-tool || true
 
   - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
