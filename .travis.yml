@@ -113,7 +113,7 @@ notifications:
 
 env:
   global:
-  #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - ANDROID_HOME=/usr/local/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
   matrix:
@@ -196,7 +196,8 @@ before_install:
   # - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
-  - export MOD_NAME=android
+  - export MOD_NAME= [[ $AVD_TARGET = android-20 ]] && echo "Wearable" || echo "android"
+  # - export MOD_NAME=android
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
@@ -344,7 +345,7 @@ script:
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
-  - ./gradlew installDebug ${DISABLE_PREDEX:-}
+  - ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
 
   # - echo 'BUILD RELEASE AND TEST'
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
