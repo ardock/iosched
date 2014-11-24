@@ -113,7 +113,8 @@ notifications:
 
 env:
   global:
-    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+  #  - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    - ANDROID_HOME=/usr/local/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
