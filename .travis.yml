@@ -203,7 +203,8 @@ before_install:
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
   # TODO: Extend to other APIs
-  - 'export AVD_TARGET_DIR=`[[ $AVD_TARGET = "Google Inc.:Google APIs:21" ]] && echo "android-21" || echo $AVD_TARGET`'
+  - export AVD_TARGET_DIR="$AVD_TARGET"
+  - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
@@ -303,6 +304,8 @@ install:
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies
+  - ./gradlew -q :android:dependencies
+  - ./gradlew -q :android:dependencyInsight --dependency guava --configuration compile
 
   - echo 'CLEAN PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
@@ -374,8 +377,9 @@ after_failure:
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
+  - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
+  - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
+  - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
 
 after_success:
   - echo 'SUCCESS'
@@ -491,11 +495,6 @@ after_script:
   # /home/travis/build/.../iosched/android/build/intermediates/tmp/dex/debug/libraryList.txt
   # Error Code:137
   #
-  # Downloading http://repo1.maven.org/maven2/ ... google-api-services-drive-v2-rev151-1.19.0.pom
-  # Resource missing. ... com/android/support/support-v4/20.0.0/support-v4-20.0.0.pom]
-  # Resource missing. ... com/android/support/support-v4/20.0.0/support-v4-20.0.0.jar]
-  # Check http://stackoverflow.com/questions/26473929/android-gradle-dependency-resolution-order
-  #
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
   # Check http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
@@ -505,7 +504,6 @@ after_script:
   #
   # Error: Avoid non-default constructors in fragments: use a default constructor
   # plus Fragment#setArguments(Bundle) instead [ValidFragment]
-  #
   #
   # LoggedErrorException: Failed to run command:  dex/debug libraryList.txt Error Code: 2 Output:
   # UNEXPECTED TOP-LEVEL EXCEPTION: com.android.dex.DexIndexOverflowException:
@@ -520,15 +518,13 @@ after_script:
   # Check exclude module: http://stackoverflow.com/questions/25993974/
   # ./gradlew -q :android:dependencyInsight --dependency guava --configuration compile
   #
-  # TODO: [] [] [] [] [] [] ?? Quiet output after upgrade to gradle plugin 0.14.2. Ignore it?
-  #
   # TODO: Fix increased method count before adding multi-dex support.
-  #
   # TODO: Add Multi-Dex support. Requires Build-Tools 21.1.0, and Support repository rev 8.
   # multiDexEnabled = true on defaultConfig, ProductFlavor, or BuildType, See multiDex samples.
   # Works for minSdkVersion 21+ (native) or <21 (legacy mode, com.android.support:multidex:1.0.0)
   #
   # Error: Invalid --tag google_apis for the selected target. (and correct components installed)
+  #
   # See issue: https://code.google.com/p/android/issues/detail?id=78947
   # Fixed by: https://android-review.googlesource.com/#/c/115390/1
 
