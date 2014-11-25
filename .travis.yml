@@ -88,6 +88,8 @@ android:
 
     # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
     # Comment the lines below if the latest Google apis addons are included or not required.
+    # - addon-google_apis_x86-google-19
+    # - addon-google_apis-google-19
     - addon-google_apis-google-21
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
@@ -114,7 +116,6 @@ notifications:
 
 env:
   global:
-    # - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - ANDROID_HOME=/usr/local/android-sdk
     - BUILD_TOOLS=build-tools-21.1.1
     - MOBI_MOD_NAME=android
@@ -133,9 +134,9 @@ env:
     # Disable pre-dexing improves performance on CI build servers (see below).
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test x86 and x86_64 ABIs allowing failure (see below).
@@ -201,6 +202,8 @@ before_install:
   - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
+  # TODO: Extend to other APIs
+  - 'export AVD_TARGET_DIR=`[[ $AVD_TARGET = "Google Inc.:Google APIs:21" ]] && echo "android-21" || echo $AVD_TARGET`'
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
   - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
@@ -250,9 +253,9 @@ before_install:
 
   - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
-  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}'
-  # - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI} -al'
-  - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET}/${AVD_TAG}/${AVD_ABI}/build.prop'
+  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}'
+  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI} -al || true'
+  - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
 
   - echo 'DEFAULT SCRIPTS'
   # Comment out the lines below to check default android scripts and PATH
@@ -276,35 +279,34 @@ install:
   # - echo 'CREATE & START AVD'
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
-  # TODO: Revise bash syntax used here. Add -d "Android Wear Round" -s AndroidWearRound for wear.
+  # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
   - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'echo "${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
   - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
 
-  # - echo 'WAIT FOR DEVICE'
+  - echo 'WAIT FOR DEVICE'
   # Check adb commands: http://developer.android.com/tools/help/adb.html
   # Comment out the line below to block execution until the emulator is online (device state).
-  # TODO: Avoid emulator killed: - adb wait-for-device && adb devices && sleep 10
   - adb wait-for-device
 
-  # - echo 'GRADLE WRAPPER'
+  - echo 'GRADLE WRAPPER'
   # Check Build with Gradle: http://developer.android.com/sdk/installing/studio-build.html
   # Check Gradle command line: http://www.gradle.org/docs/current/userguide/gradle_command_line.html
   # Comment out the line below to set executable permission, download gradle and show the version.
   - chmod +x ./gradlew; ls -l gradlew; ./gradlew -version
 
-  # - echo 'ANDROID DEPENDENCIES'
+  - echo 'ANDROID DEPENDENCIES'
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies
 
-  # - echo 'CLEAN PROJECT'
+  - echo 'CLEAN PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew clean generateDebugSources generateDebugTestSources
 
-  # - echo 'BUILD PROJECT'
+  - echo 'PREPARE PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew compileDebugSources compileDebugTestSources
 
@@ -313,7 +315,7 @@ before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
   # Check http://docs.travis-ci.com/user/build-configuration/#before_script%2C-after_script
 
-  # - echo 'WAIT FOR EMULATOR'
+  - echo 'WAIT FOR EMULATOR'
   # Check emulator help: http://developer.android.com/tools/help/emulator.html
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # TODO: Improve wait_for_emulator.sh script. Support more than one emulator simultaneously.
@@ -321,15 +323,16 @@ before_script:
   - sudo chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
-  # - echo 'LOGCAT'
+  - echo 'LOGCAT'
   # Check logcat debug output: http://developer.android.com/tools/help/logcat.html
   # Check debugging log: http://developer.android.com/tools/debugging/debugging-log.html
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
-  # - echo 'SCRIPT'
+  - echo 'SCRIPT'
 
 script:
+  - echo '$DISABLE_PREDEX'
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
   # If $DISABLE_PREDEX option is added on gradlew, pre-dexing is disabled on build server.
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
@@ -356,11 +359,11 @@ script:
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
   # Comment out the line below to run all device checks on currently connected devices
-  # - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 
 after_failure:
-  # - echo 'FAILURE'
+  - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
   - sudo apt-get install -qq lynx
@@ -372,15 +375,15 @@ after_failure:
   - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
 
 
-# after_success:
-  # - echo 'SUCCESS'
+after_success:
+  - echo 'SUCCESS'
 
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of '0' means the build passed; everything else is treated as failure.
-  # - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
+  - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
   # Uncomment the line below to kill adb and show logcat output.
   - echo " LOGCAT "; echo "========"; cat logcat.log; pkill -KILL -f adb
 
@@ -424,6 +427,10 @@ after_script:
   #
   # emulator: ERROR: x86 emulation currently requires hardware acceleration!
   # Please ensure KVM is properly installed and usable.
+  # Enable KVM, cmds after qemu interpreted by it: emulator -avd <avd_name> -qemu -m 512 -enable-kvm
+  # Check config VM Accel on Linux http://developer.android.com/tools/devices/emulator.html#accel-vm
+  # Check Help Ubuntu for KVM configuration: https://help.ubuntu.com/community/KVM/Installation
+  # Check Intel Dev Zone for Android: https://software.intel.com/en-us/android
   # @-- 200.3 --@  CPU acceleration status: KVM is not installed (/dev/kvm is missing).
   #
   # Resource missing via repository com/android/support/support-v4/21.0.0/support-v4-21.0.0.pom ...
@@ -490,6 +497,9 @@ after_script:
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
   # Check http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
+  # Check http://developer.android.com/tools/devices/emulator.html#sdcard
+  # Check http://developer.android.com/tools/help/mksdcard.html
+  # Check http://developer.android.com/tools/help/emulator.html#startup-options
   #
   # Error: Avoid non-default constructors in fragments: use a default constructor
   # plus Fragment#setArguments(Bundle) instead [ValidFragment]
