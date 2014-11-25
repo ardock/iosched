@@ -205,7 +205,7 @@ before_install:
   # TODO: Extend to other APIs
   - 'export AVD_TARGET_DIR=`[[ $AVD_TARGET = "Google Inc.:Google APIs:21" ]] && echo "android-21" || echo $AVD_TARGET`'
   # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  - 'export AVD_NAME="${AVD_TARGET}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
+  - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
   - 'mkdir avds; export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
 
@@ -332,7 +332,7 @@ before_script:
   - echo 'SCRIPT'
 
 script:
-  - echo '$DISABLE_PREDEX'
+  - echo "PRE-DEXING $DISABLE_PREDEX"
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
   # If $DISABLE_PREDEX option is added on gradlew, pre-dexing is disabled on build server.
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.

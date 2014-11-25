@@ -92,6 +92,6 @@ dependencies {
 // See https://code.google.com/p/android/issues/detail?id=76249
 project.gradle.taskGraph.whenReady {
     connectedAndroidTest {
-        ignoreFailures = true
+        ignoreFailures = false
     }
 }
