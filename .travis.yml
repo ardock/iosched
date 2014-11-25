@@ -304,8 +304,10 @@ install:
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies
-  - ./gradlew -q :android:dependencies
-  - ./gradlew -q :android:dependencyInsight --dependency guava --configuration compile
+  - ./gradlew -q :${MOBI_MOD_NAME}:dependencies
+  - ./gradlew -q :${MOBI_MOD_NAME}:dependencyInsight --dependency guava --configuration compile
+  - ./gradlew -q :${WEAR_MOD_NAME}:dependencies
+  - ./gradlew -q :${WEAR_MOD_NAME}:dependencyInsight --dependency support-v4 --configuration compile
 
   - echo 'CLEAN PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
