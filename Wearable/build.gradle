@@ -26,6 +26,7 @@ repositories {
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
     buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
     defaultConfig {
         applicationId rootProject.ext.androidDefaultApplicationId
         minSdkVersion 20
@@ -33,7 +34,6 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     signingConfigs {
         debug {
             storeFile file(rootProject.ext.androidDebugStoreFile)
@@ -65,26 +65,9 @@ android {
 }
 
 dependencies {
-    compile ('com.android.support:support-annotations:21.0.2') {
-        force = true
-    }
-    compile ('com.android.support:support-v4:21.0.2') {
-        force = true
-    }
-    compile('com.android.support:support-v13:21.0.0') {
-        // Conflicting module version com.android.support:support-v4:21.0.0 on v.21.0.0.
-        exclude (group: 'com.android.support', module: 'support-v4')
-    }
-    compile(group: 'com.google.android.support', name: 'wearable', version: '1.0.0') {
-        // Conflicting module version com.android.support:support-v4:20.0.0 on v.1.0.0.
-        exclude (group: 'com.android.support', module: 'support-v4')
-        // Conflicting module version com.android.support:support-v13:20.0.0 on v.1.0.0.
-        exclude (group: 'com.android.support', module: 'support-v13')
-    }
-    compile(group: 'com.google.android.gms', name: 'play-services-wearable', version: '6.1.71') {
-        // Conflicting module version com.android.support:support-v4:20.0.0 on v.6.1.71.
-        exclude (group: 'com.android.support', module: 'support-v4')
-    }
+    compile 'com.android.support:support-v13:21.+'
+    compile 'com.google.android.support:wearable:+'
+    compile 'com.google.android.gms:play-services-wearable:6.1.+'
 }
 
 // TODO: Add tests and delete this. Valorate to add extra time for tests.
