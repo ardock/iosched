@@ -53,8 +53,8 @@ jdk:
   # - openjdk7
   - oraclejdk7
 
-android:
-  components:
+# android:
+  # components:
     # Check your project requirements and the components included by default on Travis-ci VM images.
     # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
     # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
@@ -90,7 +90,7 @@ android:
     # Comment the lines below if the latest Google apis addons are included or not required.
     # - addon-google_apis_x86-google-19
     # - addon-google_apis-google-19
-    - addon-google_apis-google-21
+    # - addon-google_apis-google-21
 
     # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
     # Comment the lines below if the latest images are included or you don't need to run emulator/s.
@@ -98,10 +98,10 @@ android:
     # - sys-img-armeabi-v7a-android-wear-20
     # - sys-img-x86-android-21
     # - sys-img-x86_64-android-21
-    - sys-img-armeabi-v7a-addon-google_apis-google-21
+    # - sys-img-armeabi-v7a-addon-google_apis-google-21
 
 
-  licenses:
+  # licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
@@ -109,7 +109,7 @@ android:
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    - '.+'
+    # - '.+'
 
 notifications:
   email: false
@@ -144,7 +144,7 @@ env:
     # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test google_apis allowing failure (see below).
-    - AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
 
     # TODO: Work in progress... Test android-wear allowing failure (see below).
     - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
@@ -164,7 +164,7 @@ matrix:
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET="Google Inc.:Google APIs:21"  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 
@@ -180,8 +180,8 @@ before_install:
   # - ulimit -a
   - service --status-all
   - sudo service postgresql stop || true
-  # - sudo service mysql stop || true
-  # - sudo service memcached stop || true
+  - sudo service mysql stop || true
+  - sudo service memcached stop || true
   - sudo service elasticsearch stop || true
   - sudo service mongodb stop || true
   - sudo service rsync stop || true
@@ -230,6 +230,8 @@ before_install:
   - echo yes | android update sdk -a -u -t $BUILD_TOOLS || true
   - echo yes | android update sdk -u -t extra-android-m2repository,extra-android-support || true
   - echo yes | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
+  - echo yes | android update sdk -u -t addon-google_apis-google-21 || true
+  - echo yes | android update sdk -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true
 
   - echo 'AFTER UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components. Check remaining entries.
@@ -372,8 +374,8 @@ after_failure:
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
-
+  - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
+  - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
 
 after_success:
   - echo 'SUCCESS'
@@ -408,8 +410,8 @@ after_script:
   # The command './gradlew build connectedCheck' exited with 137.
   # @-- 141.5 --@ Reload job or optimize build. killed by Travis. Check concurrent jobs, emulator...
   #
-  # Failed to find Build Tools revision 21.0.2 (vm updating soon, and rev. 2.1 is published, update)
-  # @-- 142.1 --@ Add build-tools-21.0.2 or better build-tools-21.1.1 to android: components:
+  # Failed to find Build Tools revision 21.1.1
+  # @-- 142.1 --@ Add build-tools-21.1.1 to android: components:
   #
   # com.android.ddmlib.InstallException. connectedAndroidTest run tests failed, (exceed timeout).
   # @-- Issue: https://code.google.com/p/android/issues/detail?id=69735  (now optimize/reload job).
@@ -471,10 +473,10 @@ after_script:
   # @-- 254.5 --@ Travis CI killed the job. Reload job or try don't update it if is not required.
   #
   # Execution failed for preDexDebug. java.lang.OutOfMemoryError: unable to create new native thread
-  # @-- 268.4 --@ Stop unused services like data stores before run the script, etc.
+  # @-- 268.4 --@ Free resources, stop unused services like data stores before run the script, etc.
   #
   # WARNING [Project: :android] WARNING: runProguard is deprecated (and will soon stop working);
-  # change to 'minifyEnabled' instead
+  # @-- DONE --@ change to 'minifyEnabled' instead
   #
   #
   # @--@--@--@--@
