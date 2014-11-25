@@ -280,7 +280,7 @@ install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
-  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t $AVD_TARGET -b $AVD_ABI -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t ${AVD_TARGET} -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'echo "${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
@@ -329,10 +329,10 @@ before_script:
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
+  - echo "PRE-DEXING ${DISABLE_PREDEX}"
   - echo 'SCRIPT'
 
 script:
-  - echo "PRE-DEXING $DISABLE_PREDEX"
   # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
   # If $DISABLE_PREDEX option is added on gradlew, pre-dexing is disabled on build server.
   # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
