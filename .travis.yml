@@ -133,7 +133,7 @@ before_install:
   # - sudo apt-get --yes --force-yes update || true
 
   # TODO: Delete this work around when fixed the issue
-  - cp -R /usr/local/android-sdk ./android-sdk
+  - cp -R -v /usr/local/android-sdk-23.0.2 ./android-sdk
   - ls -Al
   - echo y | /usr/local/android-sdk/android update sdk -u -t tool || true
 
