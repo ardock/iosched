@@ -103,7 +103,7 @@ notifications:
 # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
 before_install:
-  - echo 'FREE RESOURCES'
+  # - echo 'FREE RESOURCES'
   # Stop unused services trying to avoid java.lang.OutOfMemoryError
   # Check issue: http://stackoverflow.com/questions/16789288
   # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
@@ -157,12 +157,12 @@ before_install:
   - echo y | android update sdk -u -t tool || true
   - echo y | android update sdk -u -t platform-tool || true
   - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
-  - echo y | android update sdk -u -t android-20,sys-img-armeabi-v7a-android-wear-20 || true
-  - echo y | android update sdk -u -t android-21,sys-img-armeabi-v7a-android-21 || true
+  - echo y | android update sdk -a -u -t android-20,sys-img-armeabi-v7a-android-wear-20 || true
+  - echo y | android update sdk -a -u -t android-21,sys-img-armeabi-v7a-android-21 || true
   - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
   - echo y | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
-  - echo y | android update sdk -u -t addon-google_apis-google-21 || true
-  - echo y | android update sdk -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true
+  - echo y | android update sdk -a -u -t addon-google_apis-google-21 || true
+  - echo y | android update sdk -a -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true
 
   - echo 'AFTER UPDATE SDK'
   # Comment out the line below to list suggested Android SDK components. Check remaining entries.
@@ -254,7 +254,7 @@ before_script:
   # Comment the lines belows to debug output and redirect it to a file. Custom tags for your app.
   - adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
-  - echo "PRE-DEXING ${DISABLE_PREDEX}"
+  # - echo "PRE-DEXING ${DISABLE_PREDEX}"
   - echo 'SCRIPT'
 
 script:
@@ -290,11 +290,12 @@ after_failure:
   - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
-  - sudo apt-get install -qq lynx
-  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
-  - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
-  - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
+  # TODO: look for preinstalled alternative, Travis CI doesn't allow to  use sudo when we use cache.
+  # - sudo apt-get install -qq lynx
+  # - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
+  # - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
+  # - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
+  # - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
   - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
