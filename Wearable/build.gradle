@@ -69,12 +69,3 @@ dependencies {
     compile 'com.google.android.support:wearable:+'
     compile 'com.google.android.gms:play-services-wearable:6.1.+'
 }
-
-// TODO: Add tests and delete this. Valorate to add extra time for tests.
-// See https://code.google.com/p/android/issues/detail?id=69735
-// See https://code.google.com/p/android/issues/detail?id=76249
-project.gradle.taskGraph.whenReady {
-    connectedAndroidTest {
-        ignoreFailures = false
-    }
-}
