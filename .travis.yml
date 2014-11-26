@@ -57,7 +57,7 @@ env:
     - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
    # - ANDROID_HOME=/usr/local/android-sdk
     - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-    - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${PATH}
+    - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}
     - BUILD_TOOLS=build-tools-21.1.1
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
