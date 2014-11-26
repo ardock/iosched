@@ -61,15 +61,15 @@ env:
   matrix:
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
@@ -260,7 +260,7 @@ script:
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
-  - ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
+  - ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-} --debug
 
   # - echo 'BUILD RELEASE AND TEST'
   # Comment out the line below to prepare the Release project sources (predex wearable, be aware).
@@ -274,7 +274,7 @@ after_failure:
   - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
-  - apt-get install -qq lynx
+  - sudo apt-get install -qq lynx
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
@@ -367,20 +367,6 @@ after_script:
   # @-- Issue: https://code.google.com/p/android/issues/detail?id=69735  (now optimize/reload job).
   # @-- 144.6 --@ Solution: https://android-review.googlesource.com/#/c/112780/ (inc. install time).
   #
-  # problem reading network stats ava.lang.IllegalStateException: problem parsing idx 1
-  # at com.android.internal.net.NetworkStatsFactory.readNetworkStatsDetail(NetworkStatsFactory. 300)
-  # @-- Check limitations: http://developer.android.com/tools/devices/emulator.html#limitations
-  # @-- Check network :http://developer.android.com/tools/devices/emulator.html#emulatornetworking
-  # @-- 180.1 --@ No support for determining network connected state.
-  #
-  # emulator: ERROR: x86 emulation currently requires hardware acceleration!
-  # Please ensure KVM is properly installed and usable.
-  # Enable KVM, cmds after qemu interpreted by it: emulator -avd <avd_name> -qemu -m 512 -enable-kvm
-  # Check config VM Accel on Linux http://developer.android.com/tools/devices/emulator.html#accel-vm
-  # Check Help Ubuntu for KVM configuration: https://help.ubuntu.com/community/KVM/Installation
-  # Check Intel Dev Zone for Android: https://software.intel.com/en-us/android
-  # @-- 200.3 --@  CPU acceleration status: KVM is not installed (/dev/kvm is missing).
-  #
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
   # Check http://stackoverflow.com/questions/11788459/apps-not-running-on-android-emulator-device
@@ -409,8 +395,5 @@ after_script:
   # multiDexEnabled = true on defaultConfig, ProductFlavor, or BuildType, See multiDex samples.
   # Works for minSdkVersion 21+ (native) or <21 (legacy mode, com.android.support:multidex:1.0.0)
   #
-  # Error: Invalid --tag google_apis for the selected target. (and correct components installed)
-  #
-  # See issue: https://code.google.com/p/android/issues/detail?id=78947
-  # Fixed by: https://android-review.googlesource.com/#/c/115390/1
+
 
