@@ -307,12 +307,12 @@ after_script:
 # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
 # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
-# android:
-  # components:
+android:
+  components:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    # - tools
+    - tools
     # - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
@@ -348,7 +348,7 @@ after_script:
     # - sys-img-x86_64-android-21
     # - sys-img-armeabi-v7a-addon-google_apis-google-21
 
-  # licenses:
+  licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
@@ -356,7 +356,7 @@ after_script:
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    # - '.+'
+    - '.+'
 
 
 # If you need validate your Travis CI configuration, you can use the Travis CI validation Web App.
