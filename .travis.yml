@@ -132,6 +132,10 @@ before_install:
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - sudo apt-get --yes --force-yes update || true
 
+  # TODO: Delete this work around when fixed the issue
+  - cp /usr/local/android-sdk/tools/android .
+  - ls -Al
+
   - echo 'BEFORE UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components.
   - android list sdk -e || true
@@ -144,7 +148,7 @@ before_install:
 
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
-  - echo y | android update sdk -u -t tool || true
+  - echo y | ./android update sdk -u -t tool || true
   - echo y | android update sdk -u -t platform-tool || true
   - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
   - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
@@ -308,12 +312,12 @@ after_script:
 # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
 # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
-android:
-  components:
+# android:
+  # components:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    - tools
+    # - tools
     # - platform-tools
 
     # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
@@ -349,7 +353,7 @@ android:
     # - sys-img-x86_64-android-21
     # - sys-img-armeabi-v7a-addon-google_apis-google-21
 
-  licenses:
+  # licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
@@ -357,7 +361,7 @@ android:
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    - '.+'
+    # - '.+'
 
 
 # If you need validate your Travis CI configuration, you can use the Travis CI validation Web App.
