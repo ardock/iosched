@@ -12,13 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# THE BUILD MATRIX
+# ----------------
+# Travis CI will run your tests against a matrix of all possible combinations for all your commits.
+# See The Build Matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
+#
+# If you want to skip a build, add [ci skip] somewhere in the commit message and will be ignored.
+# See Skip a Build: http://docs.travis-ci.com/user/how-to-skip-a-build/
+#
+# If you define language: android, env and jdk can be given as arrays to construct the build matrix.
+# See Building an Android Project (beta): http://docs.travis-ci.com/user/languages/android/
+#
+# If 'jdk:' key is not found, Travis-ci uses one jdk by default but you can use more than one here.
+# See multiples JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
+#
+# If you want to use env variables that are global to the matrix, you can use the global key.
+# See Global Variables: http://docs.travis-ci.com/user/environment-variables/#Global-Variables
+#
+# If ARGS='-PdisablePreDex' is found on a matrix row, pre-dexing is disabled improving performance.
+# See Improve performance on CI builds: http://tools.android.com/tech-docs/new-build-system/tips
+#
+# If you define rows that are allowed to fail, they won't cause your build to be shown as failed.
+# See Allow Fail: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
+#
+# If fast-finishing is true, builds will finish when the only jobs left allow failures or one fails.
+# See Fast Finishing: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
+
+
+
 language: android
 
 jdk:
-  # Check Travis JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
-  # If 'jdk:' section is not found Travis-ci uses one jdk by default. You can select one or more.
-  # If you test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   # - openjdk7
+  # - oraclejdk8
   - oraclejdk7
 
 env:
@@ -29,71 +56,56 @@ env:
     - BUILD_TOOLS=build-tools-21.1.1
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
+
   matrix:
-    # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
-    # For Android projects, env and jdk can be given as arrays to construct a build matrix.
-    # Check the build matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
-
-    # Disable pre-dexing improves performance on CI build servers (see below).
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
-    # TODO: Work in progress... Test x86 and x86_64 ABIs allowing failure (see below).
+    # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
     # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-
-    # TODO: Work in progress... Test google_apis allowing failure (see below).
     - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-
-    # TODO: Work in progress... Test android-wear allowing failure (see below).
     - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
-
 matrix:
-  # Check fast finishing - blog: http://blog.travis-ci.com/2013-11-27-fast-finishing-builds/
-  # Check fast finishing - docs: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
-  # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
-  # fast_finish: true
-
-  # Check allow: http://docs.travis-ci.com/user/build-configuration/#Rows-That-are-Allowed-To-Fail
-  # Allowed until we can set a less restrictive timeout on tests (android-studio 0.9.1 gradle 0.14+)
-  # and we define minimum one test per module, otherwise test is failed since gradle 0.13.2.
-  # TODO: Fix both issues and delete ignoreFailures for connectedAndroidTest on build.gradle files.
-  # TODO: Work in progress... Test tags and abis for x86, x86_64, google_apis and android-wear.
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+  # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
+  # fast_finish: true
 
+notifications:
+  email: false
+
+
+
+# THE BUILD LIFECYCLE
+# -------------------
+# Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
+# Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
+# Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
 
 before_install:
-  # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
-  # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
-  # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
-
   - echo 'FREE RESOURCES'
   # Stop unused services trying to avoid java.lang.OutOfMemoryError
   # Check issue: http://stackoverflow.com/questions/16789288
   # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
-  # - ulimit -a
-  - service --status-all
-  - sudo service postgresql stop || true
-  - sudo service mysql stop || true
-  - sudo service memcached stop || true
-  - sudo service elasticsearch stop || true
-  - sudo service mongodb stop || true
-  - sudo service rsync stop || true
+  - sudo service --status-all
+  - sudo service elasticsearch stop; sudo service mongodb stop; sudo service rsync stop || true
+  - sudo service postgresql stop; sudo service mysql stop; sudo service memcached stop || true
+  - sudo service --status-all
 
   - echo 'EXPORT VARIABLES'
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
@@ -159,7 +171,6 @@ before_install:
   - cat /usr/local/bin/android-update-sdk
   - cat /usr/local/bin/android-wait-for-emulator
 
-
 install:
   # - echo 'SKIP INSTALL STAGE'
   # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
@@ -207,7 +218,6 @@ install:
   - echo 'PREPARE PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
   - ./gradlew compileDebugSources compileDebugTestSources
-
 
 before_script:
   # Use this to prepare your build for testing. You can also define scripts to be run before script.
@@ -259,7 +269,6 @@ script:
   # Comment out the line below to run all device checks on currently connected devices
   - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
-
 after_failure:
   - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
@@ -274,30 +283,28 @@ after_failure:
   - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
 
-
 after_success:
   - echo 'SUCCESS'
-
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
   # Test result is exported to TRAVIS_TEST_RESULT which you can use in commands run in after_script.
   # Standard Unix exit code of '0' means the build passed; everything else is treated as failure.
-  - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
+  # - 'if [[ "${TRAVIS_TEST_RESULT}" == "0" ]]; then echo "BUILD SUCCESSFUL"; else echo "ERROR"; fi'
   # Uncomment the line below to kill adb and show logcat output.
   - echo " LOGCAT "; echo "========"; cat logcat.log; pkill -KILL -f adb
 
 
-notifications:
-  email: true
 
-android:
-  components:
-    - doc-21
-    # Check your project requirements and the components included by default on Travis-ci VM images.
-    # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
-    # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
+# THE SETUP STAGE
+# ---------------
+# If you comment out this section, Travis CI will install for you the components you define here.
+# Check your project requirements and the components included by default on Travis-ci VM images.
+# Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
+# Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
 
+# android:
+  # components:
     # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
     # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
     # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
@@ -337,8 +344,7 @@ android:
     # - sys-img-x86_64-android-21
     # - sys-img-armeabi-v7a-addon-google_apis-google-21
 
-
-  licenses:
+  # licenses:
     # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
     # By default Travis will accept all the licenses, but it's also possible to define a white list:
     # White list current android-sdk-license revision.
@@ -346,8 +352,11 @@ android:
     # White list all android-sdk-license revisions.
     # - 'android-sdk-license-.+'
     # White list all the licenses.
-    #- '.+'
+    # - '.+'
 
+
+# If you need validate your Travis CI configuration, you can use the Travis CI validation Web App.
+# See Travis WebLint: http://lint.travis-ci.org/
 
   # @--@--@--@--@
   # @-- TODO: --@
