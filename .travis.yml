@@ -133,8 +133,9 @@ before_install:
   # - sudo apt-get --yes --force-yes update || true
 
   # TODO: Delete this work around when fixed the issue
-  - cp /usr/local/android-sdk/tools/android .
+  - cp /usr/local/android-sdk/tools/android ./android-old
   - ls -Al
+  - echo y | ./android-old update sdk -u -t tool || true
 
   - echo 'BEFORE UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components.
@@ -148,7 +149,7 @@ before_install:
 
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
-  - echo y | ./android update sdk -u -t tool || true
+  - echo y | android update sdk -u -t tool || true
   - echo y | android update sdk -u -t platform-tool || true
   - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
   - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
