@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+
 # THE BUILD MATRIX
 # ----------------
 # Travis CI will run your tests against a matrix of all possible combinations for all your commits.
@@ -27,7 +28,7 @@
 # If 'jdk:' key is not found, Travis-ci uses one jdk by default but you can use more than one here.
 # See multiples JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
 #
-# If you want to use env variables that are global to the matrix, you can use the global key.
+# If you want to add env variables that are global to the matrix, you can use the global key.
 # See Global Variables: http://docs.travis-ci.com/user/environment-variables/#Global-Variables
 #
 # If ARGS='-PdisablePreDex' is found on a matrix row, pre-dexing is disabled improving performance.
@@ -102,10 +103,10 @@ before_install:
   # Stop unused services trying to avoid java.lang.OutOfMemoryError
   # Check issue: http://stackoverflow.com/questions/16789288
   # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
-  - sudo service --status-all
-  - sudo service elasticsearch stop; sudo service mongodb stop; sudo service rsync stop || true
-  - sudo service postgresql stop; sudo service mysql stop; sudo service memcached stop || true
-  - sudo service --status-all
+  # - sudo service --status-all
+  # - sudo service elasticsearch stop; sudo service mongodb stop; sudo service rsync stop || true
+  # - sudo service postgresql stop; sudo service mysql stop; sudo service memcached stop || true
+  # - sudo service --status-all
 
   - echo 'EXPORT VARIABLES'
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
@@ -228,7 +229,7 @@ before_script:
   # Check key events reference: http://developer.android.com/reference/android/view/KeyEvent.html
   # TODO: Improve wait_for_emulator.sh script. Support more than one emulator simultaneously.
   # Comment out the lines below to execute the script and send input key constant 'Menu key'.
-  - sudo chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
+  - chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
   - echo 'LOGCAT'
@@ -273,7 +274,7 @@ after_failure:
   - echo 'FAILURE'
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
-  - sudo apt-get install -qq lynx
+  - apt-get install -qq lynx
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
