@@ -44,6 +44,9 @@
 
 language: android
 
+# TODO: test cache option See http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+sudo: false
+
 jdk:
   # - openjdk7
   # - oraclejdk8
