@@ -155,14 +155,10 @@ before_install:
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
   - echo y | android update sdk -u -t tool || true
-  - echo y | android update sdk -u -t platform || true
-
-  # TODO: Delete after install android-20 (or install 1,2,45 after tools, or 1,2,3,19,20 directly).
-  - echo y | android update sdk -u -t -n platform || true
-  - echo y | android update sdk -a -u -t -n platform || true
-
   - echo y | android update sdk -u -t platform-tool || true
   - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
+  - echo y | android update sdk -u -t android-20,sys-img-armeabi-v7a-android-wear-20 || true
+  - echo y | android update sdk -u -t android-21,sys-img-armeabi-v7a-android-21 || true
   - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
   - echo y | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
   - echo y | android update sdk -u -t addon-google_apis-google-21 || true
