@@ -120,6 +120,7 @@ env:
     - BUILD_TOOLS=build-tools-21.1.1
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -193,7 +194,8 @@ before_install:
   # Comment out the line below to export TERM=dumb for fix gradle output style (Added by default...)
   # - export TERM=dumb
   # Comment out the lines below to custom gradle user home and export it to path.
-  - export GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
+  # - export GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
+  - echo $GRADLE_USER_HOME
   - export PATH=${GRADLE_USER_HOME}/bin/:${PATH}
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
@@ -283,11 +285,11 @@ install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
-  - 'echo no | android create avd --force -n ${AVD_NAME:-test} -t ${AVD_TARGET} -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'echo "${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   # Check emulator: http://developer.android.com/tools/help/emulator.html#startup-options
-  - 'emulator -avd ${AVD_NAME:-test} -no-skin -no-audio -no-window &'
+  - 'emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
 
   - echo 'WAIT FOR DEVICE'
   # Check adb commands: http://developer.android.com/tools/help/adb.html
@@ -382,6 +384,7 @@ after_failure:
   - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
+
 
 after_success:
   - echo 'SUCCESS'
