@@ -18,7 +18,7 @@
 # Travis CI will run your tests against a matrix of all possible combinations for all your commits.
 # See The Build Matrix: http://docs.travis-ci.com/user/build-configuration/#The-Build-Matrix
 #
-# If you want to skip a build, add [ci skip] somewhere in the commit message and will be ignored.
+# If you want to skip a build, add [skip ci] somewhere in the commit message and will be ignored.
 # See Skip a Build: http://docs.travis-ci.com/user/how-to-skip-a-build/
 #
 # If you define language: android, env and jdk can be given as arrays to construct the build matrix.
