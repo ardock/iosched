@@ -12,115 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# This is a third party contribution without warranties and originally forked from Google IOSched.
-#
-#     https://github.com/google/iosched
-#
-# Google I/O is a developer conference held each year with two days of deep technical content.
-# The Google I/O app is an open source project updated with material design and the Android 5.0 SDK.
-# Their Android app supports devices running Android 4.0+ and contains an Android Wear integration.
-# It is also a great design sample optimized for phones and tablets of all shapes and sizes.
-# You can customize IOSched for your own conference or app. Further information can be found here.
-#
-#     https://github.com/google/iosched/blob/master/doc/CUSTOM.md
-#
-# Fork it and contribute!. If you find this file, contributions are also highly appreciated!.
-
-
-# This is a configuration file for Travis CI specific to build Android SDK projects (Beta).
-#
-#     http://docs.travis-ci.com/user/languages/android/
-#
-# You have unlimited Build Minutes, Repositories and Collaborators but Concurrency can be limited.
-# Reload the build when a background job (e.g. emulator) is killed or you see the error code 137.
-# Avoid concurrency if this happens often or try to optimize your build and the resources usage.
-# Travis-ci offers fair use for open source projects by free. They also offer other plans. Check it!
-#
-#     https://travis-ci.com/plans
-#
-# It's full commented. You can delete the extra comments or use only the parts that consider useful.
-# .travis.yml can be very minimalistic but I added a lot of customization in it for new users as me.
-# I'm not familiar with Yaml/Bash/Ruby syntax or fluent in English, so be careful and improve it!
-
-
 language: android
 
 jdk:
   # Check Travis JDKs: http://docs.travis-ci.com/user/languages/java/#Testing-Against-Multiple-JDKs
-  # If 'jdk:' section is not found, Travis-ci use one jdk by default. You can comment out 'jdk:' and
-  # test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
+  # If 'jdk:' section is not found Travis-ci uses one jdk by default. You can select one or more.
+  # If you test against more than one JDK: 'jdk' is combined with 'env' to construct a build matrix.
   # - openjdk7
   - oraclejdk7
 
-# android:
-  # components:
-    # Check your project requirements and the components included by default on Travis-ci VM images.
-    # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
-    # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
-
-    # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
-    # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
-    # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
-    # - tools
-    # - platform-tools
-
-    # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
-    # Comment the lines below if the BuildTools required for building your project are included.
-    # - build-tools-20.0.0
-    # - build-tools-21.0.2
-    # - build-tools-21.1.1
-
-    # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
-    # Comment the lines below if the SDK versions used to compile your project are already included.
-    # - android-20
-    # - android-21
-
-    # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
-    # Comment the lines below if the latest Android extras are included or not required.
-    # - extra-android-m2repository
-    # - extra-android-support
-
-    # Check more extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
-    # Comment the lines below if the latest Google extras are included or not required.
-    # - extra-google-m2repository
-    # - extra-google-google_play_services
-
-    # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
-    # Comment the lines below if the latest Google apis addons are included or not required.
-    # - addon-google_apis_x86-google-19
-    # - addon-google_apis-google-19
-    # - addon-google_apis-google-21
-
-    # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
-    # Comment the lines below if the latest images are included or you don't need to run emulator/s.
-    # - sys-img-armeabi-v7a-android-21
-    # - sys-img-armeabi-v7a-android-wear-20
-    # - sys-img-x86-android-21
-    # - sys-img-x86_64-android-21
-    # - sys-img-armeabi-v7a-addon-google_apis-google-21
-
-
-  # licenses:
-    # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
-    # By default Travis will accept all the licenses, but it's also possible to define a white list:
-    # White list current android-sdk-license revision.
-    # - 'android-sdk-license-5be876d5'
-    # White list all android-sdk-license revisions.
-    # - 'android-sdk-license-.+'
-    # White list all the licenses.
-    # - '.+'
-
-notifications:
-  email: false
-
 env:
   global:
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
     - ANDROID_HOME=/usr/local/android-sdk
+    - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${PATH}
     - BUILD_TOOLS=build-tools-21.1.1
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
-    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
   matrix:
     # Travis CI will run your tests against a matrix of all possible combinations (including 'jdk').
     # For Android projects, env and jdk can be given as arrays to construct a build matrix.
@@ -191,17 +99,8 @@ before_install:
   # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
   # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
   # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
-  # Comment out the line below to export TERM=dumb for fix gradle output style (Added by default...)
-  # - export TERM=dumb
-  # Comment out the lines below to custom gradle user home and export it to path.
-  # - export GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
-  - echo $GRADLE_USER_HOME
-  - export PATH=${GRADLE_USER_HOME}/bin/:${PATH}
   # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
-  # Comment out the lines below to custom android sdk home and export it to path.
-  # - export ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-  - export PATH=${ANDROID_HOME}/:${PATH}
   # Comment out the line below to custom the app module name. Required to show logs of your app.
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
   # TODO: Extend to other APIs
@@ -221,40 +120,30 @@ before_install:
   - android list sdk -e || true
   # Comment out the lines below to list available Android SDK components.
   - android list sdk -a -e || true
-  # Comment out the lines below to list avalaible AVDs, Android targets and device definitions.
+  # Comment out the lines below to list available AVDs, Android targets and device definitions.
   - android list avd -c || true
   - android list target -c || true
   - android list device -c || true
 
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
-  - echo yes | android update sdk -u -t tool || true
-  - echo yes | android update sdk -u -t platform-tool || true
-  - echo yes | android update sdk -a -u -t $BUILD_TOOLS || true
-  - echo yes | android update sdk -u -t extra-android-m2repository,extra-android-support || true
-  - echo yes | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
-  - echo yes | android update sdk -u -t addon-google_apis-google-21 || true
-  - echo yes | android update sdk -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true
+  - echo y | android update sdk -u -t tool || true
+  - echo y | android update sdk -u -t platform-tool || true
+  - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
+  - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
+  - echo y | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true
+  - echo y | android update sdk -u -t addon-google_apis-google-21 || true
+  - echo y | android update sdk -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true
 
   - echo 'AFTER UPDATE SDK'
-  # Comment out the lines below to list suggested Android SDK components. Check remaining entries.
+  # Comment out the line below to list suggested Android SDK components. Check remaining entries.
   - android list sdk -e || true
-  # Comment out the lines below to list available Android SDK components. Check new entries.
+  # Comment out the line below to list available Android SDK components. Check new entries.
   - android list sdk -a -e || true
-  # Comment out the lines below to list available AVDs, Android targets and device definitions.
+  # Comment out the line below to list available AVDs, Android targets and device definitions.
   - android list || true
-  # Comment out the lines below to check suggested components by filter (no doc, sample or source)
+  # Comment out the line below to check suggested components by filter (exclude doc, sample, source)
   - android update sdk -u -n -t platform,system-image,add-on,extra || true
-  - android update sdk -u -n -t platform || true
-  - android update sdk -u -n -t system-image || true
-  - android update sdk -u -n -t add-on || true
-  - android update sdk -u -n -t extra || true
-  # Comment out the lines below to check all components available by filter (including installed).
-  - android update sdk -a -u -n -t platform,system-image,add-on,extra || true
-  - android update sdk -a -u -n -t platform || true
-  - android update sdk -a -u -n -t system-image || true
-  - android update sdk -a -u -n -t add-on || true
-  - android update sdk -a -u -n -t extra || true
 
   - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
@@ -399,6 +288,66 @@ after_script:
   - echo " LOGCAT "; echo "========"; cat logcat.log; pkill -KILL -f adb
 
 
+notifications:
+  email: true
+
+android:
+  components:
+    - doc-21
+    # Check your project requirements and the components included by default on Travis-ci VM images.
+    # Check required: https://github.com/google/iosched/blob/master/doc/BUILDING.md
+    # Check defaults: http://docs.travis-ci.com/user/languages/android/#Pre-installed-components
+
+    # Check Android SDK tools: http://developer.android.com/tools/sdk/tools-notes.html
+    # Check Android SDK Platform-tools: http://developer.android.com/tools/revisions/platforms.html
+    # Comment the lines below if the latest revisions of Android SDK Tools are included by default.
+    # - tools
+    # - platform-tools
+
+    # Check BuildTools: http://developer.android.com/tools/revisions/build-tools.html
+    # Comment the lines below if the BuildTools required for building your project are included.
+    # - build-tools-21.1.1
+
+    # Check APIs: http://developer.android.com/guide/topics/manifest/uses-sdk-element.html#ApiLevels
+    # Comment the lines below if the SDK versions used to compile your project are already included.
+    # - android-20
+    # - android-21
+
+    # Check extras: http://developer.android.com/sdk/installing/adding-packages.html#GetSupportLib
+    # Comment the lines below if the latest Android extras are included or not required.
+    # - extra-android-m2repository
+    # - extra-android-support
+
+    # Check more extras: http://developer.android.com/sdk/installing/adding-packages.html#GetGoogle
+    # Comment the lines below if the latest Google extras are included or not required.
+    # - extra-google-m2repository
+    # - extra-google-google_play_services
+
+    # Check possible addons, you can use the commandline: android list sdk --no-ui --all --extended
+    # Comment the lines below if the latest Google apis addons are included or not required.
+    # - addon-google_apis_x86-google-19
+    # - addon-google_apis-google-19
+    # - addon-google_apis-google-21
+
+    # Check get tools: http://developer.android.com/sdk/installing/adding-packages.html#GetTools
+    # Comment the lines below if the latest images are included or you don't need to run emulator/s.
+    # - sys-img-armeabi-v7a-android-21
+    # - sys-img-armeabi-v7a-android-wear-20
+    # - sys-img-x86-android-21
+    # - sys-img-x86_64-android-21
+    # - sys-img-armeabi-v7a-addon-google_apis-google-21
+
+
+  licenses:
+    # Check licenses: http://docs.travis-ci.com/user/languages/android/#Dealing-with-Licenses
+    # By default Travis will accept all the licenses, but it's also possible to define a white list:
+    # White list current android-sdk-license revision.
+    # - 'android-sdk-license-5be876d5'
+    # White list all android-sdk-license revisions.
+    # - 'android-sdk-license-.+'
+    # White list all the licenses.
+    #- '.+'
+
 
   # @--@--@--@--@
   # @-- TODO: --@
@@ -421,13 +370,6 @@ after_script:
   # Check Help Ubuntu for KVM configuration: https://help.ubuntu.com/community/KVM/Installation
   # Check Intel Dev Zone for Android: https://software.intel.com/en-us/android
   # @-- 200.3 --@  CPU acceleration status: KVM is not installed (/dev/kvm is missing).
-  #
-  # Error Code: 127 com.android.ide.common.internal.LoggedErrorException :android:preDexDebug
-  # @-- 135.5 --@ Reload job can solve the issue for a job but better optimize dependencies.
-  # @-- 179.6 --@ Gradle Dependencies. Exclude unused or conflicting transitive dependencies.
-  # /usr/local/android-sdk/build-tools/21.1.1/dx --dex --output
-  #	/home/travis/build/.../iosched/android/build/intermediates/dex/debug --input-list=
-  # /home/travis/build/.../iosched/android/build/intermediates/tmp/dex/debug/libraryList.txt
   #
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
