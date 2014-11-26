@@ -132,10 +132,15 @@ before_install:
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - sudo apt-get --yes --force-yes update || true
 
-  # TODO: Delete this work around when fixed the issue
+  # TODO: Delete this work around after fixed the issue about SDK location and the permissions.
+  # Problem: Preinstalled SDK v.23.0.2 on /usr/local... Sudo not allowed by Travis CI using cache.
+  # We need update tools to v.23.0.5 and so we need to use tools/android to update his own folder.
+  # tools/android update try to move his own folder to a tmp folder without permissions and fails.
+  # One solution is to copy the SDK to a /home... folder so we have the required permissions.
+  # And we don't need reinstall already downloaded components as android platforms 10,15..19.
+  # Really I didn't do it before for it. Propose to Travis CI to move it to user home by default.
+  # See https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb#L6
   - cp -R /usr/local/android-sdk-23.0.2 ./android-sdk
-  - ls -Al
-  - echo y | /usr/local/android-sdk/android update sdk -u -t tool || true
 
   - echo 'BEFORE UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components.
@@ -150,6 +155,12 @@ before_install:
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
   - echo y | android update sdk -u -t tool || true
+  - echo y | android update sdk -u -t platform || true
+
+  # TODO: Delete after install android-20 (or install 1,2,45 after tools, or 1,2,3,19,20 directly).
+  - echo y | android update sdk -u -t -n platform || true
+  - echo y | android update sdk -a -u -t -n platform || true
+
   - echo y | android update sdk -u -t platform-tool || true
   - echo y | android update sdk -a -u -t $BUILD_TOOLS || true
   - echo y | android update sdk -u -t extra-android-m2repository,extra-android-support || true
