@@ -133,7 +133,7 @@ before_install:
   # - sudo apt-get --yes --force-yes update || true
 
   # TODO: Delete this work around when fixed the issue
-  - cp /usr/local/android-sdk/tools/android ./android-old --link
+  - cp --link /usr/local/android-sdk/tools/android ./android-old
   - ls -Al
   - echo y | ./android-old update sdk -u -t tool || true
 
