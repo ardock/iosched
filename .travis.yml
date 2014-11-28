@@ -51,8 +51,8 @@ cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
+    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
+    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
 
 jdk:
   # - openjdk7
@@ -147,7 +147,12 @@ before_install:
   # And we don't need reinstall already downloaded components as android platforms 10,15..19.
   # Really I didn't do it before for it. Propose to Travis CI to move it to user home by default.
   # See https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb#L6
-  - echo $HOME; echo $CASHER_DIR; ls $CASHER_DIR -Al; pwd; ls /usr/local/android-sdk-23.0.2; ls ./android-sdk; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME || true
+  - ls ${TRAVIS_BUILD_DIR}/gradle/caches/ -AL
+  - ls ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/ -AL
+  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al
+  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al
+  - rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras
+  - pwd; ls /usr/local/android-sdk-23.0.2 -Al; ls ./android-sdk -Al; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME || true
   - echo ${TRAVIS_BUILD_DIR}; cp -R /usr/local/android-sdk-23.0.2 ${TRAVIS_BUILD_DIR}/android-sdk
 
   - echo 'BEFORE UPDATE SDK'
