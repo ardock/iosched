@@ -49,10 +49,10 @@ sudo: false
 
 cache:
   directories:
-    # - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
-    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
 
 jdk:
   # - openjdk7
