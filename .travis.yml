@@ -52,6 +52,7 @@ jdk:
   # - oraclejdk8
   - oraclejdk7
 
+
 env:
   global:
     - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
