@@ -152,7 +152,7 @@ before_install:
   - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al || true
   - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al || true
   - rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras || echo "Error removing cache..."
-  - pwd; ls /usr/local/android-sdk-23.0.2 -Al; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al; || true
+  - pwd ; ls /usr/local/android-sdk-23.0.2 -Al ; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true
   - cp -R /usr/local/android-sdk-23.0.2 ${TRAVIS_BUILD_DIR}/android-sdk || echo "Error copying files..."
 
   - echo 'BEFORE UPDATE SDK'
@@ -216,7 +216,7 @@ install:
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
 
-  - pwd; ls /usr/local/android-sdk-23.0.2 -Al; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al; || true
+  - pwd ; ls /usr/local/android-sdk-23.0.2 -Al ; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true
 
   - 'echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
