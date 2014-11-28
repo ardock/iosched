@@ -47,10 +47,10 @@ language: android
 # TODO: test cache option See http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
 
-# cache:
-  # directories:
+cache:
+  directories:
     # - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    # - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
     # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
     # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
 
@@ -77,24 +77,24 @@ env:
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
     # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
   # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
   # fast_finish: true
 
@@ -147,7 +147,8 @@ before_install:
   # And we don't need reinstall already downloaded components as android platforms 10,15..19.
   # Really I didn't do it before for it. Propose to Travis CI to move it to user home by default.
   # See https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb#L6
-  - cp -R /usr/local/android-sdk-23.0.2 ./android-sdk
+  - echo $HOME; echo $CASHER_DIR; ls $CASHER_DIR -Al; pwd; ls /usr/local/android-sdk-23.0.2; ls ./android-sdk; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME || true
+  - echo ${TRAVIS_BUILD_DIR}; cp -R /usr/local/android-sdk-23.0.2 ${TRAVIS_BUILD_DIR}/android-sdk
 
   - echo 'BEFORE UPDATE SDK'
   # Comment out the lines below to list suggested Android SDK components.
@@ -209,6 +210,9 @@ install:
   # Check manage avds: http://developer.android.com/tools/devices/managing-avds-cmdline.html
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
+
+  - echo $HOME; echo $CASHER_DIR; ls $CASHER_DIR -Al; pwd; ls /usr/local/android-sdk-23.0.2; ls ./android-sdk ; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME  || true
+
   - 'echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
   - 'echo "${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
