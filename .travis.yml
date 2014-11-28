@@ -48,6 +48,7 @@ language: android
 sudo: false
 
 cache:
+  - apt
   directories:
     - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
@@ -56,13 +57,11 @@ cache:
 
 jdk:
   # - openjdk7
-  # - oraclejdk8
   - oraclejdk7
 
 env:
   global:
     - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
-   # - ANDROID_HOME=/usr/local/android-sdk
     - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}
     - BUILD_TOOLS=build-tools-21.1.1
@@ -108,46 +107,47 @@ notifications:
 # Travis CI uses virtual machine snapshotting to make sure no state is left between builds.
 # Check Travis build lifecycle http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
 # Check http://docs.travis-ci.com/user/customizing-the-build/#Customizing-the-Installation-Step
+#
+# Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
+# If $DISABLE_PREDEX option is added on gradlew, pre-dexing is disabled on build server.
+# Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
+# http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
+#
+# Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
+# Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
+# Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
 
 before_install:
+  # - echo 'DEFAULT SCRIPTS'
+  # Comment out the lines below to check default android scripts and PATH
+  # - echo "$PATH"
+  # - ls /usr/local/bin -Al
+  # - cat /usr/local/bin/android-accept-licenses
+  # - cat /usr/local/bin/android-update-sdk
+  # - cat /usr/local/bin/android-wait-for-emulator
+
   # - echo 'FREE RESOURCES'
-  # Stop unused services trying to avoid java.lang.OutOfMemoryError
-  # Check issue: http://stackoverflow.com/questions/16789288
-  # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
-  # - sudo service --status-all
   # - sudo service elasticsearch stop; sudo service mongodb stop; sudo service rsync stop || true
   # - sudo service postgresql stop; sudo service mysql stop; sudo service memcached stop || true
   # - sudo service --status-all
 
   - echo 'EXPORT VARIABLES'
-  # Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
-  # Check bash syntax: http://www.gnu.org/software/bash/manual/bashref.html#Lists
-  # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
-  # Comment out the line below to add Disable Pre-dexing option to build matrix and gradle commands.
-  - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
-  # Comment out the line below to custom the app module name. Required to show logs of your app.
+  # Custom the app module name based on type of device: mobile or wearable.
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
-  # TODO: Extend to other APIs
+  # Custom AVD name.
+  - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
+  # Custom the avd path.
+  - 'mkdir avds; export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
+  # Google APIs folder name based on target. TODO: Extend to other APIs
   - export AVD_TARGET_DIR="$AVD_TARGET"
   - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
-  # Comment out the line below to custom AVD name. Defaults to test if not used (:- ads default '').
-  - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
-  # Comment out the line below to custom the avd path. Defaults to avds/test if AVD_NAME is not set.
-  - 'mkdir avds; export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
+  # Add Disable Pre-dexing option to build matrix and gradle commands.
+  - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
 
-  # - echo 'PREPARE DEPENDENCIES'
+  - echo 'PREPARE DEPENDENCIES'
   # Use this to prepare the system to install prerequisites or dependencies e.g. sudo apt-get update
   # - sudo apt-get --yes --force-yes update || true
-
   # TODO: Delete this work around after fixed the issue about SDK location and the permissions.
-  # Problem: Preinstalled SDK v.23.0.2 on /usr/local... Sudo not allowed by Travis CI using cache.
-  # We need update tools to v.23.0.5 and so we need to use tools/android to update his own folder.
-  # tools/android update try to move his own folder to a tmp folder without permissions and fails.
-  # One solution is to copy the SDK to a /home... folder so we have the required permissions.
-  # And we don't need reinstall already downloaded components as android platforms 10,15..19.
-  # Really I didn't do it before for it. Propose to Travis CI to move it to user home by default.
-  # See https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb#L6
-  - ls /home/travis/.m2/repository/ -Al || true
   - ls ${TRAVIS_BUILD_DIR}/gradle/caches/ -Al || true
   - ls ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/ -Al || true
   - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al || true
@@ -162,9 +162,7 @@ before_install:
   # Comment out the lines below to list available Android SDK components.
   - android list sdk -a -e || true
   # Comment out the lines below to list available AVDs, Android targets and device definitions.
-  - android list avd -c || true
-  - android list target -c || true
-  - android list device -c || true
+  - android list avd -c; android list target -c; android list device -c || true
 
   - echo 'UPDATE SDK'
   # Comment out the lines below to update components when a new version is suggested. No --all flag.
@@ -182,32 +180,19 @@ before_install:
   # Comment out the line below to list suggested Android SDK components. Check remaining entries.
   - android list sdk -e || true
   # Comment out the line below to list available Android SDK components. Check new entries.
-  - android list sdk -a -e || true
+  # - android list sdk -a -e || true
   # Comment out the line below to list available AVDs, Android targets and device definitions.
   - android list || true
   # Comment out the line below to check suggested components by filter (exclude doc, sample, source)
-  - android update sdk -u -n -t platform,system-image,add-on,extra || true
+  # - android update sdk -u -n -t platform,system-image,add-on,extra || true
 
-  - echo 'SYSTEM IMAGE PROPERTIES'
+  # - echo 'SYSTEM IMAGE PROPERTIES'
   # Comment out the lines below to show system image properties
-  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}'
-  - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI} -al || true'
-  - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
-
-  - echo 'DEFAULT SCRIPTS'
-  # Comment out the lines below to check default android scripts and PATH
-  - echo "$PATH"
-  # - ls /usr/local/bin -Al
-  - cat /usr/local/bin/android-accept-licenses
-  - cat /usr/local/bin/android-update-sdk
-  - cat /usr/local/bin/android-wait-for-emulator
+  # - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}'
+  # - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI} -al || true'
+  # - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
 
 install:
-  # - echo 'SKIP INSTALL STAGE'
-  # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
-  # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
-  # - true
-
   # - echo 'INSTALL DEPENDENCIES'
   # Otherwise use this to install any prerequisites or dependencies necessary to run your build.
   # - 'if [[ "${AVD_ABI:-}" == *x86* ]]; then sudo apt-get --yes --force-yes install kvm; ls /dev/kvm -al || true ; fi'
@@ -275,11 +260,6 @@ before_script:
   - echo 'SCRIPT'
 
 script:
-  # Added disable pre-dexing option to build matrix. Code checks if ARGS contains '-PdisablePreDex':
-  # If $DISABLE_PREDEX option is added on gradlew, pre-dexing is disabled on build server.
-  # Otherwise pre-dexing is enabled. It's the default option if ARGS or DISABLE_PREDEX is not found.
-  # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
-
   # - echo 'DEFAULT TRAVIS BUILD'
   # By default Travis-ci executes './gradlew build connectedCheck' if no 'script:' section found.
   # Remember to add DISABLE_PREDEX flag always gradle tasks perform predex to avoid dexing errors.
@@ -290,10 +270,10 @@ script:
   # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
   - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
-  - ./gradlew build ${DISABLE_PREDEX:-}
-  # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
+  - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
+
   - ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
 
   # - echo 'BUILD RELEASE AND TEST'
@@ -301,7 +281,9 @@ script:
   # - ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
   # Comment out the line below to assemble this project for Build 'release'
   # - ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
+
   # Comment out the line below to run all device checks on currently connected devices
+  # - ./gradlew build ${DISABLE_PREDEX:-}
   - ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 after_failure:
@@ -309,18 +291,18 @@ after_failure:
   # Check apt configuration: http://docs.travis-ci.com/user/ci-environment/#apt-configuration
   # Comment out the lines below to show log about tests with app name customized on exports section.
   # TODO: look for preinstalled alternative, Travis CI doesn't allow to  use sudo when we use cache.
-  # - sudo apt-get install -qq lynx
-  # - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  # - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
-  # - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
-  # - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
+  - sudo apt-get install -qq lynx || true
+  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
+  - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
+  - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
+  - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   # TODO Fix dependencies and delete this
   - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
 
-after_success:
-  - echo 'SUCCESS'
+# after_success:
+  # - echo 'SUCCESS'
 
 after_script:
   # Check http://docs.travis-ci.com/user/build-configuration/#Build-Lifecycle
@@ -390,17 +372,12 @@ after_script:
     # White list all the licenses.
     # - '.+'
 
-
 # If you need validate your Travis CI configuration, you can use the Travis CI validation Web App.
 # See Travis WebLint: http://lint.travis-ci.org/
 
   # @--@--@--@--@
   # @-- TODO: --@
   # @--@--@--@--@
-  #
-  # com.android.ddmlib.InstallException. connectedAndroidTest run tests failed, (exceed timeout).
-  # @-- Issue: https://code.google.com/p/android/issues/detail?id=69735  (now optimize/reload job).
-  # @-- 144.6 --@ Solution: https://android-review.googlesource.com/#/c/112780/ (inc. install time).
   #
   # W/MediaScanner(  546): Error opening directory '/mnt/sdcard/', skipping: Permission denied.
   # E/ThrottleService(  278): Error reading data file
