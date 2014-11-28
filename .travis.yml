@@ -59,15 +59,12 @@ jdk:
 
 env:
   global:
-    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
-    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}
-    - BUILD_TOOLS=build-tools-21.1.1
-    - MOBI_MOD_NAME=android
-    - WEAR_MOD_NAME=Wearable
+    - BUILD_TOOLS=build-tools-21.1.1 MOBI_MOD_NAME=android WEAR_MOD_NAME=Wearable
 
   matrix:
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS=''
