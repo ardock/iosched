@@ -240,10 +240,10 @@ install:
   # Travis-ci downloads gradle first time is called and it downloads the project dependencies.
   # Comment out the line below to download and show the android project dependencies.
   - ./gradlew androidDependencies
-  - ./gradlew -q :${MOBI_MOD_NAME}:dependencies
-  - ./gradlew -q :${MOBI_MOD_NAME}:dependencyInsight --dependency guava --configuration compile
-  - ./gradlew -q :${WEAR_MOD_NAME}:dependencies
-  - ./gradlew -q :${WEAR_MOD_NAME}:dependencyInsight --dependency support-v4 --configuration compile
+  # - ./gradlew -q :${MOBI_MOD_NAME}:dependencies
+  # - ./gradlew -q :${MOBI_MOD_NAME}:dependencyInsight --dependency guava --configuration compile
+  # - ./gradlew -q :${WEAR_MOD_NAME}:dependencies
+  # - ./gradlew -q :${WEAR_MOD_NAME}:dependencyInsight --dependency support-v4 --configuration compile
 
   - echo 'CLEAN PROJECT'
   # Comment out the line below to prepare the Debug and DebugTest project sources.
@@ -290,6 +290,7 @@ script:
   # - echo 'BUILD DEBUG AND TEST'
   # Comment out the lines below to assemble the Debug build and the Test build for the Debug build
   - ./gradlew assembleDebug ${DISABLE_PREDEX:-}
+  - ./gradlew build ${DISABLE_PREDEX:-}
   # - ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
   # Comment out the line below to install and run tests for Build 'debug' on connected devices
   # - ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
