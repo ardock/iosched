@@ -147,11 +147,11 @@ before_install:
   # And we don't need reinstall already downloaded components as android platforms 10,15..19.
   # Really I didn't do it before for it. Propose to Travis CI to move it to user home by default.
   # See https://github.com/travis-ci/travis-cookbooks/blob/master/ci_environment/android-sdk/attributes/default.rb#L6
-  - ls ${TRAVIS_BUILD_DIR}/gradle/caches/ -AL
-  - ls ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/ -AL
-  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al
-  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al
-  - rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras
+  - ls ${TRAVIS_BUILD_DIR}/gradle/caches/ -AL || true
+  - ls ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/ -AL || true
+  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al || true
+  - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al || true
+  - rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras || echo "Error removing cache..."
   - pwd; ls /usr/local/android-sdk-23.0.2 -Al; ls ./android-sdk -Al; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME || true
   - echo ${TRAVIS_BUILD_DIR}; cp -R /usr/local/android-sdk-23.0.2 ${TRAVIS_BUILD_DIR}/android-sdk
 
@@ -216,7 +216,7 @@ install:
   # Check android create avd: http://developer.android.com/tools/help/android.html
   # TODO: Revise bash syntax used here. Add -d "Android Wear Round".
 
-  - echo $HOME; echo $CASHER_DIR; ls $CASHER_DIR -Al; pwd; ls /usr/local/android-sdk-23.0.2; ls ./android-sdk ; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME  || true
+  - echo $HOME; echo $CASHER_DIR; ls $CASHER_DIR/bin -Al; pwd; ls /usr/local/android-sdk-23.0.2; ls ./android-sdk ; ls ${TRAVIS_BUILD_DIR} -Al; echo $ANDROID_HOME  || true
 
   - 'echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   # TODO: Add support for multiple avds, so we can test mobile and wearable at the same time.
