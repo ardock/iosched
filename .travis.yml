@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-
 # THE BUILD MATRIX
 # ----------------
 # Travis CI will run your tests against a matrix of all possible combinations for all your commits.
@@ -41,14 +40,13 @@
 # See Fast Finishing: http://docs.travis-ci.com/user/build-configuration/#Fast-finishing
 
 
-
 language: android
 
 # TODO: test cache option See http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
 
 cache:
-  - apt
+  apt: true
   directories:
     - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
@@ -114,7 +112,7 @@ notifications:
 # http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.
 #
 # Check CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
-# Check Environment variables http://docs.travis-ci.com/user/ci-environment/#Environment-variables
+# Check Environment variables: http://docs.travis-ci.com/user/ci-environment/#Environment-variables
 # Check Gradle props: http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
 
 before_install:
