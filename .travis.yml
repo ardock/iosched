@@ -23,8 +23,8 @@ cache:
   directories:
     - '${TRAVIS_BUILD_DIR}/gradle/caches/'
     - '${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/'
-    # - '${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/'
-    # - '${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/'
+    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/'
+    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/'
 
 jdk: oraclejdk7
 
@@ -39,18 +39,18 @@ env:
     - WEAR_MOD_NAME=Wearable
 
   matrix:
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
     # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -86,17 +86,11 @@ before_install:
   - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
   - 'ls ${SDK}/extras/android/m2repository/ -Al || true'
   - 'ls ${SDK}/extras/google/m2repository/ -Al || true'
-  - 'rm -R -f ${SDK}/extras || echo "Error removing SDK cached extras..."'
-  - 'pwd ; ls /usr/local/android-sdk-23.0.2 -Al ; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
-  - 'cp -R ${OLD_SDK} ${SDK} || echo "SDK copy failed!"'
-  - 'echo "LIST INSTALLED ADD-ONS"; ls -Als ${SDK}/add-ons'
-  - 'echo "LIST INSTALLED BUILD-TOOLS"; ls -Als ${SDK}/build-tools'
-  - 'echo "LIST INSTALLED EXTRAS"; ls -Als ${SDK}/extras'
-  - 'echo "LIST INSTALLED PLATFORMS"; ls -Als ${SDK}/platforms'
-  - 'echo "LIST INSTALLED PLATFORM-TOOLS"; ls -Als ${SDK}/platform-tools'
-  - 'echo "LIST INSTALLED SYSTEM-IMAGES"; ls -Als ${SDK}/system-images'
-  - 'echo "LIST INSTALLED TOOLS"; ls -Als ${SDK}/tools'
-  - 'echo "LIST TEMP FOLDER"; ls -Als ${SDK}/temp'
+  - 'cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed!"'
+  - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed!"'
+  - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed!"'
+  - 'echo "LIST INSTALLED ANDROID EXTRAS"; ls -Als ${OLD_SDK}/extras/android'
+  - 'echo "LIST INSTALLED GOOGLE EXTRAS"; ls -Als ${OLDSDK}/extras/google'
 
   - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
   - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
