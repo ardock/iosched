@@ -29,23 +29,23 @@ jdk: oraclejdk7
 
 env:
   global:
-    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-    - PATH=${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}
+    - GRADLE_USER_HOME="${TRAVIS_BUILD_DIR}/gradle" ANDROID_HOME="${TRAVIS_BUILD_DIR}/android-sdk"
+    - PATH="${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}"
     - BUILD_TOOLS=build-tools-21.1.1 MOBI_MOD_NAME=android WEAR_MOD_NAME=Wearable
 
   matrix:
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
 
     # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
     # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -67,26 +67,12 @@ notifications:
 
 
 before_install:
-  # - echo 'DEFAULT SCRIPTS'; echo "$PATH"; ls /usr/local/bin -Al
-  # - cat /usr/local/bin/android-accept-licenses
-  # - cat /usr/local/bin/android-update-sdk
-  # - cat /usr/local/bin/android-wait-for-emulator
-
-  # - echo 'FREE RESOURCES', sudo service --status-all
-  # - sudo service elasticsearch stop; sudo service mongodb stop; sudo service rsync stop || true
-  # - sudo service postgresql stop; sudo service mysql stop; sudo service memcached stop || true
-
-  - echo 'EXPORT ENV VARIABLES'
-  # Custom the app module name based on type of device: mobile or wearable.
+  - 'echo "EXPORT ENV VARIABLES"'
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
-  # Custom AVD name.
-  - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
-  # Custom the avd path.
-  - 'mkdir avds; export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; echo "$AVD_PATH"'
-  # Google APIs folder name based on target. TODO: Extend to other APIs
-  - export AVD_TARGET_DIR="$AVD_TARGET"
+  - 'export AVD_TARGET_DIR="$AVD_TARGET"'
   - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
-  # Add Disable Pre-dexing option to build matrix and gradle commands.
+  - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
+  - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
 
   - echo 'WARNING! delete this fix after the issue about SDK location and permissions is solved.'
@@ -119,29 +105,30 @@ before_install:
   - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
 
 install:
-  - echo 'LIST ANDROID SDK FOLDERS'; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true
+  - 'echo "LIST ANDROID SDK FOLDERS"; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
   - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
-  - 'echo "START EMULATOR JOB"; emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
-  - echo 'WAIT FOR EMULATOR ONLINE (DEVICE STATE)'; adb wait-for-device
-  - echo 'DOWNLOAD GRADLE WRAPPER AND SHOW VERSION'; chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo 'DOWNLOAD AND SHOW ANDROID PROJECT DEPENDENCIES'; ./gradlew androidDependencies
-  - echo 'CLEAN THIS PROJECT'; ./gradlew clean generateDebugSources generateDebugTestSources
-  - echo 'COMPILE DEBUG & DEBUG TEST SOURCES'; ./gradlew compileDebugSources compileDebugTestSources
+  - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
+  - 'echo "WAIT FOR EMULATOR ONLINE";     adb wait-for-device'
+  - 'echo "DOWNLOAD GRADLE WRAPPER";      chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
+  - 'echo "DOWNLOAD DEPENDENCIES";        ./gradlew androidDependencies'
+  - 'echo "CLEAN PROJECT";                ./gradlew clean'
+  - 'echo "PREPARE DEBUG AND DEBUG TEST"; ./gradlew generateDebugSources generateDebugTestSources'
+  - 'echo "COMPILE DEBUG AND DEBUG TEST"; ./gradlew compileDebugSources compileDebugTestSources'
 
 before_script:
-  - echo 'WAIT FOR EMULATOR'; chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
-  - echo 'SEND INPUT MENU KEY TO EMULATOR'; adb shell input keyevent 82 &
+  - echo 'WAIT FOR EMULATOR';chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
+  - echo 'SEND MENU KEY EVENT TO EMULATOR';  adb shell input keyevent 82 &
   - echo 'REDIRECT LOGCAT OUTPUT TO A FILE'; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  - echo 'ASSEMBLE DEBUG BUILDS'      ; ./gradlew assembleDebug                  ${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE DEBUG TEST BUILDS' ; ./gradlew assembleDebugTest              ${DISABLE_PREDEX:-}
-  - echo 'INSTALL MODULE DEBUG BUILD' ; ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE DEBUG BUILDS';       ./gradlew assembleDebug                  ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE DEBUG TEST BUILDS';  ./gradlew assembleDebugTest              ${DISABLE_PREDEX:-}
+  - echo 'INSTALL MODULE DEBUG BUILD';  ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
   - echo 'INSTALL AND RUN DEBUG TESTS'; ./gradlew connectedAndroidTest           ${DISABLE_PREDEX:-}
-  - echo 'PREPARE RELEASE BUILDS'     ; ./gradlew generateReleaseSources         ${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE RELEASE BUILDS'    ; ./gradlew assembleRelease                ${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE AND TEST PROJECT'  ; ./gradlew build                          ${DISABLE_PREDEX:-}
+  - echo 'PREPARE RELEASE BUILDS';      ./gradlew generateReleaseSources         ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE RELEASE BUILDS';     ./gradlew assembleRelease                ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE AND TEST PROJECT';   ./gradlew build                          ${DISABLE_PREDEX:-}
   - echo 'RUN DEVICE CONNECTED CHECKS'; ./gradlew connectedCheck                 ${DISABLE_PREDEX:-}
 
 after_failure:
@@ -155,7 +142,7 @@ after_failure:
   - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
 
 after_success:
-  - echo 'SUCCESS'
+  - echo "SUCCESS"
 
 after_script:
-  - echo "SHOW ADB LOGCAT OUTPUT"; cat logcat.log; pkill -KILL -f adb
+  - echo "SHOW ADB LOG"; cat logcat.log; pkill -KILL -f adb
