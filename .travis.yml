@@ -40,7 +40,7 @@ env:
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default
     # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
@@ -89,7 +89,7 @@ before_install:
   # Add Disable Pre-dexing option to build matrix and gradle commands.
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
 
-  - echo 'WARNING: delete this fix after the issue about SDK location and permissions is solved.'
+  - echo 'WARNING! delete this fix after the issue about SDK location and permissions is solved.'
   - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al || true
   - ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al || true
   # - rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras || echo "Error removing SDK cache extras..."
@@ -113,7 +113,7 @@ before_install:
   - echo 'LIST AVAILABLE SDK PACKAGES FOR INSTALL'; android list sdk -a -e || true
   - echo 'FILTERED LIST'; - android update sdk -u -n -t platform,system-image,add-on,extra || true
   - echo 'LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS'; android list || true
-  - echo 'LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES:'
+  - echo 'LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES'
   - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}'
   - 'ls ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI} -al || true'
   - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
@@ -145,7 +145,7 @@ script:
   - echo 'RUN ALL DEVICE CHECKS ON CONNECTED DEVICES'; ./gradlew connectedCheck ${DISABLE_PREDEX:-}
 
 after_failure:
-  - echo "FAILURE: INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS:'; apt-get install -qq lynx || true
+  - echo "FAILURE! INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS'; apt-get install -qq lynx || true
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
