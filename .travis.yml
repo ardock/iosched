@@ -135,17 +135,17 @@ before_script:
   - echo 'REDIRECT LOGCAT OUTPUT TO A FILE'; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  - echo 'ASSEMBLE ALL DEBUG BUILDS'; ./gradlew assembleDebug${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE ALL DEBUG TEST BUILDS'; ./gradlew assembleDebugTest ${DISABLE_PREDEX:-}
-  - echo 'INSTALL MODULE DEBUG BUILD'; ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
-  - echo 'INSTALL AND RUN DEBUG TESTS BUILDS'; ./gradlew connectedAndroidTest ${DISABLE_PREDEX:-}
-  - echo 'PREPARE ALL RELEASE BUILDS'; ./gradlew generateReleaseSources ${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE ALL RELEASE BUILDS'; ./gradlew assembleRelease  ${DISABLE_PREDEX:-}
-  - echo 'ASSEMBLE AND TEST THIS PROJECT'; ./gradlew build ${DISABLE_PREDEX:-}
-  - echo 'RUN ALL DEVICE CHECKS ON CONNECTED DEVICES'; ./gradlew connectedCheck ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE DEBUG BUILDS'      ; ./gradlew assembleDebug                  ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE DEBUG TEST BUILDS' ; ./gradlew assembleDebugTest              ${DISABLE_PREDEX:-}
+  - echo 'INSTALL MODULE DEBUG BUILD' ; ./gradlew :${MOD_NAME:-app}:installDebug ${DISABLE_PREDEX:-}
+  - echo 'INSTALL AND RUN DEBUG TESTS'; ./gradlew connectedAndroidTest           ${DISABLE_PREDEX:-}
+  - echo 'PREPARE RELEASE BUILDS'     ; ./gradlew generateReleaseSources         ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE RELEASE BUILDS'    ; ./gradlew assembleRelease                ${DISABLE_PREDEX:-}
+  - echo 'ASSEMBLE AND TEST PROJECT'  ; ./gradlew build                          ${DISABLE_PREDEX:-}
+  - echo 'RUN DEVICE CONNECTED CHECKS'; ./gradlew connectedCheck                 ${DISABLE_PREDEX:-}
 
 after_failure:
-  - echo "FAILURE! INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS'; apt-get install -qq lynx || true
+  - 'echo "FAILURE! INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS"; apt-get install -qq lynx || true'
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
@@ -158,4 +158,4 @@ after_success:
   - echo 'SUCCESS'
 
 after_script:
-  - echo "SHOW ADB LOGCAT OUTPUT AND KILL ADB"; cat logcat.log; pkill -KILL -f adb
+  - echo "SHOW ADB LOGCAT OUTPUT"; cat logcat.log; pkill -KILL -f adb
