@@ -90,7 +90,7 @@ before_install:
   - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed!"'
   - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed!"'
   - 'echo "LIST INSTALLED ANDROID EXTRAS"; ls -Als ${OLD_SDK}/extras/android'
-  - 'echo "LIST INSTALLED GOOGLE EXTRAS"; ls -Als ${OLDSDK}/extras/google'
+  - 'echo "LIST INSTALLED GOOGLE EXTRAS"; ls -Als ${OLD_SDK}/extras/google'
 
   - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
   - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
