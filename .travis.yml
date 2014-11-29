@@ -17,21 +17,24 @@ language: android
 
 # TODO: test cache option See http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
+
 cache:
   apt: true
   directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
-    # - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
+    - '${TRAVIS_BUILD_DIR}/gradle/caches/'
+    - '${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/'
+    # - '${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/'
+    # - '${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/'
 
 jdk: oraclejdk7
 
 env:
   global:
-    - GRADLE_USER_HOME="${TRAVIS_BUILD_DIR}/gradle" ANDROID_HOME="${TRAVIS_BUILD_DIR}/android-sdk"
-    - PATH="${GRADLE_USER_HOME}/bin/:${ANDROID_HOME}/:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools/:${PATH}"
-    - BUILD_TOOLS='build-tools-21.1.1' MOBI_MOD_NAME=android WEAR_MOD_NAME=Wearable
+    - GRADLE_USER_HOME='${TRAVIS_BUILD_DIR}/gradle'
+    - ANDROID_HOME='${TRAVIS_BUILD_DIR}/android-sdk'
+    - SDK='${TRAVIS_BUILD_DIR}/android-sdk'
+    - PATH='${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}'
+    - BUILD_TOOLS='build-tools-21.1.1' MOBI_MOD_NAME='android' WEAR_MOD_NAME='Wearable'
 
   matrix:
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
@@ -51,14 +54,14 @@ env:
     # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
 
 matrix:
   allow_failures:
     # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
     - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
   # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
   # fast_finish: true
 
@@ -69,21 +72,32 @@ notifications:
 before_install:
   - 'echo "EXPORT ENV VARIABLES"'
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
+  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'export AVD_TARGET_DIR="$AVD_TARGET"'
   - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
+  - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}"'
 
   - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
-  - 'ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/ -Al || true'
-  - 'ls ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/ -Al || true'
-  # - 'rm -R -f ${TRAVIS_BUILD_DIR}/android-sdk/extras || echo "Error removing SDK cache extras..."'
+  - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
+  - 'ls ${SDK}/extras/android/m2repository/ -Al || true'
+  - 'ls ${SDK}/extras/google/m2repository/ -Al || true'
+  - 'rm -R -f ${SDK}/extras || echo "Error removing SDK cached extras..."'
   - 'pwd ; ls /usr/local/android-sdk-23.0.2 -Al ; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
-  - 'cp -R /usr/local/android-sdk-23.0.2 ${TRAVIS_BUILD_DIR}/android-sdk || echo "SDK copy failed"'
+  - 'cp -R ${OLD_SDK} ${SDK} || echo "SDK copy failed!"'
+  - 'echo "LIST INSTALLED ADD-ONS"; ls -Als ${SDK}/add-ons'
+  - 'echo "LIST INSTALLED BUILD-TOOLS"; ls -Als ${SDK}/build-tools'
+  - 'echo "LIST INSTALLED EXTRAS"; ls -Als ${SDK}/extras'
+  - 'echo "LIST INSTALLED PLATFORMS"; ls -Als ${SDK}/platforms'
+  - 'echo "LIST INSTALLED PLATFORM-TOOLS"; ls -Als ${SDK}/platform-tools'
+  - 'echo "LIST INSTALLED SYSTEM-IMAGES"; ls -Als ${SDK}/system-images'
+  - 'echo "LIST INSTALLED TOOLS"; ls -Als ${SDK}/tools'
+  - 'echo "LIST TEMP FOLDER"; ls -Als ${SDK}/temp'
 
-  - 'echo "LIST SUGGESTED SDK PACKAGES FOR INSTALL"; android list sdk -e || true'
-  - 'echo "LIST AVAILABLE SDK PACKAGES FOR INSTALL"; android list sdk -a -e || true'
+  - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
+  - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
   - 'echo "LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS"; android list || true'
   - 'echo "UPDATE SDK (remove -a --all flag and only suggested updates will be installed)"'
   - 'echo y | android update sdk -u -t tool || true'
@@ -95,17 +109,15 @@ before_install:
   - 'echo y | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true'
   - 'echo y | android update sdk -a -u -t addon-google_apis-google-21 || true'
   - 'echo y | android update sdk -a -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
-  - 'echo "LIST SUGGESTED SDK PACKAGES FOR INSTALL"; android list sdk -e || true'
-  - 'echo "LIST AVAILABLE SDK PACKAGES FOR INSTALL"; android list sdk -a -e || true'
-  - 'echo "FILTERED LIST"; android update sdk -u -n -t platform,system-image,add-on,extra || true'
+  - 'echo "LIST ANDROID SDK FOLDERS";     ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
+  - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
+  - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
+  - 'echo "FILTER UPDATES"; android update sdk -u -n -t platform,system-image,add-on,extra || true'
   - 'echo "LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS"; android list || true'
   - 'echo "LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES"'
-  - 'echo ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}'
-  - 'ls   ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI} -al || true'
-  - 'cat  ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
+  - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - 'echo "LIST ANDROID SDK FOLDERS";     ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
   - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
@@ -117,9 +129,9 @@ install:
   - 'echo "COMPILE DEBUG AND DEBUG TEST"; ./gradlew compileDebugSources compileDebugTestSources'
 
 before_script:
-  - echo 'WAIT FOR EMULATOR';chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh
-  - echo 'SEND MENU KEY EVENT TO EMULATOR';  adb shell input keyevent 82 &
-  - echo 'REDIRECT LOGCAT OUTPUT TO A FILE'; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
+  - 'echo "WAIT FOR EMULATOR"; chmod +x scripts/wait_for_emulator.sh; scripts/wait_for_emulator.sh'
+  - 'echo "SEND MENU KEY EVENT TO EMULATOR";  adb shell input keyevent 82 &'
+  - 'echo "REDIRECT LOGCAT OUTPUT TO A FILE"; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
 
 script:
   - echo 'ASSEMBLE DEBUG BUILDS';       ./gradlew assembleDebug                  ${DISABLE_PREDEX:-}
@@ -133,7 +145,6 @@ script:
 
 after_failure:
   - 'echo "FAILURE! INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS"; apt-get install -qq lynx || true'
-  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
