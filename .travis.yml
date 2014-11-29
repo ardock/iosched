@@ -119,7 +119,7 @@ before_install:
   - 'cat ${ANDROID_HOME}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}/build.prop || true'
 
 install:
-  - echo "LIST ANDROID SDK FOLDERS; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true
+  - echo 'LIST ANDROID SDK FOLDERS'; ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true
   - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - echo 'START EMULATOR JOB'; 'emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
