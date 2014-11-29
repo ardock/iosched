@@ -30,11 +30,13 @@ jdk: oraclejdk7
 
 env:
   global:
-    - GRADLE_USER_HOME='${TRAVIS_BUILD_DIR}/gradle'
-    - ANDROID_HOME='${TRAVIS_BUILD_DIR}/android-sdk'
-    - SDK='${TRAVIS_BUILD_DIR}/android-sdk'
-    - PATH='${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}'
-    - BUILD_TOOLS='build-tools-21.1.1' MOBI_MOD_NAME='android' WEAR_MOD_NAME='Wearable'
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
+    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
+    - SDK=${TRAVIS_BUILD_DIR}/android-sdk
+    - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
+    - BUILD_TOOLS='build-tools-21.1.1'
+    - MOBI_MOD_NAME=android
+    - WEAR_MOD_NAME=Wearable
 
   matrix:
     # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
@@ -129,7 +131,7 @@ install:
   - 'echo "COMPILE DEBUG AND DEBUG TEST"; ./gradlew compileDebugSources compileDebugTestSources'
 
 before_script:
-  - 'echo "WAIT FOR EMULATOR"; chmod +x scripts/wait_for_emulator.sh; scripts/wait_for_emulator.sh'
+  - 'echo "WAIT FOR EMULATOR"; chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh'
   - 'echo "SEND MENU KEY EVENT TO EMULATOR";  adb shell input keyevent 82 &'
   - 'echo "REDIRECT LOGCAT OUTPUT TO A FILE"; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
 
