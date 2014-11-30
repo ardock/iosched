@@ -107,8 +107,8 @@ before_install:
   - 'echo "${SYS_IMG_DIR}"; ls "${SYS_IMG_DIR}" -Al; cat "${SYS_IMG_DIR}/build.prop" || true'
 
 install:
-  - 'echo "CREATE AVD"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" \
-                                         -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo "CREATE AVD"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b
+                                            ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
 
