@@ -40,8 +40,8 @@ env:
     - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
 
   matrix:
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a
-    # - AVD_TARGET=android-16 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a
+    - AVD_TARGET=android-16 AVD_ABI=armeabi-v7a
     # - AVD_TARGET=android-17 AVD_ABI=armeabi-v7a
     # - AVD_TARGET=android-18 AVD_ABI=armeabi-v7a
     # - AVD_TARGET=android-19 AVD_ABI=armeabi-v7a
@@ -56,14 +56,14 @@ env:
     # TODO: Include x86 and x86_64 ABIs.
     # - AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
-    - AVD_TARGET="'Google Inc.:Google APIs:21'" AVD_ABI=armeabi-v7a AVD_TAG=google_apis ARGS='-PdisablePreDex'
+    - AVD_TARGET='Google Inc.:Google APIs:21' AVD_ABI=armeabi-v7a AVD_TAG=google_apis ARGS='-PdisablePreDex'
     # - AVD_TARGET=android-20 AVD_ABI=armeabi-v7a AVD_TAG=android-wear ARGS='-PdisablePreDex'
 
 matrix:
   allow_failures:
     # - env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET="'Google Inc.:Google APIs:21'" AVD_ABI=armeabi-v7a AVD_TAG=google_apis ARGS='-PdisablePreDex'
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_ABI=armeabi-v7a AVD_TAG=google_apis ARGS='-PdisablePreDex'
     # - env: AVD_TARGET=android-20 AVD_ABI=armeabi-v7a AVD_TAG=android-wear ARGS='-PdisablePreDex'
 
 notifications:
@@ -74,15 +74,16 @@ before_install:
   - 'echo "EXPORT ENV VARIABLES"'
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  - 'export AVD_TARGET_DIR="$AVD_TARGET"'
-  - 'echo $AVD_TARGET'
-  - if [[ $AVD_TARGET == "'Google Inc.:Google APIs:21'" ]]; then AVD_TARGET_DIR="android-21"; fi
+  - 'export AVD_TARGET_DIR="${AVD_TARGET}"'
+  - 'echo "${AVD_TARGET}"'
+  - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${PREDEX_OPT:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
   - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG:-default}/${AVD_ABI}"'
   - 'export AVD_OPTS="-b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
-  - 'export MOBI_AVD_OPTS="-f -n ${AVD_NAME:-test} -t "$AVD_TARGET" ${AVD_OPTS:-}"'
+  - 'export MOBI_AVD_OPTS="-f -n ${AVD_NAME:-test} -t \"${AVD_TARGET}\" ${AVD_OPTS:-}"'
+  - 'echo ${MOBI_AVD_OPTS}'
 
   - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
   - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
@@ -109,10 +110,11 @@ before_install:
   - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd $MOBI_AVD_OPTS
+  - 'echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd ${MOBI_AVD_OPTS}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
   - 'echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device'
+
   - 'echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
   - 'echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies'
   - 'echo "CLEAN PROJECT";                  ./gradlew clean'
