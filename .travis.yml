@@ -81,7 +81,7 @@ before_install:
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
   - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG:-default}/${AVD_ABI}"'
   # - 'export AVD_OPTS="-f -b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
-  - CREATE_AVD='echo no | android create avd -n "${AVD_NAME:-test}" -t "${AVD_TARGET} -f -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - export CREATE_AVD='`android create avd -n "${AVD_NAME:-test}" -t "${AVD_TARGET} -f -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}`'
 
   - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
   - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
@@ -108,7 +108,7 @@ before_install:
   - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - 'echo "CREATE AVD"; echo no | `$CREATE_AVD`'
+  - 'echo "CREATE AVD"; echo no | $CREATE_AVD
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
 
