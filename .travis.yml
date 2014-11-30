@@ -74,16 +74,14 @@ before_install:
   - 'echo "EXPORT ENV VARIABLES"'
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  - 'export AVD_TARGET_DIR="${AVD_TARGET}"'
-  - 'echo "${AVD_TARGET}"'
+  - 'export AVD_TARGET_DIR="$AVD_TARGET"'
   - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${PREDEX_OPT:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
   - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG:-default}/${AVD_ABI}"'
-  - 'export AVD_OPTS="-b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
-  - 'export MOBI_AVD_OPTS="-f -n ${AVD_NAME:-test} -t '${AVD_TARGET}' ${AVD_OPTS:-}"'
-  - 'echo ${MOBI_AVD_OPTS}'
+  # - 'export AVD_OPTS="-f -b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
+  - CREATE_AVD='echo no | android create avd -n "${AVD_NAME:-test}" -t "${AVD_TARGET} -f -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"
 
   - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
   - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
@@ -110,21 +108,21 @@ before_install:
   - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - 'echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd ${MOBI_AVD_OPTS}'
+  - 'echo "CREATE AVD"; echo no | `$CREATE_AVD`'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
-  - 'echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device'
 
-  - 'echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
-  - 'echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies'
-  - 'echo "CLEAN PROJECT";                  ./gradlew clean'
-  - 'echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources'
-  - 'echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources'
+  - 'echo "WAIT FOR EMULATOR ONLINE";      adb wait-for-device'
+  - 'echo "DOWNLOAD GRADLE WRAPPER";       chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
+  - 'echo "DOWNLOAD PROJECT DEPENDENCIES"; ./gradlew androidDependencies'
+  - 'echo "CLEAN PROJECT";                 ./gradlew clean'
+  - 'echo "PREPARE DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources'
+  - 'echo "COMPILE DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources'
 
 before_script:
-  - 'echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY'
-  - 'echo "SEND MENU KEYEVENT TO EMULATOR"; adb shell input keyevent 82 &'
-  - 'echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
+  - 'echo "WAIT FOR EMULATOR READY";       chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY'
+  - 'echo "SEND KEYEVENT 82 TO EMULATOR";  adb shell input keyevent 82 &'
+  - 'echo "REDIRECT ADB LOGCAT TO A FILE"; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
 
 script:
   - 'echo "ASSEMBLE DEBUG BUILDS";         ./gradlew assembleDebug                  ${PREDEX_OPT:-}'
