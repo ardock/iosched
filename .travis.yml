@@ -76,7 +76,7 @@ before_install:
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'export AVD_TARGET_DIR="$AVD_TARGET"'
   - 'echo $AVD_TARGET'
-  - 'if [[ $AVD_TARGET == 'Google Inc.:Google APIs:21' ]]; then AVD_TARGET_DIR="android-21"; fi'
+  - if [[ $AVD_TARGET == 'Google Inc.:Google APIs:21' ]]; then AVD_TARGET_DIR="android-21"; fi
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${PREDEX_OPT:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
