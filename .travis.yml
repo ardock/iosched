@@ -108,7 +108,7 @@ before_install:
   - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - 'echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd "$MOBI_AVD_OPTS"'
+  - 'echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd $MOBI_AVD_OPTS'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
   - 'echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device'
