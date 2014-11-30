@@ -100,14 +100,15 @@ before_install:
   - 'echo y | android update sdk -a -u -t android-21,sys-img-armeabi-v7a-android-21 || true'
   - 'echo y | android update sdk -a -u -t addon-google_apis-google-21 || true'
   - 'echo y | android update sdk -a -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
-  - 'echo "LIST ANDROID SDK FOLDERS";     ls ${SDK} -Al || true'
+  - 'echo "LIST ANDROID SDK FOLDERS";     ls $SDK -Al || true'
   - 'echo "FILTER SDK UPDATES LIST"; android update sdk -u -n -t system-image,add-on,extra || true'
   - 'echo "LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS"; android list || true'
   - 'echo "LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES"'
-  - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
+  - 'echo "${SYS_IMG_DIR}"; ls "${SYS_IMG_DIR}" -Al; cat "${SYS_IMG_DIR}/build.prop" || true'
 
 install:
-  - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo "CREATE AVD"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" \
+                                         -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
 
@@ -131,7 +132,7 @@ script:
   - 'echo "PREPARE RELEASE BUILDS";        ./gradlew generateReleaseSources         ${PREDEX_OPT:-}'
   - 'echo "ASSEMBLE RELEASE BUILDS";       ./gradlew assembleRelease                ${PREDEX_OPT:-}'
   - 'echo "ASSEMBLE AND TEST PROJECT";     ./gradlew build                          ${PREDEX_OPT:-}'
-  - 'echo "RUN DEVICE CONNECTED CHECKS";   ./gradlew connectedCheck                 ${PREDEX_OPT:-}'
+  - 'echo "RUN CONNECTED DEVICE CHECKS";   ./gradlew connectedCheck                 ${PREDEX_OPT:-}'
 
 after_failure:
   - 'echo "FAILURE! INSTALLING LYNX REQUIRED TO SHOW HTML LOGS"; apt-get install -qq lynx || true'
