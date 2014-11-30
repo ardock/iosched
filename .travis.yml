@@ -93,7 +93,7 @@ before_install:
   - 'echo "UPDATE SDK (remove -a --all flag and only suggested updates will be installed)"'
   - 'echo y | android update sdk -u -t platform-tool,tool || true'
   - 'echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository || true'
-  - 'echo y | android update sdk -u -t extra-android-support,
+  - 'echo y | android update sdk -u -t extra-android-support,\
                                        extra-google-google_play_services || true'
   - 'echo y | android update sdk -a -u -t $BUILD_TOOLS || true'
   - 'echo y | android update sdk -a -u -t android-20,sys-img-armeabi-v7a-android-wear-20 || true'
