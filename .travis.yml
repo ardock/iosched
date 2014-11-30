@@ -15,7 +15,7 @@
 
 language: android
 
-# TODO: test cache option See http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+# TODO: See cache option: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
 
 cache:
@@ -37,35 +37,34 @@ env:
     - BUILD_TOOLS='build-tools-21.1.1'
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
+    - WFE_READY='${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh'
 
   matrix:
-    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default
-    # - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-16  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-17  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-18  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-19  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-21  AVD_ABI=armeabi-v7a  AVD_TAG=default  ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15  AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-16 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-17 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-18 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-19 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-21 AVD_ABI=armeabi-v7a
+    # - AVD_TARGET=android-15 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-16 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-17 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-18 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-19 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-21 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
 
-    # TODO: Include x86 and x86_64 ABIs, google_apis and android-wear.
-    # - AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
+    # TODO: Include x86 and x86_64 ABIs.
+    # - AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
+    # - AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
+    - AVD_TARGET='Google Inc.:Google APIs:21' AVD_ABI=armeabi-v7a AVD_TAG=google_apis ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20 AVD_ABI=armeabi-v7a AVD_TAG=android-wear ARGS='-PdisablePreDex'
 
 matrix:
   allow_failures:
-    # - env: AVD_TARGET=android-21  AVD_ABI=x86  AVD_TAG=default  ARGS='-PdisablePreDex'
-    # - env: AVD_TARGET=android-21  AVD_ABI=x86_64  AVD_TAG=default  ARGS='-PdisablePreDex'
-    - env: AVD_TARGET='Google Inc.:Google APIs:21'  AVD_ABI=armeabi-v7a  AVD_TAG=google_apis  ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
+    # - env: AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_ABI=armeabi-v7a AVD_TAG=google_apis  ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-20  AVD_ABI=armeabi-v7a  AVD_TAG=android-wear  ARGS='-PdisablePreDex'
-  # Disabled until https://github.com/travis-ci/travis-ci/issues/1696 is fixed. Avoid notifications.
-  # fast_finish: true
 
 notifications:
   email: false
@@ -80,18 +79,14 @@ before_install:
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${DISABLE_PREDEX:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export DISABLE_PREDEX="-PdisablePreDex"; fi'
-  - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG}/${AVD_ABI}"'
+  - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG:-default}/${AVD_ABI}"'
+  - 'export AVD_ARGS="-t ${AVD_TARGET} -b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
 
   - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
   - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
-  - 'ls ${SDK}/extras/android/m2repository/ -Al || true'
-  - 'ls ${SDK}/extras/google/m2repository/ -Al || true'
-  - 'cat  ${OLD_SDK}/platform-tools/source.properties || true'
   - 'cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed!"'
   - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed!"'
   - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed!"'
-  - 'echo "LIST INSTALLED ANDROID EXTRAS"; ls -Als ${OLD_SDK}/extras/android'
-  - 'echo "LIST INSTALLED GOOGLE EXTRAS"; ls -Als ${OLD_SDK}/extras/google'
 
   - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
   - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
@@ -105,28 +100,28 @@ before_install:
   - 'echo y | android update sdk -u -t extra-google-m2repository,extra-google-google_play_services || true'
   - 'echo y | android update sdk -a -u -t addon-google_apis-google-21 || true'
   - 'echo y | android update sdk -a -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
-  - 'echo "LIST ANDROID SDK FOLDERS";     ls ${TRAVIS_BUILD_DIR}/android-sdk -Al || true'
+  - 'echo "LIST ANDROID SDK FOLDERS";     ls ${SDK} -Al || true'
   - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
   - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
-  - 'echo "FILTER UPDATES"; android update sdk -u -n -t platform,system-image,add-on,extra || true'
+  - 'echo "FILTER SDK UPDATES LIST"; android update sdk -u -n -t system-image,add-on,extra || true'
   - 'echo "LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS"; android list || true'
   - 'echo "LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES"'
   - 'echo ${SYS_IMG_DIR}; ls ${SYS_IMG_DIR} -Al; cat ${SYS_IMG_DIR}/build.prop || true'
 
 install:
-  - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
+  - 'echo "CREATE AVD"; echo no | android create avd --force -n "${AVD_NAME:-test}" "${AVD_ARGS:-}"'
   - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
   - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
-  - 'echo "WAIT FOR EMULATOR ONLINE";     adb wait-for-device'
-  - 'echo "DOWNLOAD GRADLE WRAPPER";      chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
-  - 'echo "DOWNLOAD DEPENDENCIES";        ./gradlew androidDependencies'
-  - 'echo "CLEAN PROJECT";                ./gradlew clean'
-  - 'echo "PREPARE DEBUG AND DEBUG TEST"; ./gradlew generateDebugSources generateDebugTestSources'
-  - 'echo "COMPILE DEBUG AND DEBUG TEST"; ./gradlew compileDebugSources compileDebugTestSources'
+  - 'echo "WAIT FOR EMULATOR ONLINE";      adb wait-for-device'
+  - 'echo "DOWNLOAD GRADLE WRAPPER";       chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
+  - 'echo "DOWNLOAD PROJECT DEPENDENCIES"; ./gradlew androidDependencies'
+  - 'echo "CLEAN PROJECT";                 ./gradlew clean'
+  - 'echo "PREPARE DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources'
+  - 'echo "COMPILE DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources'
 
 before_script:
-  - 'echo "WAIT FOR EMULATOR"; chmod +x ./scripts/wait_for_emulator.sh; ./scripts/wait_for_emulator.sh'
-  - 'echo "SEND MENU KEY EVENT TO EMULATOR";  adb shell input keyevent 82 &'
+  - 'echo "WAIT FOR EMULATOR READY";          chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY'
+  - 'echo "SEND MENU KEY INPUT TO EMULATOR";  adb shell input keyevent 82 &'
   - 'echo "REDIRECT LOGCAT OUTPUT TO A FILE"; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
 
 script:
@@ -140,7 +135,7 @@ script:
   - echo 'RUN DEVICE CONNECTED CHECKS'; ./gradlew connectedCheck                 ${DISABLE_PREDEX:-}
 
 after_failure:
-  - 'echo "FAILURE! INSTALLING LYNX REQUIRED FOR SHOW EXTRA LOGS"; apt-get install -qq lynx || true'
+  - 'echo "FAILURE! INSTALLING LYNX REQUIRED TO SHOW HTML LOGS"; apt-get install -qq lynx || true'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
