@@ -44,14 +44,17 @@ env:
    #- AVD_TARGET=android-18
    #- AVD_TARGET=android-19
    #- AVD_TARGET=android-21
-    - AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
-   #- AVD_TARGET=android-21 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
+        SDK_PKGS=android-20,sys-img-armeabi-v7a-android-wear-20
+    - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
+        SDK_PKGS=android-21,sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
+        SDK_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
 
@@ -90,10 +93,7 @@ before_install:
                                            android-16,sys-img-armeabi-v7a-android-16,\
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
-                                           android-21,sys-img-armeabi-v7a-android-21,\
-                                           addon-google_apis-google-21,\
-                                           sys-img-armeabi-v7a-addon-google_apis-google-21 || true
+                                           {SDK_PKGS:-} || true
   - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
@@ -104,7 +104,7 @@ install:
   - echo "LIST TARGETS AVDS AND DEVICES";  android list || true
   - echo "SHOW SYSTEM IMAGE PROPERTIES";   cat "${IMG_PATH}/build.prop" || true
   - echo "SHOW AVD CONFIG";                cat "${AVD_PATH:-.}/config.ini" || true
-  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window -no-cache &
+  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
   - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
@@ -137,10 +137,8 @@ after_failure:
  #- echo "FAILURE! SHOW LOGS";             apt-get install -qq lynx || true
  #- lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
  #- lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log
- #- for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-  - cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt
+  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
   - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
-  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
-  - cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/release/libraryList.txt
   - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
   - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
