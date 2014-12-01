@@ -20,12 +20,12 @@ sudo: false
 cache:
   apt: true
   directories:
-    - '${TRAVIS_BUILD_DIR}/gradle/caches/'
-    - '${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/'
-    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/android/support/'
-    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/'
-    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/'
-    - '${TRAVIS_BUILD_DIR}/android-sdk/extras/google/google_play_services/'
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/support/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/google_play_services/
 
 jdk: oraclejdk7
 
@@ -68,82 +68,82 @@ notifications:
 
 
 before_install:
-  - 'echo "EXPORT ENV VARIABLES";          export AVDT_DIR="$AVD_TARGET"'
-  - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi'
-  - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
-  - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
-  - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  - 'export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}"'
-  - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
-  - 'export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"'
+  - echo "EXPORT ENV VARIABLES";           export AVDT_DIR="$AVD_TARGET"
+  - if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi
+  - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`
+  - export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/
+  - export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}"
+  - export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"
+  - export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
 
-  - 'echo "WARNING! delete when fixed";    export OLD_SDK=/usr/local/android-sdk-23.0.2'
-  - 'cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed."'
-  - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed."'
-  - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed."'
+  - echo "WARNING! delete when fixed";     export OLD_SDK=/usr/local/android-sdk-23.0.2
+  - cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed."
+  - cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed."
+  - cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed."
 
-  - 'echo "LIST SUGGESTED SDK PACKAGES";   android list sdk -e || true'
-  - 'echo "LIST AVAILABLE SDK PACKAGES";   android list sdk -a -e || true'
-  - 'echo "UPDATE PACKAGES IF REQUIRED";   echo y | android update sdk -u -t platform-tool,tool,\
+  - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
+  - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
+  - echo "UPDATE PACKAGES IF REQUIRED";    echo y | android update sdk -u -t platform-tool,tool,\
                                            extra-android-support,extra-google-google_play_services,\
                                            extra-android-m2repository,extra-google-m2repository,\
                                            android-19,sys-img-armeabi-v7a-android-19,\
                                            android-18,sys-img-armeabi-v7a-android-18,\
                                            android-17,sys-img-armeabi-v7a-android-17,\
                                            android-16,sys-img-armeabi-v7a-android-16,\
-                                           android-15,sys-img-armeabi-v7a-android-15 || true'
-  - 'echo "UPDATE PACKAGES IF POSSIBLE";   echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
+                                           android-15,sys-img-armeabi-v7a-android-15 || true
+  - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
                                            android-20,sys-img-armeabi-v7a-android-wear-20,\
                                            android-21,sys-img-armeabi-v7a-android-21,\
                                            addon-google_apis-google-21,\
-                                           sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
-  - 'echo "LIST SDK UPDATES BY FILTERS";   android update sdk -u -n -t platform,system-image,\
-                                           add-on,extra || true'
+                                           sys-img-armeabi-v7a-addon-google_apis-google-21 || true
+  - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
+                                           add-on,extra || true
 
 install:
-  - 'echo "CREATE ANDROID VIRTUAL DEVICE"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t
+  - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD_NAME:-test}" -t
                                            "${AVD_TARGET}" -g ${AVD_TAG:-default} -p
-                                           "${AVD_PATH:-.}" -b ${AVD_ABI:-armeabi-v7a}'
-  - 'echo "LIST TARGETS AVDS AND DEVICES"; android list || true'
-  - 'echo "SHOW SYSTEM IMAGE PROPERTIES";  cat "${IMG_PATH}/build.prop" || true'
-  - 'echo "SHOW AVD CONFIG";               cat "${AVD_PATH:-.}/config.ini" || true'
-  - 'echo "START EMULATOR IN BACKGROUND";  emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &'
-  - 'echo "WAIT FOR EMULATOR ONLINE";      adb wait-for-device'
-  - 'echo "DOWNLOAD GRADLE WRAPPER";       chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
-  - 'echo "DOWNLOAD PROJECT DEPENDENCIES"; ./gradlew androidDependencies'
-  - 'echo "CLEAN PROJECT";                 ./gradlew clean'
-  - 'echo "PREPARE DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources'
-  - 'echo "COMPILE DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources'
+                                           "${AVD_PATH:-.}" -b ${AVD_ABI:-armeabi-v7a}
+  - echo "LIST TARGETS AVDS AND DEVICES";  android list || true
+  - echo "SHOW SYSTEM IMAGE PROPERTIES";   cat "${IMG_PATH}/build.prop" || true
+  - echo "SHOW AVD CONFIG";                cat "${AVD_PATH:-.}/config.ini" || true
+  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
+  - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
+  - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
+  - echo "CLEAN PROJECT";                  ./gradlew clean
+  - echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
+  - echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
 
 before_script:
-  - 'echo "WAIT FOR EMULATOR READY";       chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY'
-  - 'echo "SEND MENU KEY EVENT";           adb shell input keyevent 82 &'
-  - 'echo "REDIRECT ADB LOGCAT TO A FILE"; adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &'
+  - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
+  - echo "SEND MENU KEY EVENT";            adb shell input keyevent 82 &
+  - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  - 'echo "ASSEMBLE DEBUG BUILDS";         ./gradlew assembleDebug                  ${PREDEX_OPT:-}'
-  - 'echo "ASSEMBLE DEBUG TEST BUILDS";    ./gradlew assembleDebugTest              ${PREDEX_OPT:-}'
-  - 'echo "INSTALL MODULE DEBUG BUILD";    ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}'
-  - 'echo "INSTALL AND RUN DEBUG TESTS";   ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}'
-  - 'echo "PREPARE RELEASE BUILDS";        ./gradlew generateReleaseSources         ${PREDEX_OPT:-}'
-  - 'echo "ASSEMBLE RELEASE BUILDS";       ./gradlew assembleRelease                ${PREDEX_OPT:-}'
-  - 'echo "ASSEMBLE AND TEST PROJECT";     ./gradlew build                          ${PREDEX_OPT:-}'
-  - 'echo "RUN CONNECTED DEVICE CHECKS";   ./gradlew connectedCheck                 ${PREDEX_OPT:-}'
+  - echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
+  - echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
+  - echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
+  - echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
+  - echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
+  - echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-}
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
 
 after_success:
-  - 'echo "SUCCESS!";                      echo "BUILD SUCCESSFUL"'
+  - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
 
 after_script:
-  - 'echo "SHOW ADB LOG";                  cat logcat.log; pkill -KILL -f adb'
+  - echo "SHOW ADB LOG";                   cat logcat.log; pkill -KILL -f adb
 
 after_failure:
- #- 'echo "FAILURE! SHOW LOGS";            apt-get install -qq lynx || true'
- #- 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
- #- 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
- #- 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/release/libraryList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt'
-  - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt'
+ #- echo "FAILURE! SHOW LOGS";             apt-get install -qq lynx || true
+ #- lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+ #- lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log
+ #- for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
+  - cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/release/libraryList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
+  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
