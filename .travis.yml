@@ -50,11 +50,11 @@ env:
    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
-        SDK_EXTRA_PKGS=sys-img-armeabi-v7a-android-wear-20
+        SDK_PKGS=sys-img-armeabi-v7a-android-wear-20
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
-        SDK_EXTRA_PKGS=sys-img-armeabi-v7a-android-21
+        SDK_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
-        SDK_EXTRA_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+        SDK_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
 
@@ -92,7 +92,7 @@ before_install:
                                            android-16,sys-img-armeabi-v7a-android-16,\
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,android-21,${SDK_EXTRA_PKGS:-} || true
+                                           android-20,android-21,${SDK_PKGS:-} || true
   - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
@@ -134,11 +134,13 @@ after_script:
 
 after_failure:
  #- echo "FAILURE! SHOW LOGS";             apt-get install -qq lynx || true
- #- LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected
- #- lynx --dump ${LOG_DIR}/com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
- #- lynx --dump ${LOG_DIR}/com.android.builder.testing.html > myTesting.log
+ #- M_TMP=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected
+ #- lynx --dump ${M_TMP}/com.android.builder.testing.ConnectedDevice.html > mConnectedDevice.log
+ #- lynx --dump ${M_TMP}/com.android.builder.testing.html > mTesting.log
+ #- lynx --dump ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/outputs/lint-results.html > mMobiLint.log
+ #- lynx --dump ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/outputs/lint-results.html > mWearLint.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-  - MOBI_DEX_DIR=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex
-  - cat ${MOBI_DEX_DIR}/debug/inputList.txt ${MOBI_DEX_DIR}/release/inputList.txt
-  - WEAR_DEX_DIR=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex
-  - cat ${WEAR_DEX_DIR}/debug/inputList.txt ${WEAR_DEX_DIR}/release/inputList.txt
+  - M_TMP=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex
+  - cat ${M_TMP}/debug/inputList.txt ${M_TMP}/release/inputList.txt
+  - M_TMP=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex
+  - cat ${M_TMP}/debug/inputList.txt ${M_TMP}/release/inputList.txt
