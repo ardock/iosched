@@ -22,10 +22,7 @@ cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/support/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/android/m2repository/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/m2repository/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/google/google_play_services/
+    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/
 
 jdk: oraclejdk7
 
@@ -41,20 +38,20 @@ env:
     - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
 
   matrix:
-    - AVD_TARGET=android-15 AVD_ABI=armeabi-v7a
-   #- AVD_TARGET=android-16 AVD_ABI=armeabi-v7a
-   #- AVD_TARGET=android-17 AVD_ABI=armeabi-v7a
-   #- AVD_TARGET=android-18 AVD_ABI=armeabi-v7a
-   #- AVD_TARGET=android-19 AVD_ABI=armeabi-v7a
-   #- AVD_TARGET=android-21 AVD_ABI=armeabi-v7a
-    - AVD_TARGET=android-15 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-16 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-17 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-18 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-19 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-20 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex' AVD_TAG=android-wear
-   #- AVD_TARGET=android-21 AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex'
-    - AVD_TARGET='Google Inc.:Google APIs:21' AVD_ABI=armeabi-v7a ARGS='-PdisablePreDex' AVD_TAG=google_apis
+    - AVD_TARGET=android-15
+   #- AVD_TARGET=android-16
+   #- AVD_TARGET=android-17
+   #- AVD_TARGET=android-18
+   #- AVD_TARGET=android-19
+   #- AVD_TARGET=android-21
+    - AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
+   #- AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
+   #- AVD_TARGET=android-21 ARGS='-PdisablePreDex'
+    - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
 
