@@ -50,11 +50,11 @@ env:
    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
-        SDK_PKGS=android-20,sys-img-armeabi-v7a-android-wear-20
+        SDK_EXTRA_PKGS=sys-img-armeabi-v7a-android-wear-20
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
-        SDK_PKGS=android-21,sys-img-armeabi-v7a-android-21
+        SDK_EXTRA_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
-        SDK_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+        SDK_EXTRA_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
 
@@ -93,7 +93,7 @@ before_install:
                                            android-16,sys-img-armeabi-v7a-android-16,\
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           {SDK_PKGS:-} || true
+                                           android-20, android-21, ${SDK_EXTRA_PKGS:-} || true
   - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
