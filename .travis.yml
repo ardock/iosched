@@ -104,7 +104,7 @@ install:
   - echo "LIST TARGETS AVDS AND DEVICES";  android list || true
   - echo "SHOW SYSTEM IMAGE PROPERTIES";   cat "${IMG_PATH}/build.prop" || true
   - echo "SHOW AVD CONFIG";                cat "${AVD_PATH:-.}/config.ini" || true
-  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
+  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window -no-cache &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
   - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
