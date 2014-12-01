@@ -71,47 +71,49 @@ notifications:
 
 
 before_install:
-  - 'echo "EXPORT ENV VARIABLES"'
+  - 'echo "EXPORT ENV VARIABLES";          export AVD_TARGET_DIR="$AVD_TARGET"'
   - 'export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`'
   - 'export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
-  - 'export AVD_TARGET_DIR="$AVD_TARGET"'
+  - 'export LINT_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/'
   - 'if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVD_TARGET_DIR="android-21"; fi'
   - 'export AVD_NAME="${AVD_TARGET_DIR}-${AVD_TAG:-default}-${AVD_ABI}-${RANDOM:-}${PREDEX_OPT:-}"'
   - 'export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"'
   - 'if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi'
   - 'export SYS_IMG_DIR="${SDK}/system-images/${AVD_TARGET_DIR}/${AVD_TAG:-default}/${AVD_ABI}"'
-  # - 'export AVD_OPTS="-f -b ${AVD_ABI} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}"'
 
-  - 'echo "WARNING! delete this fix after the issue about SDK location and permissions is solved."'
-  - 'export OLD_SDK=/usr/local/android-sdk-23.0.2'
-  - 'cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed!"'
-  - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed!"'
-  - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed!"'
+  - 'echo "WARNING! delete when fixed";    export OLD_SDK=/usr/local/android-sdk-23.0.2'
+  - 'cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed."'
+  - 'cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed."'
+  - 'cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed."'
 
-  - 'echo "LIST SUGGESTED SDK UPDATES"; android list sdk -e || true'
-  - 'echo "LIST AVAILABLE SDK UPDATES"; android list sdk -a -e || true'
-  - 'echo "UPDATE SDK (remove -a --all flag and only suggested updates will be installed)"'
-  - 'echo y | android update sdk -u -t platform-tool,tool || true'
-  - 'echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository || true'
-  - 'echo y | android update sdk -u -t extra-android-support,\
-                                       extra-google-google_play_services || true'
-  - 'echo y | android update sdk -a -u -t $BUILD_TOOLS || true'
-  - 'echo y | android update sdk -a -u -t android-20,sys-img-armeabi-v7a-android-wear-20 || true'
-  - 'echo y | android update sdk -a -u -t android-21,sys-img-armeabi-v7a-android-21 || true'
-  - 'echo y | android update sdk -a -u -t addon-google_apis-google-21 || true'
-  - 'echo y | android update sdk -a -u -t sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
-  - 'echo "LIST ANDROID SDK FOLDERS";     ls $SDK -Al || true'
-  - 'echo "FILTER SDK UPDATES LIST"; android update sdk -u -n -t system-image,add-on,extra || true'
-  - 'echo "LIST INSTALLED AVDS, ANDROID TARGETS AND DEVICE DEFINITIONS"; android list || true'
-  - 'echo "LIST SYSTEM IMAGE PATH, FILES AND PROPERTIES"'
-  - 'echo "${SYS_IMG_DIR}"; ls "${SYS_IMG_DIR}" -Al; cat "${SYS_IMG_DIR}/build.prop" || true'
+  - 'echo "LIST SUGGESTED SDK PACKAGES";   android list sdk -e || true'
+  - 'echo "LIST AVAILABLE SDK PACKAGES";   android list sdk -a -e || true'
+  - 'echo "UPDATE PACKAGES IF REQUIRED";   echo y | android update sdk -u -t platform-tool,tool,\
+                                           extra-android-support,extra-google-google_play_services,\
+                                           extra-android-m2repository,extra-google-m2repository,\
+                                           android-19,sys-img-armeabi-v7a-android-19,\
+                                           android-18,sys-img-armeabi-v7a-android-18,\
+                                           android-17,sys-img-armeabi-v7a-android-17,\
+                                           android-16,sys-img-armeabi-v7a-android-16,\
+                                           android-15,sys-img-armeabi-v7a-android-15 || true'
+  - 'echo "UPDATE PACKAGES IF POSSIBLE";   echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
+                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
+                                           android-21,sys-img-armeabi-v7a-android-21,\
+                                           addon-google_apis-google-21,\
+                                           sys-img-armeabi-v7a-addon-google_apis-google-21 || true'
+  - 'echo "LIST SDK UPDATES BY FILTERS";   android update sdk -u -n -t platform,system-image,\
+                                           add-on,extra || true'
+  - 'echo "LIST ANDROID SDK FOLDERS";      ls $SDK -Al || true'
+  - 'echo "LIST TARGETS AVDS AND DEVICES"; android list || true'
+  - 'echo "LIST SYSTEM IMAGE PROPERTIES";  echo "${SYS_IMG_DIR}"; ls "${SYS_IMG_DIR}" -Al;
+                                           cat "${SYS_IMG_DIR}/build.prop" || true'
 
 install:
-  - 'echo "CREATE AVD"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t "${AVD_TARGET}" -b
-                                            ${AVD_ABI:-} -g ${AVD_TAG:-default} -p ${AVD_PATH:-.}'
-  - 'echo "SHOW AVD CONFIG ${AVD_PATH:-.}/config.ini:"; cat "${AVD_PATH:-.}/config.ini" || true'
-  - 'echo "START EMULATOR JOB";   emulator -avd "${AVD_NAME:-test}" -no-skin -no-audio -no-window &'
-
+  - 'echo "CREATE ANDROID VIRTUAL DEVICE"; echo no | android create avd -f -n "${AVD_NAME:-test}" -t
+                                           "${AVD_TARGET}" -b ${AVD_ABI:-} -g ${AVD_TAG:-default} -p
+                                           "${AVD_PATH:-.}"'
+  - 'echo "SHOW AVD CONFIG";               cat "${AVD_PATH:-.}/config.ini" || true'
+  - 'echo "START EMULATOR IN BACKGROUND";  emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &'
   - 'echo "WAIT FOR EMULATOR ONLINE";      adb wait-for-device'
   - 'echo "DOWNLOAD GRADLE WRAPPER";       chmod +x ./gradlew; ls -l gradlew; ./gradlew -v'
   - 'echo "DOWNLOAD PROJECT DEPENDENCIES"; ./gradlew androidDependencies'
@@ -134,17 +136,17 @@ script:
   - 'echo "ASSEMBLE AND TEST PROJECT";     ./gradlew build                          ${PREDEX_OPT:-}'
   - 'echo "RUN CONNECTED DEVICE CHECKS";   ./gradlew connectedCheck                 ${PREDEX_OPT:-}'
 
+after_success:
+  - 'echo "SUCCESS!";                      echo "BUILD SUCCESSFUL"'
+
+after_script:
+  - 'echo "SHOW ADB LOG";                  cat logcat.log; pkill -KILL -f adb'
+
 after_failure:
-  - 'echo "FAILURE! INSTALLING LYNX REQUIRED TO SHOW HTML LOGS"; apt-get install -qq lynx || true'
+  - 'echo "FAILURE! SHOW LOGS";            apt-get install -qq lynx || true'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log'
   - 'lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log'
   - 'for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true'
   - 'cat ${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/intermediates/tmp/dex/debug/libraryList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
   - 'cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt'
-
-after_success:
-  - 'echo "SUCCESS"'
-
-after_script:
-  - 'echo "SHOW ADB LOG"; cat logcat.log; pkill -KILL -f adb'
