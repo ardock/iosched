@@ -72,7 +72,6 @@ before_install:
   - if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi
   - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`
-  - export LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected/
   - export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}"
   - export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"
   - export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
@@ -93,7 +92,7 @@ before_install:
                                            android-16,sys-img-armeabi-v7a-android-16,\
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20, android-21, ${SDK_EXTRA_PKGS:-} || true
+                                           android-20,android-21,${SDK_EXTRA_PKGS:-} || true
   - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
@@ -135,10 +134,11 @@ after_script:
 
 after_failure:
  #- echo "FAILURE! SHOW LOGS";             apt-get install -qq lynx || true
- #- lynx --dump ${LOG_DIR}com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
- #- lynx --dump ${LOG_DIR}com.android.builder.testing.html > myTesting.log
+ #- LOG_DIR=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected
+ #- lynx --dump ${LOG_DIR}/com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+ #- lynx --dump ${LOG_DIR}/com.android.builder.testing.html > myTesting.log
   - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-  - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
-  - cat ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
-  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/debug/inputList.txt
-  - cat ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex/release/inputList.txt
+  - MOBI_DEX_DIR=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex
+  - cat ${MOBI_DEX_DIR}/debug/inputList.txt ${MOBI_DEX_DIR}/release/inputList.txt
+  - WEAR_DEX_DIR=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex
+  - cat ${WEAR_DEX_DIR}/debug/inputList.txt ${WEAR_DEX_DIR}/release/inputList.txt
