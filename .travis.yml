@@ -38,9 +38,9 @@ env:
     - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
 
   matrix:
-    - AVD_TARGET=android-15
+   #- AVD_TARGET=android-15
    #- AVD_TARGET=android-16
-   #- AVD_TARGET=android-17
+    - AVD_TARGET=android-17
    #- AVD_TARGET=android-18
    #- AVD_TARGET=android-19
    #- AVD_TARGET=android-21
@@ -49,15 +49,14 @@ env:
    #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
-        SDK_PKGS=sys-img-armeabi-v7a-android-wear-20
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
-        SDK_PKGS=sys-img-armeabi-v7a-android-21
+        AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
-        SDK_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+        AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
+        AVD_PKGS=sys-img-armeabi-v7a-android-wear-20
    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
-
 matrix:
   allow_failures:
    #- env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
@@ -73,7 +72,7 @@ before_install:
   - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi
   - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`
   - export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}"
-  - export AVD_PATH="${TRAVIS_BUILD_DIR:-.}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"
+  - export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"
   - export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
 
   - echo "WARNING! delete when fixed";     export OLD_SDK=/usr/local/android-sdk-23.0.2
@@ -92,17 +91,18 @@ before_install:
                                            android-16,sys-img-armeabi-v7a-android-16,\
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "UPDATE PACKAGES IF POSSIBLE";    echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,android-21,${SDK_PKGS:-} || true
+                                           android-20,android-21,${AVD_PKGS:-} || true
   - echo "LIST SDK UPDATES BY FILTERS";    android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
 install:
   - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD_NAME:-test}" -t
-                                           "${AVD_TARGET}" -g ${AVD_TAG:-default} -p
-                                           "${AVD_PATH:-.}" -b ${AVD_ABI:-armeabi-v7a}
-  - echo "LIST TARGETS AVDS AND DEVICES";  android list || true
-  - echo "SHOW SYSTEM IMAGE PROPERTIES";   cat "${IMG_PATH}/build.prop" || true
-  - echo "SHOW AVD CONFIG";                cat "${AVD_PATH:-.}/config.ini" || true
+                                           "${AVD_TARGET}" -b ${AVD_ABI:-armeabi-v7a} -c 90M -sdcard
+                                           "${AVD_PATH:-.}/sdcard.img" -g ${AVD_TAG:-default} -p
+                                           "${AVD_PATH:-.}"
+  - echo "LIST TARGETS, AVDS AND DEVICES"; android list || true
+  - echo "SHOW SYSTEM IMAGE PROPERTIES";   ls ${IMG_PATH} -Als; cat "${IMG_PATH}/build.prop" || true
+  - echo "SHOW AVD CONFIGURATION";         ls ${AVD_PATH} -Als; cat "${AVD_PATH}/config.ini" || true
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
@@ -133,14 +133,24 @@ after_script:
   - echo "SHOW ADB LOG";                   cat logcat.log; pkill -KILL -f adb
 
 after_failure:
- #- echo "FAILURE! SHOW LOGS";             apt-get install -qq lynx || true
- #- M_TMP=${TRAVIS_BUILD_DIR}/${MOD_NAME}/build/outputs/reports/androidTests/connected
- #- lynx --dump ${M_TMP}/com.android.builder.testing.ConnectedDevice.html > mConnectedDevice.log
- #- lynx --dump ${M_TMP}/com.android.builder.testing.html > mTesting.log
- #- lynx --dump ${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/outputs/lint-results.html > mMobiLint.log
- #- lynx --dump ${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/outputs/lint-results.html > mWearLint.log
-  - for file in *.log; do echo "$file"; echo "====================="; cat "$file"; done || true
-  - M_TMP=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/intermediates/tmp/dex
-  - cat ${M_TMP}/debug/inputList.txt ${M_TMP}/release/inputList.txt
-  - M_TMP=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/intermediates/tmp/dex
-  - cat ${M_TMP}/debug/inputList.txt ${M_TMP}/release/inputList.txt
+  - echo "FAILURE! PREPARE LOGS";          MOBI_BUILD=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/;
+                                           WEAR_BUILD=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/;
+                                           DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
+                                           RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
+                                           LINT_OUTS=outputs/lint-results.html;
+                                           CONN=outputs/reports/androidTests/connected;
+                                           DEVICE=com.android.builder.testing.ConnectedDevice.html;
+                                           TEST_OUTS=com.android.builder.testing.testing.html;
+                                           apt-get install -qq lynx || true
+  - echo "SHOW MOBI DEX INPUT LISTS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBI TEST AND LINT LOGS";   lynx --dump ${MOBI_BUILD}${LINT_OUTS} > mMobiLint.log;
+                                           lynx --dump ${MOBI_BUILD}${CONN_OUTS} > mMobiConnect.log;
+                                           lynx --dump ${MOBI_BUILD}${TEST_OUTS} > mMobiTesting.log;
+                                           for file in mMobi*.log; do echo "$file";
+                                           echo "====================="; cat "$file"; done || true
+  - echo "SHOW WEAR DEX INPUT LISTS";      cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
+  - echo "SHOW WEAR TEST AND LINT LOGS";   lynx --dump ${WEAR_BUILD}${LINT_OUTS} > mWearLint.log;
+                                           lynx --dump ${WEAR_BUILD}${CONN_OUTS} > mWearConnect.log;
+                                           lynx --dump ${WEAR_BUILD}${TEST_OUTS} > mWearTesting.log;
+                                           for file in mWear*.log; do echo "$file";
+                                           echo "====================="; cat "$file"; done || true
