@@ -39,29 +39,30 @@ env:
 
 
   matrix:
-   #- AVD_TARGET=android-15
-   #- AVD_TARGET=android-16
-   #- AVD_TARGET=android-17
-   #- AVD_TARGET=android-18
+    #- AVD_TARGET=android-15
+    #- AVD_TARGET=android-16
+    #- AVD_TARGET=android-17
+    #- AVD_TARGET=android-18
     - AVD_TARGET=android-19
     - AVD_TARGET=android-21
-   #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
-   # - AVD_TARGET=android-17 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
+        AVD_PKGS=sys-img-armeabi-v7a-android-21
+    #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+    #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
+    #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-19 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
         AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
         AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
+    #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
-        AVD_PKGS=sys-img-armeabi-v7a-android-wear-20
-   #- AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
 matrix:
   allow_failures:
-   #- env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
-   #- env: AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
+    #- env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
+    #- env: AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
 
 notifications:
   email: false
@@ -91,7 +92,8 @@ before_install:
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "INSTALL PACKAGES IF AVAILABLE";  echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,android-21,${AVD_PKGS:-} || true
+                                           android-20,sys-img-armeabi-v7a-android-20-wear,\
+                                           android-21,${AVD_PKGS:-} || true
   - echo "LIST FILTERED SDK PACKAGES";     android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
@@ -123,7 +125,8 @@ script:
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
   - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-}
-  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
+  #- echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck -debug          ${PREDEX_OPT:-}
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
@@ -132,7 +135,7 @@ after_script:
   - echo "SHOW ADB LOG";                   cat logcat.log; pkill -KILL -f adb
 
 after_failure:
-  - echo "FAILURE! PREPARE LOGS";          MOBI_BUILD=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/;
+  - echo "FAILURE! PREPARE REPORTS";       MOBI_BUILD=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/;
                                            WEAR_BUILD=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/;
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
@@ -142,15 +145,16 @@ after_failure:
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
                                            sudo apt-get install -qq lynx || true
-  - echo "SHOW MOBI DEX INPUT LISTS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
-  - echo "SHOW MOBI TEST AND LINT LOGS";   lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
+  - echo "SHOW MOBILE DEX INPUT LISTS";    cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBILE LINT AND LOGS";      lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
                                            lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
                                            for file in mMobi*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
-  - echo "SHOW WEAR DEX INPUT LISTS";      cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
-  - echo "SHOW WEAR TEST AND LINT LOGS";   lynx --dump ${WEAR_BUILD}${LINT_LOG} > mWearLint.log;
+  - echo "SHOW WEARABLE DEX INPUT LISTS";  cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
+  - echo "SHOW WEARABLE LINT AND LOGS";    lynx --dump ${WEAR_BUILD}${LINT_LOG} > mWearLint.log;
                                            lynx --dump ${WEAR_BUILD}${CONN_LOG} > mWearConnect.log;
                                            lynx --dump ${WEAR_BUILD}${TEST_LOG} > mWearTesting.log;
                                            for file in mWear*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
+                                           # TODO: http://ubuntuforums.org/showthread.php?t=2042120
