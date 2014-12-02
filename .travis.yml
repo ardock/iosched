@@ -62,7 +62,7 @@ matrix:
   allow_failures:
     #- env: AVD_TARGET=android-21 AVD_ABI=x86 ARGS='-PdisablePreDex'
     #- env: AVD_TARGET=android-21 AVD_ABI=x86_64 ARGS='-PdisablePreDex'
-    - AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
+    - env: AVD_TARGET=android-20 ARGS='-PdisablePreDex' AVD_TAG=android-wear
 
 notifications:
   email: false
