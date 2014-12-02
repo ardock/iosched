@@ -43,7 +43,7 @@ env:
     #- AVD_TARGET=android-16
     #- AVD_TARGET=android-17
     #- AVD_TARGET=android-18
-    - AVD_TARGET=android-19
+    #- AVD_TARGET=android-19
     - AVD_TARGET=android-21
         AVD_PKGS=sys-img-armeabi-v7a-android-21
     #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
@@ -124,9 +124,10 @@ script:
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-}
   #- echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
-  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck -debug          ${PREDEX_OPT:-}
+  # Debug
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew build connectedCheck -debug    ${PREDEX_OPT:-}
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
