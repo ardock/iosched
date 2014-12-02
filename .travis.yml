@@ -23,23 +23,24 @@ env:
     - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
     - SDK=${TRAVIS_BUILD_DIR}/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
+    - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
     - BUILD_TOOLS='build-tools-21.1.1'
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
-    - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
+
 
   matrix:
    #- AVD_TARGET=android-15
    #- AVD_TARGET=android-16
-    - AVD_TARGET=android-17
+   #- AVD_TARGET=android-17
    #- AVD_TARGET=android-18
-   #- AVD_TARGET=android-19
-   #- AVD_TARGET=android-21
+    - AVD_TARGET=android-19
+    - AVD_TARGET=android-21
    #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+   # - AVD_TARGET=android-17 ARGS='-PdisablePreDex'
    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
-   #- AVD_TARGET=android-19 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-19 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
         AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' ARGS='-PdisablePreDex' AVD_TAG=google_apis
@@ -95,7 +96,7 @@ install:
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
+  #- echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
   #- echo "CLEAN PROJECT";                  ./gradlew clean
   #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
@@ -131,7 +132,7 @@ after_failure:
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
-                                           apt-get install -qq lynx || true
+                                           sudo apt-get install -qq lynx || true
   - echo "SHOW MOBI DEX INPUT LISTS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
   - echo "SHOW MOBI TEST AND LINT LOGS";   lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
