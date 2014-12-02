@@ -66,8 +66,9 @@ before_install:
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH";
       export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
   - echo "WARNING delete this when fixed"; export OLD_SDK=/usr/local/android-sdk-23.0.2;
-                                           cp -R ${OLD_SDK}/system-images ${SDK}/system-images;
+                                           mkdir ${SDK};
                                            cp -R ${OLD_SDK}/platforms ${SDK}/platforms;
+                                           cp -R ${OLD_SDK}/system-images ${SDK}/system-images;
                                            cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "Copy failed"
   - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
