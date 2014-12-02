@@ -15,15 +15,6 @@
 
 language: android
 
-sudo: true
-
-cache:
-  apt: true
-  directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/
-
 jdk: oraclejdk7
 
 env:
@@ -67,19 +58,17 @@ notifications:
 
 
 before_install:
-  - echo "EXPORT ENV VARIABLES";           export AVDT_DIR="$AVD_TARGET"
-  - if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi
-  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi
-  - export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`
-  - export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}"
-  - export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH"
-  - export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
-
-  - echo "WARNING! delete when fixed";     export OLD_SDK=/usr/local/android-sdk-23.0.2
-  - cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "SDK tools copy failed."
-  - cp -R ${OLD_SDK}/platforms ${SDK}/platforms || echo "SDK platforms copy failed."
-  - cp -R ${OLD_SDK}/system-images ${SDK}/system-images || echo "SDK system-images copy failed."
-
+  - echo "EXPORT ENV VARIABLES";           export AVDT_DIR="$AVD_TARGET";
+      if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
+      if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
+      export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`;
+      export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
+      export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH";
+      export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
+  - echo "WARNING delete this when fixed"; export OLD_SDK=/usr/local/android-sdk-23.0.2;
+                                           cp -R ${OLD_SDK}/system-images ${SDK}/system-images;
+                                           cp -R ${OLD_SDK}/platforms ${SDK}/platforms;
+                                           cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "Copy failed"
   - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "UPDATE PACKAGES IF REQUIRED";    echo y | android update sdk -u -t platform-tool,tool,\
@@ -136,20 +125,21 @@ after_failure:
                                            WEAR_BUILD=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/;
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
-                                           LINT_OUTS=outputs/lint-results.html;
-                                           CONN=outputs/reports/androidTests/connected;
-                                           DEVICE=com.android.builder.testing.ConnectedDevice.html;
-                                           TEST_OUTS=com.android.builder.testing.testing.html;
+                                           LINT_LOG=outputs/lint-results.html;
+                                           CONNECTED_TMP=outputs/reports/androidTests/connected/;
+                                           TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
+                                           CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
+                                           TEST_LOG=${TESTING_TMP}testing.html;
                                            apt-get install -qq lynx || true
   - echo "SHOW MOBI DEX INPUT LISTS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
-  - echo "SHOW MOBI TEST AND LINT LOGS";   lynx --dump ${MOBI_BUILD}${LINT_OUTS} > mMobiLint.log;
-                                           lynx --dump ${MOBI_BUILD}${CONN_OUTS} > mMobiConnect.log;
-                                           lynx --dump ${MOBI_BUILD}${TEST_OUTS} > mMobiTesting.log;
+  - echo "SHOW MOBI TEST AND LINT LOGS";   lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
+                                           lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
+                                           lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
                                            for file in mMobi*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
   - echo "SHOW WEAR DEX INPUT LISTS";      cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
-  - echo "SHOW WEAR TEST AND LINT LOGS";   lynx --dump ${WEAR_BUILD}${LINT_OUTS} > mWearLint.log;
-                                           lynx --dump ${WEAR_BUILD}${CONN_OUTS} > mWearConnect.log;
-                                           lynx --dump ${WEAR_BUILD}${TEST_OUTS} > mWearTesting.log;
+  - echo "SHOW WEAR TEST AND LINT LOGS";   lynx --dump ${WEAR_BUILD}${LINT_LOG} > mWearLint.log;
+                                           lynx --dump ${WEAR_BUILD}${CONN_LOG} > mWearConnect.log;
+                                           lynx --dump ${WEAR_BUILD}${TEST_LOG} > mWearTesting.log;
                                            for file in mWear*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
