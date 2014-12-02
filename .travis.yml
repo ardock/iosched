@@ -92,7 +92,7 @@ before_install:
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "INSTALL PACKAGES IF AVAILABLE";  echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,sys-img-armeabi-v7a-android-20-wear,\
+                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
                                            android-21,${AVD_PKGS:-} || true
   - echo "LIST FILTERED SDK PACKAGES";     android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
