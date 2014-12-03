@@ -37,7 +37,6 @@ env:
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
 
-
   matrix:
     #- AVD_TARGET=android-15
     #- AVD_TARGET=android-16
@@ -107,8 +106,8 @@ install:
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  #- echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
-  #- echo "CLEAN PROJECT";                  ./gradlew clean
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
+  - echo "CLEAN PROJECT";                  ./gradlew clean
   #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
 
