@@ -117,14 +117,14 @@ before_script:
   - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
+  - echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
   #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
   #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
   - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-} --info
-  #- echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
