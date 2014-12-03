@@ -106,11 +106,11 @@ install:
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies --info
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
   - echo "CLEAN PROJECT";                  ./gradlew clean
   - echo "PREPARE  DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources
   - echo "COMPILE  DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --debug
+  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
@@ -140,12 +140,16 @@ after_failure:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
+                                           DUMP_MAPT=outputs/mapping/test/debug/dump.txt
+                                           DUMP_MAPD=outputs/mapping/debug/dump.txt
+                                           USAGE_MAPD=outputs/mapping/debug/usage.txt
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
                                            sudo apt-get install -qq lynx || true
   - echo "SHOW MOBILE DEX INPUT LISTS";    cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBILE PROGUARD LOGS";      cat ${MOBI_BUILD}${DUMP_MAPT} ${MOBI_BUILD}${DUMP_MAPD} ${MOBI_BUILD}${USAGE_MAPD}
   - echo "SHOW MOBILE LINT AND LOGS";      lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
                                            lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
