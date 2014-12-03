@@ -110,7 +110,7 @@ install:
   #- echo "CLEAN PROJECT";                  ./gradlew clean
   #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG";                 ./gradlew proguardDebug
+  - echo "PROGUARD DEBUG AND DEBUG TEST";   ./gradlew proguardDebug proguardDebugTest
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
@@ -122,10 +122,11 @@ script:
   #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
   #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
+  #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk          ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew :${MOD_NAME:-app}:build                          ${PREDEX_OPT:-} --info
-  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew :${MOD_NAME:-app}:connectedCheck                 ${PREDEX_OPT:-}
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-}
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-}
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
