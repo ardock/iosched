@@ -117,7 +117,7 @@ before_script:
   - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  - echo "ASSEMBLE DEBUG BUILDS";          ./gradlew :${MOD_NAME:-app}:proguardDebug                  ${PREDEX_OPT:-} --info
+  - echo "ASSEMBLE DEBUG BUILDS";          ./gradlew :android:compileDebugJava                  ${PREDEX_OPT:-} --info
   #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
   #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
