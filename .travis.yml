@@ -110,7 +110,7 @@ install:
   #- echo "CLEAN PROJECT";                  ./gradlew clean
   #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG AND DEBUG TEST";   ./gradlew proguardDebug proguardDebugTest
+  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --debug
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
