@@ -62,6 +62,9 @@
 -keepclasseswithmembers class * {
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int, int);
+}
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);
 }
