@@ -36,6 +36,7 @@
 # duplicate the contents of this file and remove the include of this
 # file from your project's proguard.config path property.
 -keepattributes *Annotation*
+-keepattributes InnerClasses
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
@@ -46,14 +47,15 @@
 -keep public class * extends android.support.v4.app.Fragment
 -keep public class * extends android.app.Fragment
 # For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
--keepclasseswithmembernames,includedescriptorclasses class * {
+-keepclasseswithmembernames class * {
     native <methods>;
 }
+# Added includedescriptorclasses for unkept android.support descriptors
 -keep,includedescriptorclasses public class * extends android.view.View {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
-    public <init>(android.content.Context, android.util.AttributeSet, int, int); #Added in API 21
+    public <init>(android.content.Context, android.util.AttributeSet, int, int); # Added in API 21
     public void set*(...);
 }
 -keepclasseswithmembers class * {
@@ -63,7 +65,7 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int, int); #Added in API 21
+    public <init>(android.content.Context, android.util.AttributeSet, int, int); # Added in API 21
 }
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);

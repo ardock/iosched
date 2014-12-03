@@ -133,8 +133,8 @@ after_success:
 
 after_script:
   - echo "SHOW ADB LOG";                   cat logcat.log; pkill -KILL -f adb
-
-after_failure:
+#
+#after_failure:
   - echo "FAILURE! PREPARE REPORTS";       MOBI_BUILD=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/;
                                            WEAR_BUILD=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/;
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
