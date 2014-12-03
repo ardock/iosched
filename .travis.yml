@@ -122,7 +122,7 @@ script:
   #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
-  - echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
   - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-} --info
   #- echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
 
