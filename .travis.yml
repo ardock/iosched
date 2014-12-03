@@ -106,10 +106,10 @@ install:
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
-  #- echo "CLEAN PROJECT";                  ./gradlew clean
-  #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
-  #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies --info
+  - echo "CLEAN PROJECT";                  ./gradlew clean
+  - echo "PREPARE  DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources
+  - echo "COMPILE  DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources
   - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --debug
 
 before_script:
