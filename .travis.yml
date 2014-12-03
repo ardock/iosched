@@ -110,7 +110,7 @@ install:
   - echo "CLEAN PROJECT";                  ./gradlew clean
   - echo "PREPARE  DEBUG AND DEBUG TEST";  ./gradlew generateDebugSources generateDebugTestSources
   - echo "COMPILE  DEBUG AND DEBUG TEST";  ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
+  #- echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
@@ -125,8 +125,8 @@ script:
   #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk          ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-}
-  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-}
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-} --info
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-} --info
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
@@ -140,9 +140,9 @@ after_failure:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
-                                           DUMP_MAPT=outputs/mapping/test/debug/dump.txt
-                                           DUMP_MAPD=outputs/mapping/debug/dump.txt
-                                           USAGE_MAPD=outputs/mapping/debug/usage.txt
+                                           DUMP_MAPT=outputs/mapping/test/debug/dump.txt;
+                                           DUMP_MAPD=outputs/mapping/debug/dump.txt;
+                                           USAGE_MAPD=outputs/mapping/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
