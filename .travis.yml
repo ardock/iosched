@@ -118,7 +118,7 @@ before_script:
 
 script:
   - echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
-  - echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
   #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
   #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
   - echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
