@@ -49,7 +49,7 @@
 -keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
 }
--keep public class * extends android.view.View {
+-keep,includedescriptorclasses public class * extends android.view.View {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
@@ -63,7 +63,7 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int, int);
+    public <init>(android.content.Context, android.util.AttributeSet, int, int); #Added in API 21
 }
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);
