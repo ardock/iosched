@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+# BEGIN -- Default
 # This is a configuration file for ProGuard.
 # http://proguard.sourceforge.net/index.html#manual/usage.html
 -dontusemixedcaseclassnames
@@ -23,7 +23,6 @@
 # of these optimizations on its own).
 -dontoptimize
 -dontpreverify
-
 # If you want to enable optimization, you should include the
 # following:
 # -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
@@ -36,31 +35,20 @@
 # duplicate the contents of this file and remove the include of this
 # file from your project's proguard.config path property.
 -keepattributes *Annotation*
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgent
--keep public class * extends android.preference.Preference
--keep public class * extends android.support.v4.app.Fragment
--keep public class * extends android.app.Fragment
+# Licensing. See http://developer.android.com/google/play/licensing/adding-licensing.html
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
 # For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
 -keepclasseswithmembernames class * {
     native <methods>;
 }
--keep public class * extends android.view.View {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-    public void set*(...);
+# keep setters in Views so that animations can still work.
+# see http://proguard.sourceforge.net/manual/examples.html#beans
+-keepclassmembers public class * extends android.view.View {
+   void set*(***);
+   *** get*();
 }
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet);
-}
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
+# We want to keep methods in Activity that could be used in the XML attribute onClick
 -keepclassmembers class * extends android.app.Activity {
    public void *(android.view.View);
 }
@@ -78,7 +66,41 @@
 # The support library contains references to newer platform versions.
 # Don't warn about those in case this app is linking against an older
 # platform version.  We know about them, and they are safe.
--dontwarn android.support.**
+#-dontwarn android.support.**
+# END -- Default
+
+# BEGIN -- Android
+-keepattributes InnerClasses
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgent
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.support.v4.app.Fragment
+-keep public class * extends android.app.Fragment
+
+# Added includedescriptorclasses for unkept android.support descriptors
+-keep,includedescriptorclasses public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <init>(android.content.Context, android.util.AttributeSet, int, int); # Added in API 21
+    public void set*(...);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int, int); # Added in API 21
+}
+# END-- Android
+
+# BEGIN -- Google APIs
 # Needed by google-http-client to keep generic types and @Key annotations accessed via reflection
 -keepclassmembers class * {
   @com.google.api.client.util.Key <fields>;
@@ -97,8 +119,8 @@
 # Don't discard Guava classes that raise warnings
 -keep class com.google.common.collect.MapMakerInternalMap$ReferenceEntry
 -keep class com.google.common.cache.LocalCache$ReferenceEntry
-# Make sure that Google Analytics doesn't get removed
--keep class com.google.analytics.tracking.android.CampaignTrackingReceiver
+## END -- Google APIs
+
 ## BEGIN -- Google Play Services proguard.txt
 -keep class * extends java.util.ListResourceBundle {
     protected java.lang.Object[][] getContents();
@@ -118,6 +140,11 @@
     public static final ** CREATOR;
 }
 ## END -- Google Play Services proguard.txt
+
+# Legacy
+# Make sure that Google Analytics doesn't get removed
+-keep class com.google.analytics.tracking.android.CampaignTrackingReceiver
+
 # Other settings
 -keep class com.android.**
 -keep class com.google.android.**

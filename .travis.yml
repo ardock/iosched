@@ -15,15 +15,6 @@
 
 language: android
 
-sudo: false
-
-cache:
-  apt: true
-  directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-    - ${TRAVIS_BUILD_DIR}/android-sdk/extras/
-
 jdk: oraclejdk7
 
 env:
@@ -36,20 +27,20 @@ env:
     - BUILD_TOOLS='build-tools-21.1.1'
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
-
+    - LOG_TAGS='*:E'
 
   matrix:
-    #- AVD_TARGET=android-15
-    #- AVD_TARGET=android-16
-    #- AVD_TARGET=android-17
-    #- AVD_TARGET=android-18
+    - AVD_TARGET=android-15
+    - AVD_TARGET=android-16
+    - AVD_TARGET=android-17
+    - AVD_TARGET=android-18
     - AVD_TARGET=android-19
     - AVD_TARGET=android-21
         AVD_PKGS=sys-img-armeabi-v7a-android-21
-    #- AVD_TARGET=android-15 ARGS='-PdisablePreDex'
-    #- AVD_TARGET=android-16 ARGS='-PdisablePreDex'
-    #- AVD_TARGET=android-17 ARGS='-PdisablePreDex'
-    #- AVD_TARGET=android-18 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-16 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+    - AVD_TARGET=android-18 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-19 ARGS='-PdisablePreDex'
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
         AVD_PKGS=sys-img-armeabi-v7a-android-21
@@ -77,10 +68,10 @@ before_install:
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH";
       export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
   - echo "WARNING delete this when fixed"; export OLD_SDK=/usr/local/android-sdk-23.0.2;
-                                           mkdir ${SDK};
-                                           cp -R ${OLD_SDK}/platforms ${SDK}/platforms;
-                                           cp -R ${OLD_SDK}/system-images ${SDK}/system-images;
-                                           cp -R ${OLD_SDK}/tools ${SDK}/tools || echo "Copy failed"
+                                           mkdir -p ${SDK};
+                                           cp -u -R ${OLD_SDK}/platforms ${SDK}/platforms;
+                                           cp -u -R ${OLD_SDK}/system-images ${SDK}/system-images;
+                                           cp -u -R ${OLD_SDK}/tools ${SDK}/tools || echo "CP ERROR"
   - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
   - echo "INSTALL PACKAGES IF SUGGESTED";  echo y | android update sdk -u -t platform-tool,tool,\
                                            extra-android-support,extra-google-google_play_services,\
@@ -92,7 +83,7 @@ before_install:
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "INSTALL PACKAGES IF AVAILABLE";  echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,sys-img-armeabi-v7a-android-20-wear,\
+                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
                                            android-21,${AVD_PKGS:-} || true
   - echo "LIST FILTERED SDK PACKAGES";     android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
@@ -107,51 +98,62 @@ install:
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD_NAME}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  #- echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
-  #- echo "CLEAN PROJECT";                  ./gradlew clean
-  #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
-  #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
+  - echo "CLEAN PROJECT";                  ./gradlew clean
+  - echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
+  - echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
+  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
   - echo "SEND MENU KEY EVENT";            adb shell input keyevent 82 &
-  - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
+  - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat $LOG_TAGS | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
-  #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
-  #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
-  #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
-  #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
-  #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew build                          ${PREDEX_OPT:-}
-  #- echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck                 ${PREDEX_OPT:-}
-  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew connectedCheck -debug          ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                   ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest               ${PREDEX_OPT:-}
+  #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug  ${PREDEX_OPT:-}
+  #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest            ${PREDEX_OPT:-}
+  #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk           ${PREDEX_OPT:-}
+  #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources          ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                 ${PREDEX_OPT:-}
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-}
+  - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-}
 
 after_success:
   - echo "SUCCESS!";                       echo "BUILD SUCCESSFUL"
 
 after_script:
   - echo "SHOW ADB LOG";                   cat logcat.log; pkill -KILL -f adb
-
-after_failure:
+#
+#after_failure:
   - echo "FAILURE! PREPARE REPORTS";       MOBI_BUILD=${TRAVIS_BUILD_DIR}/${MOBI_MOD_NAME}/build/;
                                            WEAR_BUILD=${TRAVIS_BUILD_DIR}/${WEAR_MOD_NAME}/build/;
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
+                                           PRO_RULES=intermediates/proguard-rules/;
+                                           R_PRORULES=${PRO_RULES}release/aapt_rules.txt
+                                           R_PROUSAGE=outputs/mapping/release/usage.txt;
+                                           D_PRORULES=${PRO_RULES}debug/aapt_rules.txt;
+                                           D_PROUSAGE=outputs/mapping/debug/usage.txt;
+                                           T_PRORULES=${PRO_RULES}test/debug/aapt_rules.txt;
+                                           T_PROUSAGE=outputs/mapping/test/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
                                            sudo apt-get install -qq lynx || true
-  - echo "SHOW MOBILE DEX INPUT LISTS";    cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBILE DEX LIST LOGS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBILE PROGUARD RELEASE";   cat ${MOBI_BUILD}${R_PRORULES} #${MOBI_BUILD}$R_PROUSAGE}
+  - echo "SHOW MOBILE PROGUARD DEBUG";     cat ${MOBI_BUILD}${D_PRORULES} #${MOBI_BUILD}$D_PROUSAGE}
+  - echo "SHOW MOBILE PROGUARD TESTDEBUG"; cat ${MOBI_BUILD}${T_PRORULES} #${MOBI_BUILD}$T_PROUSAGE}
   - echo "SHOW MOBILE LINT AND LOGS";      lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
                                            lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
                                            for file in mMobi*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
-  - echo "SHOW WEARABLE DEX INPUT LISTS";  cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
+  - echo "SHOW WEARABLE DEX LIST LOGS";    cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
   - echo "SHOW WEARABLE LINT AND LOGS";    lynx --dump ${WEAR_BUILD}${LINT_LOG} > mWearLint.log;
                                            lynx --dump ${WEAR_BUILD}${CONN_LOG} > mWearConnect.log;
                                            lynx --dump ${WEAR_BUILD}${TEST_LOG} > mWearTesting.log;
