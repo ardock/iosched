@@ -36,6 +36,7 @@ env:
     - BUILD_TOOLS='build-tools-21.1.1'
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
+    - LOG_TAGS='*:E'
 
   matrix:
     #- AVD_TARGET=android-15
@@ -110,12 +111,12 @@ install:
   - echo "CLEAN PROJECT";                  ./gradlew clean
   - echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   - echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
-  #- echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
+  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
   - echo "SEND MENU KEY EVENT";            adb shell input keyevent 82 &
-  - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
+  - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat $LOG_TAGS | tee logcat.log>/dev/null 2>&1 &
 
 script:
   #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                   ${PREDEX_OPT:-}
@@ -125,7 +126,7 @@ script:
   #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk           ${PREDEX_OPT:-}
   #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources          ${PREDEX_OPT:-}
   #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                 ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-} --stacktrace --info
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-}
   - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-}
 
 after_success:
@@ -140,15 +141,22 @@ after_script:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
-                                           DRULES_PRO=intermediates/proguard-rules/debug/aapt_rules.txt
-                                           DUSAGE_PRO=outputs/mapping/debug/usage.txt;
+                                           PRO_RULES=intermediates/proguard-rules/
+                                           R_PRORULES=${PRO_RULES}release/aapt_rules.txt
+                                           R_PROUSAGE=outputs/mapping/release/usage.txt;
+                                           D_PRORULES=${PRO_RULES}debug/aapt_rules.txt
+                                           D_PROUSAGE=outputs/mapping/debug/usage.txt;
+                                           T_PRORULES=${PRO_RULES}test/debug/aapt_rules.txt
+                                           T_PROUSAGE=outputs/mapping/test/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
                                            sudo apt-get install -qq lynx || true
   - echo "SHOW MOBILE DEX LIST LOGS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
-  - echo "SHOW MOBILE PROGUARD LOGS";      cat ${MOBI_BUILD}${DRULES_PRO} ${MOBI_BUILD}$DUSAGE_PRO}
+  - echo "SHOW MOBILE PROGUARD RELEASE";   cat ${MOBI_BUILD}${R_PRORULES} #${MOBI_BUILD}$R_PROUSAGE}
+  - echo "SHOW MOBILE PROGUARD DEBUG";     cat ${MOBI_BUILD}${D_PRORULES} #${MOBI_BUILD}$D_PROUSAGE}
+  - echo "SHOW MOBILE PROGUARD TESTDEBUG"; cat ${MOBI_BUILD}${T_PRORULES} #${MOBI_BUILD}$T_PROUSAGE}
   - echo "SHOW MOBILE LINT AND LOGS";      lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
                                            lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
