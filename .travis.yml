@@ -141,12 +141,12 @@ after_script:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
-                                           PRO_RULES=intermediates/proguard-rules/
+                                           PRO_RULES=intermediates/proguard-rules/;
                                            R_PRORULES=${PRO_RULES}release/aapt_rules.txt
                                            R_PROUSAGE=outputs/mapping/release/usage.txt;
-                                           D_PRORULES=${PRO_RULES}debug/aapt_rules.txt
+                                           D_PRORULES=${PRO_RULES}debug/aapt_rules.txt;
                                            D_PROUSAGE=outputs/mapping/debug/usage.txt;
-                                           T_PRORULES=${PRO_RULES}test/debug/aapt_rules.txt
+                                           T_PRORULES=${PRO_RULES}test/debug/aapt_rules.txt;
                                            T_PROUSAGE=outputs/mapping/test/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
