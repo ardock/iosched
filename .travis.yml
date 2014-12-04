@@ -140,21 +140,21 @@ after_script:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
-                                           DUMP_MAPD=outputs/mapping/debug/dump.txt;
-                                           USAGE_MAPD=outputs/mapping/debug/usage.txt;
+                                           DRULES_PRO=intermediates/debug/aapt_rules.txt
+                                           DUSAGE_PRO=outputs/mapping/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
                                            CONN_LOG=${TESTING_TMP}ConnectedDevice.html;
                                            TEST_LOG=${TESTING_TMP}testing.html;
                                            sudo apt-get install -qq lynx || true
-  - echo "SHOW MOBILE DEX INPUT LISTS";    cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
-  - echo "SHOW MOBILE PROGUARD LOGS";      cat ${MOBI_BUILD}${USAGE_MAPD} ${MOBI_BUILD}${DUMP_MAPD}
+  - echo "SHOW MOBILE DEX LIST LOGS";      cat ${MOBI_BUILD}${DEBUG_INT} ${MOBI_BUILD}${RELEASE_INT}
+  - echo "SHOW MOBILE PROGUARD LOGS";      cat ${MOBI_BUILD}${DRULES_PRO} ${MOBI_BUILD}$DUSAGE_PRO}
   - echo "SHOW MOBILE LINT AND LOGS";      lynx --dump ${MOBI_BUILD}${LINT_LOG} > mMobiLint.log;
                                            lynx --dump ${MOBI_BUILD}${CONN_LOG} > mMobiConnect.log;
                                            lynx --dump ${MOBI_BUILD}${TEST_LOG} > mMobiTesting.log;
                                            for file in mMobi*.log; do echo "$file";
                                            echo "====================="; cat "$file"; done || true
-  - echo "SHOW WEARABLE DEX INPUT LISTS";  cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
+  - echo "SHOW WEARABLE DEX LIST LOGS";    cat ${WEAR_BUILD}${DEBUG_INT} ${WEAR_BUILD}${RELEASE_INT}
   - echo "SHOW WEARABLE LINT AND LOGS";    lynx --dump ${WEAR_BUILD}${LINT_LOG} > mWearLint.log;
                                            lynx --dump ${WEAR_BUILD}${CONN_LOG} > mWearConnect.log;
                                            lynx --dump ${WEAR_BUILD}${TEST_LOG} > mWearTesting.log;
