@@ -110,7 +110,7 @@ install:
   - echo "CLEAN PROJECT";                  ./gradlew clean
   - echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
   - echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
+  #- echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
@@ -118,14 +118,14 @@ before_script:
   - echo "REDIRECT ADB LOGCAT TO A FILE";  adb -e logcat *:W | tee logcat.log > /dev/null 2>&1 &
 
 script:
-  #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                  ${PREDEX_OPT:-}
-  #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest              ${PREDEX_OPT:-}
-  #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug ${PREDEX_OPT:-}
-  #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest           ${PREDEX_OPT:-}
-  #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk          ${PREDEX_OPT:-}
-  #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources         ${PREDEX_OPT:-}
-  #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                ${PREDEX_OPT:-}
-  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE DEBUG BUILDS";          ./gradlew assembleDebug                   ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE DEBUG TEST BUILDS";     ./gradlew assembleDebugTest               ${PREDEX_OPT:-}
+  #- echo "INSTALL MODULE DEBUG BUILD";     ./gradlew :${MOD_NAME:-app}:installDebug  ${PREDEX_OPT:-}
+  #- echo "INSTALL AND RUN DEBUG TESTS";    ./gradlew connectedAndroidTest            ${PREDEX_OPT:-}
+  #- echo "HANDLE RELEASE MICRO APK";       ./gradlew handleReleaseMicroApk           ${PREDEX_OPT:-}
+  #- echo "PREPARE RELEASE BUILDS";         ./gradlew generateReleaseSources          ${PREDEX_OPT:-}
+  #- echo "ASSEMBLE RELEASE BUILDS";        ./gradlew assembleRelease                 ${PREDEX_OPT:-}
+  - echo "ASSEMBLE AND TEST PROJECT";      ./gradlew ${MOD_NAME:-app}:build          ${PREDEX_OPT:-} --stacktrace --info
   - echo "RUN CONNECTED DEVICE CHECKS";    ./gradlew ${MOD_NAME:-app}:connectedCheck ${PREDEX_OPT:-}
 
 after_success:
@@ -140,7 +140,7 @@ after_script:
                                            DEBUG_INT=intermediates/tmp/dex/debug/inputList.txt;
                                            RELEASE_INT=intermediates/tmp/dex/release/inputList.txt;
                                            LINT_LOG=outputs/lint-results.html;
-                                           DRULES_PRO=intermediates/debug/aapt_rules.txt
+                                           DRULES_PRO=intermediates/proguard-rules/debug/aapt_rules.txt
                                            DUSAGE_PRO=outputs/mapping/debug/usage.txt;
                                            CONNECTED_TMP=outputs/reports/androidTests/connected/;
                                            TESTING_TMP=${CONNECTED_TMP}com.android.builder.testing.;
