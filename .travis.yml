@@ -16,7 +16,6 @@ language: android
 
 jdk:
   - openjdk7
-  - oraclejdk6
   - oraclejdk7
   - oraclejdk8
 
@@ -41,6 +40,7 @@ env:
 install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
+  - adb wait-for-device
 
 before_script:
   - ./scripts/wait_for_emulator.sh
