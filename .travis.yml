@@ -39,8 +39,10 @@ env:
 
 install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - adb wait-for-device
+  - echo "START EMULATOR IN BACKGROUND";   emulator -avd test -no-skin -no-audio -no-window &
+  - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
+  - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
 
 before_script:
   - ./scripts/wait_for_emulator.sh
