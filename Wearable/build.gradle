@@ -24,28 +24,28 @@ repositories {
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    compileSdkVersion rootProject.ext.androidCompileSdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.google.samples.apps.iosched"
+        applicationId rootProject.ext.androidDefaultApplicationId
         minSdkVersion 20
-        targetSdkVersion 20
+        targetSdkVersion rootProject.ext.androidDefaultTargetSdkVersion
         versionCode 1
         versionName "1.0"
     }
     signingConfigs {
         debug {
-            storeFile file(iosched14_android_debugkey_storefile)
-            storePassword iosched14_android_debugkey_storePassword
-            keyAlias iosched14_android_debugkey_keyAlias
-            keyPassword iosched14_android_debugkey_keyPassword
+            storeFile file(rootProject.ext.androidDebugStoreFile)
+            storePassword rootProject.ext.androidDebugStorePassword
+            keyAlias rootProject.ext.androidDebugKeyAlias
+            keyPassword rootProject.ext.androidDebugKeyPassword
         }
         release {
-            storeFile file(iosched14_android_releasekey_storefile)
-            storePassword iosched14_android_releasekey_storePassword
-            keyAlias iosched14_android_releasekey_keyAlias
-            keyPassword iosched14_android_releasekey_keyPassword
+            storeFile file(rootProject.ext.androidReleaseStoreFile)
+            storePassword rootProject.ext.androidReleaseStorePassword
+            keyAlias rootProject.ext.androidReleaseKeyAlias
+            keyPassword rootProject.ext.androidReleaseKeyPassword
         }
     }
 
@@ -68,5 +68,4 @@ dependencies {
     compile 'com.android.support:support-v13:21.+'
     compile 'com.google.android.support:wearable:+'
     compile 'com.google.android.gms:play-services-wearable:6.1.+'
-} 
-
+}

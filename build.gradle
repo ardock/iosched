@@ -24,3 +24,30 @@ buildscript {
     }
 }
 
+// Control Android properties of all your modules from the main project.
+// See Tip 1: http://tools.android.com/tech-docs/new-build-system/tips
+// Parameterise values so they can be overridden by environment level or command line properties.
+// See gradle.properties file for more information on the overriding system and the custom values.
+project.ext {
+    // 'Wearable' and 'android' modules can share these values and/or forks customize them.
+    androidCompileSdkVersion = 21
+    androidBuildToolsVersion = "21.1.1"
+
+    androidDefaultApplicationId = ANDROID_DEFAULT_APPLICATION_ID
+    androidDefaultMinSdkVersion = 14
+    androidDefaultTargetSdkVersion = 21
+    androidDefaultVersionCode = 223
+    androidDefaultVersionName = "2.2.3"
+
+    androidDebugStoreFile = ANDROID_DEBUG_STORE_FILE
+    androidDebugStorePassword = ANDROID_DEBUG_STORE_PASSWORD
+    androidDebugKeyAlias = ANDROID_DEBUG_KEY_ALIAS
+    androidDebugKeyPassword = ANDROID_DEBUG_KEY_PASSWORD
+
+    androidReleaseStoreFile = ANDROID_RELEASE_STORE_FILE
+    androidReleaseStorePassword = ANDROID_RELEASE_STORE_PASSWORD
+    androidReleaseKeyAlias = ANDROID_RELEASE_KEY_ALIAS
+    androidReleaseKeyPassword = ANDROID_RELEASE_KEY_PASSWORD
+
+    // 'Updater' and 'gcm-server' modules can share these values and/or forks customize them.
+}
