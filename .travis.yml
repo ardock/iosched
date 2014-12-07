@@ -61,13 +61,13 @@ before_install:
                                            "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -c 100M -g
                                            "${AVD_TAG:-default}" -p "${AVD_PATH:-.}"
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD:-test}" -no-skin -no-audio -no-window &
-  - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device; adb devices; sleep 10
+  - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
 
 install:
   - echo "LIST TARGETS, AVDS AND DEVICES"; android list || true
   - echo "SHOW AVD CONFIGURATION";         ls ${AVD_PATH} -Als; cat "${AVD_PATH}/config.ini" || true
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies --info
 
 before_script:
   - ./scripts/wait_for_emulator.sh
