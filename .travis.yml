@@ -35,11 +35,13 @@ notifications:
 
 env:
   matrix:
-    - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
+    - AVD_TARGET=android-21
 
 install:
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - echo "START EMULATOR IN BACKGROUND";   emulator -avd test -no-skin -no-audio -no-window &
+  - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD:-test}" -t
+                                           "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -c 100M -g
+                                           "${AVD_TAG:-default}" -p "${AVD_PATH:-.}"
+  - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD:-test}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
   - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
