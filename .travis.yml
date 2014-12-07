@@ -36,10 +36,12 @@ notifications:
 env:
   matrix:
     - AVD_TARGET=android-21
+    - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
 
 before_install:
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
-      export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}";
+      if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
+      export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD:-test}"; mkdir avds; echo "$AVD_PATH"
 
 install:
@@ -54,3 +56,6 @@ install:
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
+
+script:
+  - ./gradlew build connectedCheck ${PREDEX_OPT:-}
