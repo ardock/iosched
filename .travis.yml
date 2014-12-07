@@ -39,6 +39,20 @@ env:
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
 
 before_install:
+
+  # Stop other services trying to avoid java.lang.OutOfMemoryError
+  # Check http://stackoverflow.com/questions/16789288
+  # CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
+  - service --status-all
+  - sudo service postgresql stop || true
+  - sudo service mysql stop || true
+  - sudo service memcached stop || true
+  - sudo service elasticsearch stop || true
+  - sudo service mongodb stop || true
+  - sudo service rsync stop || true
+  - service --status-all
+  - ulimit -a
+
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
       if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
       export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
