@@ -37,6 +37,11 @@ env:
   matrix:
     - AVD_TARGET=android-21
 
+before_install:
+  - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
+      export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}";
+      export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD:-test}"; mkdir avds; echo "$AVD_PATH"
+
 install:
   - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD:-test}" -t
                                            "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -c 100M -g
