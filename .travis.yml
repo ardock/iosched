@@ -21,8 +21,8 @@ jdk:
 
 android:
   components:
-    - tools
     - platform-tools
+    - tools
     - build-tools-21.1.1
     - android-20
     - android-21
@@ -39,35 +39,21 @@ env:
     - AVD_TARGET=android-21 ARGS='-PdisablePreDex'
 
 before_install:
-
-  # Stop other services trying to avoid java.lang.OutOfMemoryError
-  # Check http://stackoverflow.com/questions/16789288
-  # CI environment: http://docs.travis-ci.com/user/ci-environment/#Data-Stores
-  - service --status-all
-  - sudo service postgresql stop || true
-  - sudo service mysql stop || true
-  - sudo service memcached stop || true
-  - sudo service elasticsearch stop || true
-  - sudo service mongodb stop || true
-  - sudo service rsync stop || true
-  - service --status-all
-  - ulimit -a
-
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
       if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
       export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
-      # export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD:-test}"; mkdir avds; echo "$AVD_PATH"
+      export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD:-test}"; mkdir avds; echo "$AVD_PATH"
   - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD:-test}" -t
                                            "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -g
-                                           "${AVD_TAG:-default}" # -p "${AVD_PATH:-.}" -c 100M
+                                           "${AVD_TAG:-default}" -c 100M # -p "${AVD_PATH:-.}"
   - echo "START EMULATOR IN BACKGROUND";   emulator "@${AVD:-test}" -no-skin -no-audio -no-window &
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
 
 install:
-  # - echo "LIST TARGETS, AVDS AND DEVICES"; android list || true
-  # - echo "SHOW AVD CONFIGURATION";         ls ${AVD_PATH} -Als; cat "${AVD_PATH}/config.ini" || true
+  - echo "LIST TARGETS, AVDS AND DEVICES"; android list || true
+  - echo "SHOW AVD CONFIGURATION";         ls ${AVD_PATH} -Als; cat "${AVD_PATH}/config.ini" || true
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
-  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies --info
+  - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
 
 before_script:
   - ./scripts/wait_for_emulator.sh
