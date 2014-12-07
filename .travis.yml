@@ -43,6 +43,7 @@ before_install:
       if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
       export AVD="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD:-test}"; mkdir avds; echo "$AVD_PATH"
+  - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
 
 install:
   - echo "CREATE ANDROID VIRTUAL DEVICE";  echo no | android create avd -f -n "${AVD:-test}" -t
