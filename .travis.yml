@@ -61,15 +61,14 @@ notifications:
 
 
 before_install:
-  - echo "EXPORT ENVIRONMENT VARIABLES";
-      export AVDT_DIR="$AVD_TARGET";
-      if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
-      if [[ "${GW_OPTS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
+  - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
+      if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi
+      if [[ "${GW_OPTS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi
       export MOD_NAME=`[[ $AVD_TAG = android-wear ]] && echo $WEAR_MOD_NAME || echo $MOBI_MOD_NAME`;
       export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH";
       export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
-  - echo "WARNING Update on 2014/12/09";
+  - echo "WARNING!! Update on 2014/12/09";
       export OLD_SDK=/usr/local/android-sdk-23.0.2;
       mkdir -p ${SDK};
       cp -u -R ${OLD_SDK}/platforms ${SDK}/platforms;
