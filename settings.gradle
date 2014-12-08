@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include 'iosched', ':android', ':Wearable'
+include ':android', ':Wearable'
