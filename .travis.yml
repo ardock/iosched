@@ -28,7 +28,7 @@ env:
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
     - LOG_TAGS='*:E'
-    - GRADLE_OPTS="-Xmx1024m -Dfile.encoding=UTF-8"
+    - GRADLE_OPTS="-Xmx2048m -Dfile.encoding=UTF-8"
 
   matrix:
     - AVD_TARGET=android-15
@@ -61,6 +61,7 @@ notifications:
 
 
 before_install:
+  - java -XX:+PrintFlagsFinal -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
       if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
       if [[ "${GW_OPTS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
