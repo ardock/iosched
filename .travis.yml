@@ -99,10 +99,11 @@ install:
   - echo "WAIT FOR EMULATOR ONLINE";       adb wait-for-device
   - echo "DOWNLOAD GRADLE WRAPPER";        chmod +x ./gradlew; ls -l gradlew; ./gradlew -v
   - echo "DOWNLOAD PROJECT DEPENDENCIES";  ./gradlew androidDependencies
-  - echo "CLEAN PROJECT";                  ./gradlew clean
-  - echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources generateDebugTestSources
-  - echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
-  - echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
+  #- echo "CLEAN PROJECT";                  ./gradlew clean
+  #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugSources
+  #- echo "PREPARE DEBUG AND DEBUG TEST";   ./gradlew generateDebugTestSources
+  #- echo "COMPILE DEBUG AND DEBUG TEST";   ./gradlew compileDebugSources compileDebugTestSources
+  #- echo "PROGUARD DEBUG AND DEBUG TEST";  ./gradlew proguardDebug proguardDebugTest --info
 
 before_script:
   - echo "WAIT FOR EMULATOR READY";        chmod +x $WFE_READY; ls -l $WFE_READY; $WFE_READY
