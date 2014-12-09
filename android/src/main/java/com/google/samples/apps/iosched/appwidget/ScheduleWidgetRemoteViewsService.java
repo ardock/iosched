@@ -16,11 +16,9 @@
 
 package com.google.samples.apps.iosched.appwidget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.text.format.DateUtils;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
@@ -42,7 +40,8 @@ import com.google.samples.apps.iosched.util.UIUtils;
 
 import java.util.*;
 
-import static com.google.samples.apps.iosched.util.LogUtils.*;
+import static com.google.samples.apps.iosched.util.LogUtils.LOGE;
+import static com.google.samples.apps.iosched.util.LogUtils.makeLogTag;
 
 /**
  * This is the service that provides the factory to be bound to the collection service.
