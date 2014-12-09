@@ -56,21 +56,13 @@ matrix:
     #- env: AVD_TARGET=android-21 AVD_ABI=x86_64 GW_OPTS='-PdisablePreDex'
     - env: AVD_TARGET=android-20 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
 
-android:
-  components:
-    - build-tools-21.1.1
-    - android-20
-    - android-21
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-21
-
 notifications:
   email: false
 
-
 before_install:
   - java -XX:+PrintFlagsFinal -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
+  - service postgresql stop
+  - service mysql stop
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
       if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
       if [[ "${GW_OPTS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
