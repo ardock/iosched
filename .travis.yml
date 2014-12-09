@@ -20,8 +20,8 @@ jdk: oraclejdk7
 env:
   global:
     - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
-    - ANDROID_HOME=${TRAVIS_BUILD_DIR}/android-sdk
-    - SDK=${TRAVIS_BUILD_DIR}/android-sdk
+    - ANDROID_HOME=/usr/local/android-sdk
+    - SDK=/usr/local/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
     - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
     - BUILD_TOOLS='build-tools-21.1.1'
@@ -37,14 +37,12 @@ env:
     #- AVD_TARGET=android-18
     #- AVD_TARGET=android-19
     - AVD_TARGET=android-21
-        AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET=android-15 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-16 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-17 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-18 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-19 GW_OPTS='-PdisablePreDex'
     - AVD_TARGET=android-21 GW_OPTS='-PdisablePreDex'
-        AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET='Google Inc.:Google APIs:21' GW_OPTS='-PdisablePreDex' AVD_TAG=google_apis
         AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
     #- AVD_TARGET=android-21 AVD_ABI=x86 GW_OPTS='-PdisablePreDex'
@@ -60,10 +58,6 @@ notifications:
   email: false
 
 before_install:
-  - java -XX:+PrintFlagsFinal -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
-  - sudo service postgresql stop
-  - sudo service mysql stop
-  - ulimit -a; free -m
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
       if [[ $AVD_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
       if [[ "${GW_OPTS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
@@ -71,17 +65,13 @@ before_install:
       export AVD_NAME="${AVDT_DIR}-${AVD_TAG:-default}-${AVD_ABI:-armeabi-v7a}${PREDEX_OPT:-}";
       export AVD_PATH="${TRAVIS_BUILD_DIR}/avds/${AVD_NAME:-test}"; mkdir avds; echo "$AVD_PATH";
       export IMG_PATH="${SDK}/system-images/${AVDT_DIR}/${AVD_TAG:-default}/${AVD_ABI:-armeabi-v7a}"
-  - echo "WARNING!! Update on 2014/12/09";
-      export OLD_SDK=/usr/local/android-sdk-23.0.2;
-      ls $OLD_SDK -Als; ls ${OLD_SDK}/platforms;
-      mkdir -p ${SDK};
-      cp -u -R ${OLD_SDK}/platforms ${SDK}/platforms;
-      cp -u -R ${OLD_SDK}/system-images ${SDK}/system-images;
-      cp -u -R ${OLD_SDK}/tools ${SDK}/tools || echo "CP ERROR"
+  - ls $SDK -Als; ls ${SDK}/platforms -Als; ls /usr/local -Als;
   - echo "LIST SUGGESTED SDK PACKAGES";    android list sdk -e || true
   - echo "INSTALL PACKAGES IF SUGGESTED";  echo y | android update sdk -u -t platform-tool,tool,\
                                            extra-android-support,extra-google-google_play_services,\
                                            extra-android-m2repository,extra-google-m2repository,\
+                                           android-21,sys-img-armeabi-v7a-android-21,\
+                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
                                            android-19,sys-img-armeabi-v7a-android-19,\
                                            android-18,sys-img-armeabi-v7a-android-18,\
                                            android-17,sys-img-armeabi-v7a-android-17,\
@@ -89,8 +79,7 @@ before_install:
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "INSTALL PACKAGES IF AVAILABLE";  echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           android-20,sys-img-armeabi-v7a-android-wear-20,\
-                                           android-21,${AVD_PKGS:-} || true
+                                           ${AVD_PKGS:-} || true
   - echo "LIST FILTERED SDK PACKAGES";     android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 
