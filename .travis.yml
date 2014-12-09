@@ -28,14 +28,14 @@ env:
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
     - LOG_TAGS='*:E'
-    - GRADLE_OPTS="-Xmx2048m -Dfile.encoding=UTF-8"
+    - GRADLE_OPTS="-Xmx2048m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8"
 
   matrix:
-    - AVD_TARGET=android-15
+    #- AVD_TARGET=android-15
     #- AVD_TARGET=android-16
-    - AVD_TARGET=android-17
+    #- AVD_TARGET=android-17
     #- AVD_TARGET=android-18
-    - AVD_TARGET=android-19
+    #- AVD_TARGET=android-19
     - AVD_TARGET=android-21
         AVD_PKGS=sys-img-armeabi-v7a-android-21
     - AVD_TARGET=android-15 GW_OPTS='-PdisablePreDex'
@@ -45,11 +45,11 @@ env:
     - AVD_TARGET=android-19 GW_OPTS='-PdisablePreDex'
     - AVD_TARGET=android-21 GW_OPTS='-PdisablePreDex'
         AVD_PKGS=sys-img-armeabi-v7a-android-21
-    - AVD_TARGET='Google Inc.:Google APIs:21' GW_OPTS='-PdisablePreDex' AVD_TAG=google_apis
-        AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    #- AVD_TARGET='Google Inc.:Google APIs:21' GW_OPTS='-PdisablePreDex' AVD_TAG=google_apis
+    #    AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
     #- AVD_TARGET=android-21 AVD_ABI=x86 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-21 AVD_ABI=x86_64 GW_OPTS='-PdisablePreDex'
-    - AVD_TARGET=android-20 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
+    #- AVD_TARGET=android-20 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
 matrix:
   allow_failures:
     #- env: AVD_TARGET=android-21 AVD_ABI=x86 GW_OPTS='-PdisablePreDex'
