@@ -28,7 +28,7 @@ env:
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
     - LOG_TAGS='*:E'
-    - GRADLE_OPTS="-Xmx1024m -Xss64kb -XX:MaxPermSize=256m -Dfile.encoding=UTF-8"
+    - GRADLE_OPTS="-Xmx1024m -Xss256k -XX:MaxPermSize=256m -Dfile.encoding=UTF-8"
 
   matrix:
     #- AVD_TARGET=android-15
