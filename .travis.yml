@@ -28,7 +28,7 @@ env:
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
     - LOG_TAGS='*:E'
-    - GRADLE_OPTS="-Xmx2048m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8"
+    - GRADLE_OPTS="-Xmx1024m -Xss64kb -XX:MaxPermSize=256m -Dfile.encoding=UTF-8"
 
   matrix:
     #- AVD_TARGET=android-15
@@ -61,6 +61,7 @@ notifications:
 
 before_install:
   - java -XX:+PrintFlagsFinal -version | grep -iE 'HeapSize|PermSize|ThreadStackSize'
+  - ulimit -a
   - sudo service postgresql stop
   - sudo service mysql stop
   - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="$AVD_TARGET";
