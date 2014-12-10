@@ -21,6 +21,10 @@ notifications:
 
 env:
   global:
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/.gradle
+    - ANDROID_HOME=/usr/local/android-sdk
+    - SDK=/usr/local/android-sdk
+    - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
     - BUILD_TOOLS='build-tools-21.1.1'
   matrix:
     - AVD_TARGET=android-21 AVD_TAG=default
@@ -36,8 +40,13 @@ before_install:
   - echo y | android update sdk -u -t platform-tool,tool,android-21,extra-android-m2repository,\
       extra-google-m2repository,android-20,sys-img-armeabi-v7a-android-wear-20
   - echo y | android update sdk -a -u -t $BUILD_TOOLS,${AVD_PKGS:-}
-  - echo n | android create avd -f -n test -t ${AVD_TARGET} -b ${AVD_ABI:-armeabi-v7a} -g ${AVD_TAG}
+
+install:
+  - echo n | android create avd -f -n test -t "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -g
+      "${AVD_TAG:-default}"
   - emulator -avd test -no-skin -no-audio -no-window &
+  - adb wait-for-device
+  - chmod +x ./gradlew; ls -l gradlew; ./gradlew wrapper -v
 
 before_script:
   - ./scripts/wait_for_emulator.sh
