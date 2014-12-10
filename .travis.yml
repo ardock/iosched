@@ -38,12 +38,11 @@ matrix:
 
 before_install:
   - echo y | android update sdk -u -t platform-tool,tool,android-21,extra-android-m2repository,\
-      extra-google-m2repository,android-20,sys-img-armeabi-v7a-android-wear-20
+      extra-google-m2repository,sys-img-armeabi-v7a-android-wear-21
   - echo y | android update sdk -a -u -t $BUILD_TOOLS,${AVD_PKGS:-}
 
 install:
-  - echo n | android create avd -f -n test -t "${AVD_TARGET}" -b "${AVD_ABI:-armeabi-v7a}" -g
-      "${AVD_TAG:-default}"
+  - echo n | android create avd -f -n test -t "${AVD_TARGET:-android-21}" -g "${AVD_TAG:-default}" -b "${AVD_ABI:-armeabi-v7a}"
   - emulator -avd test -no-skin -no-audio -no-window &
   - adb wait-for-device
   - chmod +x ./gradlew; ls -l gradlew; ./gradlew wrapper -v
