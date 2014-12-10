@@ -17,11 +17,6 @@ package com.google.samples.apps.iosched.sync.userdata.gms;
 
 import android.content.Context;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.*;
-
-import static com.google.samples.apps.iosched.util.LogUtils.makeLogTag;
-
 /**
  *
  * Async task that syncs a file with the Drive AppData folder.
@@ -48,7 +43,7 @@ public class DriveAppAsyncTask extends ApiClientAsyncTask<Void, Void, Boolean> {
 */
     @Override
     protected Boolean doInBackgroundConnected(Void... params) {
-      return true;
+      return true; // TODO: Implement this
     }
     /*
         Log.d(TAG, "on DriveAppAsyncTask");

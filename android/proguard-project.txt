@@ -101,7 +101,7 @@
 -keep class com.google.analytics.tracking.android.CampaignTrackingReceiver
 ## BEGIN -- Google Play Services proguard.txt
 -keep class * extends java.util.ListResourceBundle {
-    protected java.lang.Object[][] getContents();
+    protected Object[][] getContents();
 }
 # Keep SafeParcelable value, needed for reflection. This is required to support backwards
 # compatibility of some classes.

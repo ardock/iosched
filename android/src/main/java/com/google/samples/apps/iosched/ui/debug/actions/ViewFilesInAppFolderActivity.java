@@ -18,10 +18,15 @@ package com.google.samples.apps.iosched.ui.debug.actions;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.Metadata;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.api.client.util.Charsets;
 import com.google.samples.apps.iosched.sync.userdata.gms.ApiClientAsyncTask;
 import com.google.samples.apps.iosched.ui.BaseActivity;
-import com.google.android.gms.drive.*;
-import com.google.api.client.util.Charsets;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -58,8 +63,8 @@ public class ViewFilesInAppFolderActivity extends BaseActivity {
                     DriveId id = m.getDriveId();
                     DriveFile file = Drive.DriveApi.getFile(getGoogleApiClient(), id);
 
-                    Contents contents = file.openContents( getGoogleApiClient(),
-                            DriveFile.MODE_READ_ONLY, null).await().getContents();
+                    DriveContents contents = file.open(getGoogleApiClient(),
+                            DriveFile.MODE_READ_ONLY, null).await().getDriveContents(); // TODO: only a test, migrate correctly
 
                     FileInputStream is = new FileInputStream(contents.getParcelFileDescriptor().getFileDescriptor());
                     try {
@@ -68,7 +73,7 @@ public class ViewFilesInAppFolderActivity extends BaseActivity {
                         while ((line=bf.readLine()) != null ) {
                             sb.append(line);
                         }
-                        file.discardContents(getGoogleApiClient(), contents);
+                        contents.discard(getGoogleApiClient()); // TODO: only a test, migrate correctly
                         result.append("*** " + m.getTitle() + "/" + id + "/" + m.getFileSize() + "B:\n   [" + sb.toString() + "]\n");
                     } catch (IOException e) {
                         throw new RuntimeException(e);

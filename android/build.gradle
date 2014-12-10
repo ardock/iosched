@@ -98,10 +98,4 @@ dependencies {
     compile('com.google.maps.android:android-maps-utils:0.3+') {
         exclude group: "com.google.android.gms"
     }
-
-    /* The two dependencies below are only required while we are using http
-       Drive appdata. When we start using AppData through GMS,
-       they should be removed. */
-    compile 'com.google.http-client:google-http-client-gson:+'
-    compile 'com.google.apis:google-api-services-drive:+'
 }

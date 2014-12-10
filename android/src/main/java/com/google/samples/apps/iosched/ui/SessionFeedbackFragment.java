@@ -32,8 +32,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
 import com.google.samples.apps.iosched.R;
 import com.google.samples.apps.iosched.provider.ScheduleContract;
 import com.google.samples.apps.iosched.ui.widget.NumberRatingBar;
@@ -48,9 +48,8 @@ import static com.google.samples.apps.iosched.util.LogUtils.makeLogTag;
  * A fragment that lets the user submit feedback about a given session.
  */
 public class SessionFeedbackFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>,
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        LoaderManager.LoaderCallbacks<Cursor>,GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = makeLogTag(SessionDetailActivity.class);
 
@@ -64,7 +63,7 @@ public class SessionFeedbackFragment extends Fragment implements
     private String mTitleString;
 
     private TextView mTitle;
-    private PlusClient mPlusClient;
+    private GoogleApiClient mGoogleApiClient;
 
     private boolean mVariableHeightHeader = false;
     private RatingBar mSessionRatingFeedbackBar;
@@ -79,10 +78,13 @@ public class SessionFeedbackFragment extends Fragment implements
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState); // TODO: only a test, migrate correctly
         final String chosenAccountName = AccountUtils.getActiveAccountName(getActivity());
-        mPlusClient = new PlusClient.Builder(getActivity(), this, this)
-                .clearScopes()
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .setAccountName(chosenAccountName)
                 .build();
 
@@ -147,13 +149,13 @@ public class SessionFeedbackFragment extends Fragment implements
     @Override
     public void onStart() {
         super.onStart();
-        mPlusClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mPlusClient.disconnect();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -161,7 +163,8 @@ public class SessionFeedbackFragment extends Fragment implements
     }
 
     @Override
-    public void onDisconnected() {
+    public void onConnectionSuspended(int i) {
+        // TODO: do something?
     }
 
     @Override

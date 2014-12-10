@@ -15,26 +15,14 @@
  */
 package com.google.samples.apps.iosched.sync.userdata.gms;
 
-import android.util.Log;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.*;
-import com.google.api.client.util.Charsets;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.google.samples.apps.iosched.sync.userdata.util.UserDataHelper.*;
-import static com.google.samples.apps.iosched.util.LogUtils.LOGD;
 import static com.google.samples.apps.iosched.util.LogUtils.makeLogTag;
 
 public class DriveHelper {
 
     private static final String TAG = makeLogTag(DriveHelper.class);
 
+    // TODO migrate this to GMS
+/*
     // Constants related to the JSON serialization:
     private static final String MIMETYPE_JSON = "application/json";
     public static final String DRIVE_FILENAME = "starred_sessions.json";
@@ -47,7 +35,7 @@ public class DriveHelper {
         FileOutputStream os = new FileOutputStream(contentsResult.getContents()
                 .getParcelFileDescriptor().getFileDescriptor());
         byte[] serializedContents = toByteArray(contents);
-        Log.d(TAG, "Saving contents to drive file: "+new String(serializedContents));
+        Log.d(TAG, "Saving contents to drive file: " + new String(serializedContents));
         os.write(serializedContents);
         com.google.android.gms.common.api.Status status =
                 file.commitAndCloseContents(apiClient, contentsResult.getContents()).await();
@@ -168,5 +156,5 @@ public class DriveHelper {
             return null;
         }
     }
-
+*/
 }
