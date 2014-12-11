@@ -24,7 +24,7 @@ env:
     - SDK=/usr/local/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
     - WFE_READY=${TRAVIS_BUILD_DIR}/scripts/wait_for_emulator.sh
-    - BUILD_TOOLS='build-tools-21.1.1'
+    - BUILD_TOOLS='build-tools-21.1.2'
     - MOBI_MOD_NAME=android
     - WEAR_MOD_NAME=Wearable
     - LOG_TAGS='*:E'
@@ -48,12 +48,12 @@ env:
         AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
     #- AVD_TARGET=android-21 AVD_ABI=x86 GW_OPTS='-PdisablePreDex'
     #- AVD_TARGET=android-21 AVD_ABI=x86_64 GW_OPTS='-PdisablePreDex'
-    - AVD_TARGET=android-20 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
+    - AVD_TARGET=android-21 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
 matrix:
   allow_failures:
     #- env: AVD_TARGET=android-21 AVD_ABI=x86 GW_OPTS='-PdisablePreDex'
     #- env: AVD_TARGET=android-21 AVD_ABI=x86_64 GW_OPTS='-PdisablePreDex'
-    - env: AVD_TARGET=android-20 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
+    - env: AVD_TARGET=android-21 GW_OPTS='-PdisablePreDex' AVD_TAG=android-wear
 
 notifications:
   email: false
@@ -80,7 +80,7 @@ before_install:
                                            android-15,sys-img-armeabi-v7a-android-15 || true
   - echo "LIST AVAILABLE SDK PACKAGES";    android list sdk -a -e || true
   - echo "INSTALL PACKAGES IF AVAILABLE";  echo y | android update sdk -a -u -t ${BUILD_TOOLS},\
-                                           ${AVD_PKGS:-} || true
+                                           ${AVD_PKGS:-},sys-img-armeabi-v7a-android-wear-21 || true
   - echo "LIST FILTERED SDK PACKAGES";     android update sdk -u -n -t platform,system-image,\
                                            add-on,extra || true
 

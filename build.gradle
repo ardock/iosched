@@ -31,7 +31,7 @@ buildscript {
 project.ext {
     // 'Wearable' and 'android' modules can share these values and/or forks customize them.
     androidCompileSdkVersion = 21
-    androidBuildToolsVersion = "21.1.1"
+    androidBuildToolsVersion = "21.1.2"
 
     androidDefaultApplicationId = ANDROID_DEFAULT_APPLICATION_ID
     androidDefaultMinSdkVersion = 14
