@@ -24,44 +24,58 @@ env:
     - SDK=/usr/local/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
     - BUILD_TOOLS='build-tools-21.1.2'
-    #- AVM_NAME=android
-    #- AVW_NAME=Wearable
+    - MOBI_APP=android
+    - WEAR_APP=Wearable
     - ANDROID_SERIAL='emulator-5554'
     - LOG_TAGS='*:E'
     #- GRADLE_OPTS="-Xmx768m -Xms256m -Xss4m -Dfile.encoding=UTF-8"
 
 matrix:
   include:
-    - env: AVD_TARGET=android-19
-    - env: AVD_TARGET=android-21 AVD_PKGS=sys-img-armeabi-v7a-android-21
-    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-    - env: AVD_TARGET=android-20 AVD_TAG=android-wear
-    - env: AVD_TARGET=android-21 AVD_TAG=android-wear
+    - env: AVM_TGT=android-18
+    - env: AVM_TGT=android-19
+    - env: AVM_TGT=android-21 AVM_PKGS=sys-img-armeabi-v7a-android-21
+    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-19,sys-img-armeabi-v7a-addon-google_apis-google-19
+    - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
   allow_failures:
-    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis AVD_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-    - env: AVD_TARGET=android-20 AVD_TAG=android-wear
-    - env: AVD_TARGET=android-21 AVD_TAG=android-wear
+    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-19,sys-img-armeabi-v7a-addon-google_apis-google-19
+    - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 
 before_install:
-  - echo y | android update sdk -u -t platform-tool,tool,android-21,extra-android-m2repository,\
-      extra-google-m2repository,android-20,sys-img-armeabi-v7a-android-wear-20
-  - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${AVD_PKGS:-}
+  - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
+  - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${AVM_PKGS:-},android-21,sys-img-armeabi-v7a-android-wear-21
 
 install:
-  - echo n | android create avd -f -n test -t "${AVD_TARGET:-android-21}" -b
-      "${AVD_ABI:-armeabi-v7a}" -g "${AVD_TAG:-default}"
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - adb wait-for-device
-  - chmod +x ./gradlew; ls -l gradlew; ./gradlew wrapper -v
+  - echo n | android create avd -f -n "${AVM_NAME:-mobi}" -t "${AVM_TGT:-android-21}" -b
+      "${AVM_ABI:-armeabi-v7a}" -g "${AVM_TAG:-default}"
+  - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TGT:-android-21}" -b
+      "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
+  - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
+  - adb devices; adb wait-for-device
+  - chmod +x ./gradlew; ls -l gradlew; ./gradlew --version
   - ./gradlew androidDependencies
   - ./gradlew clean
+  - ./gradlew generateDebugSources generateDebugTestSources
+  - ./gradlew compileDebugSources compileDebugTestSources
 
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - adb -e logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
+  - adb logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
 
-script: ./gradlew build connectedCheck
+script:
+  - ./gradlew :${MOBI_APP:-mobi}:assembleDebug
+  - ./gradlew :${MOBI_APP:-mobi}:assembleDebugTest
+  - ./gradlew :${MOBI_APP:-mobi}:installDebug
+  - ./gradlew :${MOBI_APP:-mobi}:connectedAndroidTest
+  - ./gradlew :${MOBI_APP:-mobi}:assembleRelease
+  - ./gradlew :${MOBI_APP:-mobi}:installRelease
+  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
+  - ANDROID_SERIAL='emulator-5556'
+  - adb devices; adb wait-for-device; ./scripts/wait_for_emulator.sh; adb shell input keyevent 82 &
+  - ./gradlew :${WEAR_APP:-wear}:installRelease
+  - ANDROID_SERIAL=''
+  - ./gradlew connectedCheck
 
 after_script:
-  - cat logcat.log
+  - cat logcat.log; pkill -KILL -f adb
