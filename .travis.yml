@@ -32,13 +32,13 @@ env:
 
 matrix:
   include:
-    - env: AVM_TGT=android-18
-    - env: AVM_TGT=android-19
+    - env: AVM_TGT=android-18 AVM_PKGS=sys-img-armeabi-v7a-android-18
+    - env: AVM_TGT=android-19 AVM_PKGS=sys-img-armeabi-v7a-android-19
     - env: AVM_TGT=android-21 AVM_PKGS=sys-img-armeabi-v7a-android-21
-    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-19,sys-img-armeabi-v7a-addon-google_apis-google-19
+    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
     - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
   allow_failures:
-    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-19,sys-img-armeabi-v7a-addon-google_apis-google-19
+    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
     - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 
 before_install:
