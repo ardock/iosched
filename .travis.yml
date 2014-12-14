@@ -33,8 +33,6 @@ env:
 
 matrix:
   include:
-    - env: AVM_TGT=android-18
-    - env: AVM_TGT=android-19
     - env: AVM_TGT=android-21
     - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
     - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
@@ -53,9 +51,9 @@ install:
   - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TGT:-android-21}" -b
       "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
   - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
-  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
-  - adb devices -l; adb wait-for-device; adb get-state; adb get-serialno
-  - ./gradlew --version clean compileDebugSources compileDebugTestSources compileReleaseSources
+  - adb wait-for-device; adb devices -l; adb get-state; adb get-serialno
+  - ./gradlew --version
+  - ./gradlew clean compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
   - adb wait-for-device; ./scripts/wait_for_emulator.sh; adb devices; adb shell input keyevent 82 &
@@ -65,6 +63,7 @@ script:
   - ./gradlew :${MOBI_APP:-mobi}:assembleDebug :${MOBI_APP:-mobi}:installDebug
   - ./gradlew :${MOBI_APP:-mobi}:assembleRelease :${MOBI_APP:-mobi}:installRelease
   - ANDROID_SERIAL='emulator-5556'
+  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
   - adb wait-for-device; ./scripts/wait_for_emulator.sh; adb devices; adb shell input keyevent 82 &
   - ./gradlew :${WEAR_APP:-wear}:assembleRelease :${WEAR_APP:-wear}:installRelease
   - ANDROID_SERIAL=''
