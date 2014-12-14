@@ -41,11 +41,9 @@ matrix:
 before_install:
   - sudo service --status-all
   - sudo initctl list
-  - sudo service postgresql stop
-  # - sudo service mysql stop
-  - sudo sh -c 'echo manual >> /etc/init/mysql.override'
+  - sudo /etc/init.d/postgresql stop
+  - echo manual | sudo tee /etc/init/mysql.override
   - sudo service mysql stop
-  - sudo pkill -KILL -f mysql
   - sudo service --status-all
   - initctl list
   - export ANDROID_SERIAL='emulator-5554'
