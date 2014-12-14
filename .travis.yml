@@ -26,6 +26,7 @@ env:
     - BUILD_TOOLS='build-tools-21.1.2'
     - MOBI_APP=android
     - WEAR_APP=Wearable
+    - ANDROID_SERIAL='emulator-5554'
     - LOG_TAGS='*:E'
     - ADB_INSTALL_TIMEOUT=8 # See https://code.google.com/p/android/issues/detail?id=69735
     #- GRADLE_OPTS="-Xmx768m -Xms256m -Xss4m -Dfile.encoding=UTF-8"
@@ -61,7 +62,6 @@ before_script:
   - adb logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  - ANDROID_SERIAL='emulator-5554'
   - ./gradlew :${MOBI_APP:-mobi}:assembleDebug :${MOBI_APP:-mobi}:installDebug
   - ./gradlew :${MOBI_APP:-mobi}:assembleRelease :${MOBI_APP:-mobi}:installRelease
   - ANDROID_SERIAL='emulator-5556'
