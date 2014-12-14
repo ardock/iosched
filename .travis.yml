@@ -24,12 +24,6 @@ env:
     - SDK=/usr/local/android-sdk
     - PATH=${GRADLE_USER_HOME}/bin/:${SDK}/:${SDK}/tools/:${SDK}/platform-tools/:${PATH}
     - BUILD_TOOLS='build-tools-21.1.2'
-    - MOBI_APP=android
-    - WEAR_APP=Wearable
-    - ANDROID_SERIAL='emulator-5554'
-    - LOG_TAGS='*:E'
-    - ADB_INSTALL_TIMEOUT=8 # See https://code.google.com/p/android/issues/detail?id=69735
-    #- GRADLE_OPTS="-Xmx768m -Xms256m -Xss4m -Dfile.encoding=UTF-8"
 
 matrix:
   include:
@@ -43,9 +37,9 @@ matrix:
     - env: AVM_TARGET='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 
 before_install:
+  - export ANDROID_SERIAL='emulator-5554'
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},android-21,sys-img-armeabi-v7a-android-wear-21,${AVM_PKGS:-}
-  - adb kill-server; adb start-server
 
 install:
   - echo n | android create avd -f -n "${AVM_NAME:-mobi}" -t "${AVM_TARGET:-android-21}" -b
@@ -53,26 +47,26 @@ install:
   - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TARGET:-android-21}" -b
       "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
   - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window -no-boot-anim &
-  - adb wait-for-device; adb get-state; adb get-serialno
+  - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
-  - ./scripts/wait_for_emulator.sh;
+  - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - adb logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
+  - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  - ./gradlew build
+  - ./gradlew assembleDebug installDebug
   - ANDROID_SERIAL='emulator-5556'
   - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window -no-boot-anim &
-  - adb wait-for-device; adb get-state; adb get-serialno
+  - adb wait-for-device get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
   - ANDROID_SERIAL=''
   - adb devices -l
-  - ./gradlew connectedCheck --info
+  - ./gradlew connectedCheck
 
 after_script:
   - cat logcat.log; pkill -KILL -f adb
