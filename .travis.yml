@@ -39,6 +39,13 @@ matrix:
   fast_finish: true
 
 before_install:
+  - service --status-all
+  - initctl list
+  - sudo service postgresql stop
+  # - sudo service mysql stop
+  - sudo sh -c 'echo manual >> /etc/init/mysql.override'
+  - service --status-all
+  - initctl list
   - export ANDROID_SERIAL='emulator-5554'
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${AVM_PKGS:-},${AVW_PKGS:-}
@@ -55,24 +62,22 @@ install:
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
+  - service --status-all
   - initctl list
-  - sudo service postgresql stop
-  - sudo service mysql stop
-  - sudo stop mysql || true
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
   - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
 
 script:
   - ./gradlew :${MOBI_APP:-android}:assembleDebug
-  - ./gradlew :${MOBI_APP:-android}:installDebug --debug --stacktrace
+  - ./gradlew :${MOBI_APP:-android}:installDebug --stacktrace
   - ANDROID_SERIAL='emulator-5556'
   - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
   - ./gradlew :${MOBI_APP:-Wearable}:assembleDebug
-  - ./gradlew :${MOBI_APP:-Wearable}:installDebug --debug --stacktrace
+  - ./gradlew :${MOBI_APP:-Wearable}:installDebug --stacktrace
   - ANDROID_SERIAL=''
   - adb devices -l
   #- ./gradlew build connectedCheck
