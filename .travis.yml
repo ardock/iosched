@@ -39,9 +39,6 @@ matrix:
   fast_finish: true
 
 before_install:
-  - sudo service postgresql stop
-  - sudo service mysql stop
-  - sudo stop mysql
   - export ANDROID_SERIAL='emulator-5554'
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${AVM_PKGS:-},${AVW_PKGS:-}
@@ -58,6 +55,10 @@ install:
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
+  - initctl list
+  - sudo service postgresql stop
+  - sudo service mysql stop
+  - sudo stop mysql || true
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
   - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
