@@ -44,6 +44,8 @@ before_install:
   - sudo service postgresql stop
   # - sudo service mysql stop
   - sudo sh -c 'echo manual >> /etc/init/mysql.override'
+  - sudo service mysql stop
+  - sudo pkill -KILL -f mysql
   - sudo service --status-all
   - initctl list
   - export ANDROID_SERIAL='emulator-5554'
