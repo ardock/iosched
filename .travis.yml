@@ -26,7 +26,6 @@ env:
     - BUILD_TOOLS='build-tools-21.1.2'
     - MOBI_APP=android
     - WEAR_APP=Wearable
-    - ANDROID_SERIAL='emulator-5554'
     - LOG_TAGS='*:E'
     - ADB_INSTALL_TIMEOUT=8 # See https://code.google.com/p/android/issues/detail?id=69735
     #- GRADLE_OPTS="-Xmx768m -Xms256m -Xss4m -Dfile.encoding=UTF-8"
@@ -53,28 +52,21 @@ install:
   - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TGT:-android-21}" -b
       "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
   - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
+  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
   - adb devices -l; adb wait-for-device; adb get-state; adb get-serialno
-  - chmod +x ./gradlew; ls -l gradlew; ./gradlew --version
-  #- ./gradlew androidDependencies
-  - ./gradlew clean
-  - ./gradlew generateDebugSources generateDebugTestSources generateReleaseSources
-  - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
+  - ./gradlew --version clean compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
-  - adb devices; adb wait-for-device; ./scripts/wait_for_emulator.sh; adb shell input keyevent 82 &
+  - adb wait-for-device; ./scripts/wait_for_emulator.sh; adb devices; adb shell input keyevent 82 &
   - adb logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  - ./gradlew :${MOBI_APP:-mobi}:assembleDebug
-  - ./gradlew :${MOBI_APP:-mobi}:assembleDebugTest
-  - ./gradlew :${MOBI_APP:-mobi}:installDebug
-  - ./gradlew :${MOBI_APP:-mobi}:connectedAndroidTest
-  - ./gradlew :${MOBI_APP:-mobi}:assembleRelease
-  - ./gradlew :${MOBI_APP:-mobi}:installRelease
-  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
+  - ANDROID_SERIAL='emulator-5554'
+  - ./gradlew :${MOBI_APP:-mobi}:assembleDebug :${MOBI_APP:-mobi}:installDebug
+  - ./gradlew :${MOBI_APP:-mobi}:assembleRelease :${MOBI_APP:-mobi}:installRelease
   - ANDROID_SERIAL='emulator-5556'
-  - adb devices; adb wait-for-device; ./scripts/wait_for_emulator.sh; adb shell input keyevent 82 &
-  - ./gradlew :${WEAR_APP:-wear}:installRelease
+  - adb wait-for-device; ./scripts/wait_for_emulator.sh; adb devices; adb shell input keyevent 82 &
+  - ./gradlew :${WEAR_APP:-wear}:assembleRelease :${WEAR_APP:-wear}:installRelease
   - ANDROID_SERIAL=''
   - ./gradlew connectedCheck
 
