@@ -55,18 +55,18 @@ install:
   - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb devices -l; adb wait-for-device; adb get-state; adb get-serialno
   - chmod +x ./gradlew; ls -l gradlew; ./gradlew --version
-  - ./gradlew androidDependencies
-  - ./gradlew clean assembleDebug
-  #- ./gradlew generateDebugSources generateDebugTestSources
-  #- ./gradlew compileDebugSources compileDebugTestSources
+  #- ./gradlew androidDependencies
+  - ./gradlew clean
+  - ./gradlew generateDebugSources generateDebugTestSources generateReleaseSources
+  - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
   - adb devices; adb wait-for-device; ./scripts/wait_for_emulator.sh; adb shell input keyevent 82 &
   - adb logcat ${LOG_TAGS} | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  #- ./gradlew :${MOBI_APP:-mobi}:assembleDebug
-  #- ./gradlew :${MOBI_APP:-mobi}:assembleDebugTest
+  - ./gradlew :${MOBI_APP:-mobi}:assembleDebug
+  - ./gradlew :${MOBI_APP:-mobi}:assembleDebugTest
   - ./gradlew :${MOBI_APP:-mobi}:installDebug
   - ./gradlew :${MOBI_APP:-mobi}:connectedAndroidTest
   - ./gradlew :${MOBI_APP:-mobi}:assembleRelease
