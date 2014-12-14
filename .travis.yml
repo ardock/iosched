@@ -42,6 +42,7 @@ before_install:
   - sudo service --status-all
   - sudo initctl list
   - sudo /etc/init.d/postgresql stop
+  - ls /etc/init/*.conf
   - echo manual | sudo tee /etc/init/mysql.override
   - sudo service mysql stop
   - sudo service --status-all
