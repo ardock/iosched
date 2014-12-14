@@ -33,12 +33,13 @@ env:
 
 matrix:
   include:
-    - env: AVM_TGT=android-21
-    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
-    - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVM_TARGET=android-19
+    - env: AVM_TARGET=android-21
+    - env: AVM_TARGET='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
+    - env: AVM_TARGET='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
   allow_failures:
-    - env: AVM_TGT='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
-    - env: AVM_TGT='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVM_TARGET='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
+    - env: AVM_TARGET='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 
 before_install:
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
@@ -46,9 +47,9 @@ before_install:
   - adb kill-server; adb start-server
 
 install:
-  - echo n | android create avd -f -n "${AVM_NAME:-mobi}" -t "${AVM_TGT:-android-21}" -b
+  - echo n | android create avd -f -n "${AVM_NAME:-mobi}" -t "${AVM_TARGET:-android-21}" -b
       "${AVM_ABI:-armeabi-v7a}" -g "${AVM_TAG:-default}"
-  - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TGT:-android-21}" -b
+  - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TARGET:-android-21}" -b
       "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
   - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device; adb get-state; adb get-serialno
@@ -68,10 +69,9 @@ script:
   - adb wait-for-device; adb get-state; adb get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - ./gradlew :${WEAR_APP:-wear}:assembleRelease :${WEAR_APP:-wear}:installRelease
   - ANDROID_SERIAL=''
   - adb devices -l
-  - ./gradlew connectedCheck
+  - ./gradlew connectedCheck --info
 
 after_script:
   - cat logcat.log; pkill -KILL -f adb
