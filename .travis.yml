@@ -37,6 +37,9 @@ matrix:
     - env: AVM_TARGET='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 
 before_install:
+  - gradle --stop
+  - sudo /etc/init.d/mysql stop
+  - sudo /etc/init.d/postgresql stop
   - export ANDROID_SERIAL='emulator-5554'
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},android-21,sys-img-armeabi-v7a-android-wear-21,${AVM_PKGS:-}
@@ -59,17 +62,17 @@ before_script:
 
 script:
   - ./gradlew :${MOBI_APP:-android}:assembleDebug
-  - ./gradlew :${MOBI_APP:-android}:installDebug
+  - ./gradlew :${MOBI_APP:-android}:installDebug --debug
   - ANDROID_SERIAL='emulator-5556'
   - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
   - ./gradlew :${MOBI_APP:-Wearable}:assembleDebug
-  - ./gradlew :${MOBI_APP:-Wearable}:installDebug
+  - ./gradlew :${MOBI_APP:-Wearable}:installDebug --debug
   - ANDROID_SERIAL=''
   - adb devices -l
-  - ./gradlew build connectedCheck
+  #- ./gradlew build connectedCheck
 
 after_script:
   - cat logcat.log; pkill -KILL -f adb
