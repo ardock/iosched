@@ -35,6 +35,7 @@ matrix:
   include:
     - env: AVM_TARGET=android-19
     - env: AVM_TARGET=android-21
+    - env: AVM_TARGET=android-21 AVW_TARGET=android-20
     - env: AVM_TARGET='Google Inc.:Google APIs:19' AVM_PKGS=addon-google_apis-google-19
     - env: AVM_TARGET='Google Inc.:Google APIs:21' AVM_TAG=google_apis AVM_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
   allow_failures:
@@ -51,7 +52,7 @@ install:
       "${AVM_ABI:-armeabi-v7a}" -g "${AVM_TAG:-default}"
   - echo n | android create avd -f -n "${AVW_NAME:-wear}" -t "${AVW_TARGET:-android-21}" -b
       "${AVW_ABI:-armeabi-v7a}" -g "${AVW_TAG:-android-wear}"
-  - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window &
+  - emulator -avd "${AVM_NAME:-mobi}" -no-skin -no-audio -no-window -no_boot_anim &
   - adb wait-for-device; adb get-state; adb get-serialno
   - ./gradlew --version
   - ./gradlew clean
@@ -65,7 +66,7 @@ before_script:
 script:
   - ./gradlew build
   - ANDROID_SERIAL='emulator-5556'
-  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window &
+  - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window -no_boot_anim &
   - adb wait-for-device; adb get-state; adb get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
