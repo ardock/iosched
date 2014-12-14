@@ -63,15 +63,11 @@ before_script:
   - adb wait-for-device get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - ./gradlew :${MOBI_APP:-Wearable}:assembleDebug
-  - ./gradlew :${MOBI_APP:-Wearable}:installDebug --stacktrace
   - ANDROID_SERIAL=''
   - adb devices -l
 
 script:
-  - ./gradlew :${MOBI_APP:-android}:assembleDebug
-  - ./gradlew :${MOBI_APP:-android}:installDebug --stacktrace
-  #- ./gradlew build connectedCheck
+  - ./gradlew build connectedCheck
 
 after_script:
   - cat logcat.log; pkill -KILL -f adb
