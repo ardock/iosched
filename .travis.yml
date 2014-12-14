@@ -39,13 +39,13 @@ matrix:
   fast_finish: true
 
 before_install:
-  - sudo service --status-all
-  - sudo initctl list
-  - sudo /etc/init.d/postgresql stop
+  - service --status-all
+  - initctl list
   - ls /etc/init/*.conf
+  - sudo /etc/init.d/postgresql stop
   - echo manual | sudo tee /etc/init/mysql.override
   - sudo service mysql stop
-  - sudo service --status-all
+  - service --status-all
   - initctl list
   - export ANDROID_SERIAL='emulator-5554'
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
@@ -63,6 +63,7 @@ install:
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
 
 before_script:
+  - sudo service mysql stop
   - sudo service --status-all
   - sudo initctl list
   - ./scripts/wait_for_emulator.sh
