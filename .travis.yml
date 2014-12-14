@@ -44,8 +44,8 @@ install:
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}"
   - echo n | android create avd -f -n "${WEAR_NAME:-wear}" -t "${WEAR_TARGET:-android-20}" -b
       "${WEAR_ABI:-armeabi-v7a}" -g "${WEAR_TAG:-android-wear}"
-  - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window -no-boot-anim &
-  - emulator -avd "${WEAR_NAME:-wear}" -no-skin -no-audio -no-window -no-boot-anim &
+  - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
+  - emulator -avd "${WEAR_NAME:-wear}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
