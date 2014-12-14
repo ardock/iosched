@@ -58,15 +58,18 @@ before_script:
   - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
 
 script:
-  - ./gradlew assembleDebug installDebug
+  - ./gradlew :${MOBI_APP:-android}:assembleDebug
+  - ./gradlew :${MOBI_APP:-android}:installDebug
   - ANDROID_SERIAL='emulator-5556'
   - emulator -avd "${AVW_NAME:-wear}" -no-skin -no-audio -no-window -no-boot-anim &
   - adb wait-for-device get-serialno
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
+  - ./gradlew :${MOBI_APP:-Wearable}:assembleDebug
+  - ./gradlew :${MOBI_APP:-Wearable}:installDebug
   - ANDROID_SERIAL=''
   - adb devices -l
-  - ./gradlew connectedCheck
+  - ./gradlew build connectedCheck
 
 after_script:
   - cat logcat.log; pkill -KILL -f adb
