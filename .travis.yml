@@ -57,8 +57,8 @@ install:
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M
   - android list avd
   - android update avd -n "${MOBI_NAME:-mobi}"
-  - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
-  - adb wait-for-device get-serialno
+  - emulator -avd "${MOBI_NAME:-mobi}" -wipe-data -no-skin -no-audio -no-window &
+  #- adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
