@@ -37,7 +37,7 @@ matrix:
     - env: ANDROID_TARGET=android-18
     - env: ANDROID_TARGET=android-19
   allow_failures:
-    - env: ANDROID_TARGET=android-21
+    - env: ANDROID_TARGET=android-19
   fast_finish: yes
 
 install:
