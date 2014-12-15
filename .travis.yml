@@ -35,20 +35,21 @@ matrix:
   fast_finish: true
 
 before_install:
-  - echo "No space left on device workaround";
+  - echo "Remove unused android components to gain disk space and avoid related issues";
       export IMGS=${ANDROID_HOME}system-images; rm -R ${IMGS}/android-15;
       rm -R ${IMGS}/android-16; rm -R ${IMGS}/android-17; rm -R ${IMGS}/android-18;
       export PFRM=${ANDROID_HOME}platforms; rm -R ${PFRM}/android-15;
       rm -R ${PFRM}/android-16; rm -R ${PFRM}/android-17; rm -R ${PFRM}/android-18;
-      rm -R ${ANDROID_HOME}build-tools/21.1.1 || true
-  - export ANDROID_SERIAL='emulator-5554'
+      rm -R ${ANDROID_HOME}build-tools/21.1.1; rm -R ${ANDROID_HOME}extras || true
+  #- export ANDROID_SERIAL='emulator-5554'
+   - export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH";
   #- echo y | android update sdk -u -t platform-tool,tool
   - echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
 install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
-      "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}"
+      "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M -g
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
