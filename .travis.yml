@@ -33,6 +33,7 @@ install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}"
   - ls -Als /tmp/android-travis || true
+  - rm -R -v ${ANDROID_HOME}system-images
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
