@@ -19,25 +19,14 @@ sudo: false
 notifications:
   email: false
 
-env:
-  global:
-    - BUILD_TOOLS='build-tools-21.1.2'
+android:
+  components:
+    - build-tools-21.1.2
 
 matrix:
   include:
     - env: MOBI_TARGET=android-19
     - env: MOBI_TARGET=android-21
-    - env: MOBI_TARGET='Google Inc.:Google APIs:19' MOBI_PKGS=addon-google_apis-google-19
-    - env: MOBI_TARGET='Google Inc.:Google APIs:21' MOBI_TAG=google_apis MOBI_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-  allow_failures:
-    - env: MOBI_TARGET='Google Inc.:Google APIs:19' MOBI_PKGS=addon-google_apis-google-19
-    - env: MOBI_TARGET='Google Inc.:Google APIs:21' MOBI_TAG=google_apis MOBI_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-  fast_finish: true
-
-before_install:
-  - ls -Als /tmp
-  - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
-  - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
 install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
