@@ -46,8 +46,9 @@ before_install:
       if [[ $MOBI_TARGET == "Google Inc.:Google APIs:19" ]]; then AVDT_DIR="android-19"; fi;
       export MOBI_NAME="${AVDT_DIR}-${MOBI_TAG:-default}-${MOBI_ABI:-armeabi-v7a}-${RANDOM}";
       export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH";
-      export ANDROID_TMP="${TRAVIS_BUILD_DIR}/avds/tmp"; mkdir avds/tmp; echo "$ANDROID_TMP";
+      export ANDROID_TMP="${MOBI_PATH}/tmp"; mkdir -p ${MOBI_PATH}/tmp; echo "$ANDROID_TMP";
       export ANDROID_SERIAL='emulator-5554'
+  - android --clear-cache update sdk -u -n -t tool,platform-tool,platform,system-image,add-on,extra
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
@@ -55,6 +56,7 @@ install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M
   - android list avd
+  - android update
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
