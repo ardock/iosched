@@ -16,49 +16,35 @@ language: android
 
 sudo: false
 
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+
 notifications:
   email: false
 
 env:
   global:
-    - BUILD_TOOLS='build-tools-21.1.2'
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
+    - PATH=${GRADLE_USER_HOME}/bin/:${PATH}
 
 matrix:
   include:
-    - env: MOBI_TARGET=android-19
-    - env: MOBI_TARGET=android-21
-    - env: MOBI_TARGET='Google Inc.:Google APIs:19' MOBI_PKGS=addon-google_apis-google-19
-    - env: MOBI_TARGET='Google Inc.:Google APIs:21' MOBI_TAG=google_apis MOBI_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: ANDROID_TARGET=android-15
+    - env: ANDROID_TARGET=android-16
+    - env: ANDROID_TARGET=android-17
+    - env: ANDROID_TARGET=android-18
+    - env: ANDROID_TARGET=android-19
   allow_failures:
-    - env: MOBI_TARGET='Google Inc.:Google APIs:19' MOBI_PKGS=addon-google_apis-google-19
-    - env: MOBI_TARGET='Google Inc.:Google APIs:21' MOBI_TAG=google_apis MOBI_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-  fast_finish: true
-
-before_install:
-  - echo "REMOVE UNUSED COMPONENTS";
-      export IMGS=${ANDROID_HOME}system-images; rm -R ${IMGS}/android-15;
-      rm -R ${IMGS}/android-16; rm -R ${IMGS}/android-17; rm -R ${IMGS}/android-18;
-      export PFRM=${ANDROID_HOME}platforms; rm -R ${PFRM}/android-15;
-      rm -R ${PFRM}/android-16; rm -R ${PFRM}/android-17; rm -R ${PFRM}/android-18;
-      rm -R ${ANDROID_HOME}build-tools/21.1.1; rm -R ${ANDROID_HOME}extras || true
-  - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="${MOBI_TARGET:-android-21}";
-      if [[ $MOBI_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
-      if [[ $MOBI_TARGET == "Google Inc.:Google APIs:19" ]]; then AVDT_DIR="android-19"; fi;
-      export MOBI_NAME="${AVDT_DIR}-${MOBI_TAG:-default}-${MOBI_ABI:-armeabi-v7a}-${RANDOM}";
-      export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH";
-      export ANDROID_TMP="${MOBI_PATH}/tmp"; mkdir -p ${MOBI_PATH}/tmp; echo "$ANDROID_TMP";
-      export ANDROID_SERIAL='emulator-5554'
-  - android --clear-cache update sdk -u -n -t tool,platform-tool,platform,system-image,add-on,extra
-  - echo y | android update sdk -f -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
-  - echo y | android update sdk -f -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
+    - env: ANDROID_TARGET=android-21
+  fast_finish: yes
 
 install:
-  - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
-      "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M
-  - android list avd
-  - android update avd -n "${MOBI_NAME:-mobi}"
-  - emulator -avd "${MOBI_NAME:-mobi}" -wipe-data -no-skin -no-audio -no-window &
-  #- adb wait-for-device get-serialno
+  - echo n | android create avd -f -n "${ANDROID_NAME:-test}" -t "${ANDROID_TARGET:-android-21}" -b
+      "${ANDROID_ABI:-armeabi-v7a}"
+  - emulator -avd "${ANDROID_NAME:-test}" -no-skin -no-audio -no-window &
+  - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
