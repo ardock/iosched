@@ -35,17 +35,20 @@ matrix:
   fast_finish: true
 
 before_install:
-  - echo "Remove unused android components to gain disk space and avoid related issues";
+  - echo "REMOVE UNUSED COMPONENTS";
       export IMGS=${ANDROID_HOME}system-images; rm -R ${IMGS}/android-15;
       rm -R ${IMGS}/android-16; rm -R ${IMGS}/android-17; rm -R ${IMGS}/android-18;
       export PFRM=${ANDROID_HOME}platforms; rm -R ${PFRM}/android-15;
       rm -R ${PFRM}/android-16; rm -R ${PFRM}/android-17; rm -R ${PFRM}/android-18;
       rm -R ${ANDROID_HOME}build-tools/21.1.1; rm -R ${ANDROID_HOME}extras || true
-  #- export ANDROID_SERIAL='emulator-5554'
-  - export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH"
-  - export ANDROID_TMP="${TRAVIS_BUILD_DIR}/avds/temp"; mkdir avds/temp; echo "$ANDROID_TMP"
-  #- echo y | android update sdk -u -t platform-tool,tool
-  - echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository
+  - echo "EXPORT ENVIRONMENT VARIABLES";   export AVDT_DIR="${MOBI_TARGET:-android-21}";
+      if [[ $MOBI_TARGET == "Google Inc.:Google APIs:21" ]]; then AVDT_DIR="android-21"; fi;
+      if [[ $MOBI_TARGET == "Google Inc.:Google APIs:19" ]]; then AVDT_DIR="android-19"; fi;
+      export MOBI_NAME="${AVDT_DIR}-${MOBI_TAG:-default}-${MOBI_ABI:-armeabi-v7a}-${RANDOM}";
+      export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH";
+      export ANDROID_TMP="${TRAVIS_BUILD_DIR}/avds/tmp"; mkdir avds/tmp; echo "$ANDROID_TMP";
+      export ANDROID_SERIAL='emulator-5554'
+  - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
 install:
