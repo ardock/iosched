@@ -43,6 +43,7 @@ before_install:
       rm -R ${ANDROID_HOME}build-tools/21.1.1; rm -R ${ANDROID_HOME}extras || true
   #- export ANDROID_SERIAL='emulator-5554'
   - export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH"
+  - export ANDROID_TMP="${TRAVIS_BUILD_DIR}/avds/temp"; mkdir avds/temp; echo "$ANDROID_TMP"
   #- echo y | android update sdk -u -t platform-tool,tool
   - echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
@@ -51,7 +52,7 @@ install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M
   - android list avd
-  - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window -wipe-data &
+  - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
