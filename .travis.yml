@@ -40,10 +40,10 @@ before_install:
   - echo "No space left on device workaround";
       export IMGS=${ANDROID_HOME}system-images; rm -R -v ${IMGS}/android-15;
       rm -R -v ${IMGS}/android-16; rm -R -v ${IMGS}/android-17; rm -R -v ${IMGS}/android-18;
-      ls -Als /home/travis/.android; ls -Als /home/travis/.android/avd/;
-      ls -Als /tmp/android-travis; ls -Als ${ANDROID_HOME}temp || true
+      ls -Als /home/travis/.android/cache; ls -Als /home/travis/.android/avd/;
+      ls -Als ${ANDROID_HOME}temp; ls -Als /tmp/android-travis || true
   - export ANDROID_SERIAL='emulator-5554'
-  - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
+  #- echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-},${WEAR_PKGS:-}
 
 install:
