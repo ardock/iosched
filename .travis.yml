@@ -35,7 +35,7 @@ matrix:
   fast_finish: true
 
 before_install:
-  - ls -Als /tmp; ls -Als /tmp/android-travis
+  - ls -Als /tmp
   - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
@@ -44,6 +44,7 @@ install:
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}"
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
+  - ls -Als /tmp/android-travis || true
   - ./gradlew --version
   - ./gradlew clean
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
