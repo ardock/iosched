@@ -42,7 +42,7 @@ before_install:
       rm -R ${PFRM}/android-16; rm -R ${PFRM}/android-17; rm -R ${PFRM}/android-18;
       rm -R ${ANDROID_HOME}build-tools/21.1.1; rm -R ${ANDROID_HOME}extras || true
   #- export ANDROID_SERIAL='emulator-5554'
-   - export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH";
+  - export MOBI_PATH="${TRAVIS_BUILD_DIR}/avds/${MOBI_NAME:-mobi}"; mkdir avds; echo "$MOBI_PATH"
   #- echo y | android update sdk -u -t platform-tool,tool
   - echo y | android update sdk -u -t extra-android-m2repository,extra-google-m2repository
   - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
