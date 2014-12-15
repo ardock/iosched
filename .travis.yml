@@ -49,7 +49,7 @@ before_install:
 
 install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
-      "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M -g
+      "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}" -p "${MOBI_PATH:-.}" -c 100M
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
