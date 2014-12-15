@@ -25,15 +25,16 @@ android:
 
 matrix:
   include:
+    - env: MOBI_TARGET=android-15
     - env: MOBI_TARGET=android-19
     - env: MOBI_TARGET=android-21
 
 install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
       "${MOBI_ABI:-armeabi-v7a}" -g "${MOBI_TAG:-default}"
+  - ls -Als /tmp/android-travis || true
   - emulator -avd "${MOBI_NAME:-mobi}" -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
-  - ls -Als /tmp/android-travis || true
   - ./gradlew --version
   - ./gradlew clean
   - ./gradlew compileDebugSources compileDebugTestSources compileReleaseSources
