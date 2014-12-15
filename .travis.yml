@@ -49,8 +49,8 @@ before_install:
       export ANDROID_TMP="${MOBI_PATH}/tmp"; mkdir -p ${MOBI_PATH}/tmp; echo "$ANDROID_TMP";
       export ANDROID_SERIAL='emulator-5554'
   - android --clear-cache update sdk -u -n -t tool,platform-tool,platform,system-image,add-on,extra
-  - echo y | android update sdk -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
-  - echo y | android update sdk -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
+  - echo y | android update sdk -f -u -t platform-tool,tool,extra-android-m2repository,extra-google-m2repository
+  - echo y | android update sdk -f -a -u -t ${BUILD_TOOLS},${MOBI_PKGS:-}
 
 install:
   - echo n | android create avd -f -n "${MOBI_NAME:-mobi}" -t "${MOBI_TARGET:-android-21}" -b
