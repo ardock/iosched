@@ -33,9 +33,7 @@ env:
 matrix:
   include:
     - env: ANDROID_TARGET=android-15
-    - env: ANDROID_TARGET=android-16
     - env: ANDROID_TARGET=android-17
-    - env: ANDROID_TARGET=android-18
     - env: ANDROID_TARGET=android-19
     - env: ANDROID_TARGET=android-21
   allow_failures:
@@ -50,7 +48,7 @@ before_install:
 
 install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET -b "${ANDROID_ABI:-armeabi-v7a}"
-  - emulator -avd test -no-skin -no-audio -no-window -debug avd_config &
+  - emulator -avd test -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
@@ -59,10 +57,3 @@ install:
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
-
-script:
-  - ./gradlew build connectedCheck
-
-after_script:
-  - cat logcat.log; pkill -KILL -f adb
