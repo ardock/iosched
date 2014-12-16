@@ -28,6 +28,7 @@ env:
   global:
     - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
     - PATH=${GRADLE_USER_HOME}/bin/:${PATH}
+    - ANDROID_SDK_HOME=${TRAVIS_BUILD_DIR}
 
 matrix:
   include:
@@ -42,15 +43,14 @@ matrix:
   fast_finish: yes
 
 before_install:
-  # TODO: delete this quickfix if VM are updated. https://github.com/travis-ci/travis-ci/issues/3037
+  # TODO: if VM are updated, delete this quickfix https://github.com/travis-ci/travis-ci/issues/3037
   - if [[ $ANDROID_TARGET ==  *-19 ]]; then rm -R ${ANDROID_HOME}system-images/android-21; fi
   - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-20; fi
   - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-19; fi
 
 install:
-  - echo n | android create avd -f -n "${ANDROID_NAME:-test}" -t "${ANDROID_TARGET:-android-21}" -b
-      "${ANDROID_ABI:-armeabi-v7a}"
-  - emulator -avd "${ANDROID_NAME:-test}" -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET -b "${ANDROID_ABI:-armeabi-v7a}"
+  - emulator -avd test -no-skin -no-audio -no-window -debug avd_config &
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
@@ -59,7 +59,7 @@ install:
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
-  - adb logcat *:W | tee logcat.log>/dev/null 2>&1 &
+  - adb logcat *:E | tee logcat.log>/dev/null 2>&1 &
 
 script:
   - ./gradlew build connectedCheck
