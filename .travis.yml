@@ -44,6 +44,7 @@ matrix:
 before_install:
   # TODO: delete this quickfix if VM are updated. https://github.com/travis-ci/travis-ci/issues/3037
   - if [[ $ANDROID_TARGET ==  *-19 ]]; then rm -R ${ANDROID_HOME}system-images/android-21; fi
+  - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-20; fi
   - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-19; fi
 
 install:
