@@ -37,14 +37,9 @@ matrix:
     - env: ANDROID_TARGET=android-19
     - env: ANDROID_TARGET=android-21
   allow_failures:
+    - env: ANDROID_TARGET=android-19
     - env: ANDROID_TARGET=android-21
   fast_finish: yes
-
-before_install:
-  # TODO: if VM are updated, delete this quickfix https://github.com/travis-ci/travis-ci/issues/3037
-  - if [[ $ANDROID_TARGET ==  *-19 ]]; then rm -R ${ANDROID_HOME}system-images/android-21; fi
-  - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-20; fi
-  - if [[ $ANDROID_TARGET ==  *-21 ]]; then rm -R ${ANDROID_HOME}system-images/android-19; fi
 
 install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET -b "${ANDROID_ABI:-armeabi-v7a}"
