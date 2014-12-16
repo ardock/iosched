@@ -40,6 +40,9 @@ matrix:
     - env: ANDROID_TARGET=android-19
   fast_finish: yes
 
+before_install:
+  - if [[ $ANDROID_TARGET ==  *-19 ]]; then rm -R ${ANDROID_HOME}system-images/android-21; fi
+
 install:
   - echo n | android create avd -f -n "${ANDROID_NAME:-test}" -t "${ANDROID_TARGET:-android-21}" -b
       "${ANDROID_ABI:-armeabi-v7a}"
