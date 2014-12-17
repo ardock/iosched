@@ -38,6 +38,8 @@ before_install:
   - emulator -avd test -no-skin -no-audio -no-window &
   - adb wait-for-device get-serialno
   - ./gradlew --version
+  - ./gradlew clean
+  - ./gradlew compileDebugSources
 
 before_script:
   - ./scripts/wait_for_emulator.sh
