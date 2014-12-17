@@ -18,6 +18,7 @@ sudo: false
 
 android:
   components:
+    - build-tools-20.0.0
     - build-tools-21.1.1
     - android-20
     - android-21
