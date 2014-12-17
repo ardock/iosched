@@ -42,9 +42,9 @@ matrix:
     - env: ANDROID_TARGET=android-21
   fast_finish: yes
 
-before_install:
+install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET -b "${ANDROID_ABI:-armeabi-v7a}"
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - emulator -avd test -no-skin -no-audio -no-window -debug avd_config &
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
