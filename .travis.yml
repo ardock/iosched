@@ -37,10 +37,12 @@ before_install:
   - emulator -avd test -no-skin -no-audio -no-window -debug avd_config &
   - adb wait-for-device get-serialno
 
+install: true
+
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 
 script:
   - ./gradlew :Wearable:build
-  - ./gradlew :android:preDexDebug --stacktrace
+  - ./gradlew :android:preDexDebug --full-stacktrace
