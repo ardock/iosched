@@ -38,7 +38,6 @@ before_install:
   - adb wait-for-device get-serialno
   - ./gradlew --version
   - ./gradlew clean
-  - ./gradlew compileDebugSources
 
 before_script:
   - ./scripts/wait_for_emulator.sh
