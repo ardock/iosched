@@ -21,6 +21,10 @@ cache:
     - ${TRAVIS_BUILD_DIR}/gradle/caches/
     - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
 
+android:
+  components:
+    - build-tools-21.1.1
+
 notifications:
   email: false
 
@@ -32,9 +36,7 @@ env:
 matrix:
   include:
     - env: ANDROID_TARGET=android-15
-    - env: ANDROID_TARGET=android-16
     - env: ANDROID_TARGET=android-17
-    - env: ANDROID_TARGET=android-18
     - env: ANDROID_TARGET=android-19
     - env: ANDROID_TARGET=android-21
   allow_failures:
