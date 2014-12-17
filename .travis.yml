@@ -34,7 +34,7 @@ env:
 
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window -debug init &
+  - emulator -avd test -no-skin -no-audio -no-window -debug avd_config,init,adb &
   - adb wait-for-device get-serialno
 
 before_script:
@@ -44,4 +44,4 @@ before_script:
 script:
   - ./gradlew clean
   - ./gradlew :Wearable:assembleDebug
-  - ./gradlew :android:preDexDebug --full-stacktrace
+  - ./gradlew :android:assembleDebug --full-stacktrace
