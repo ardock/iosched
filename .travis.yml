@@ -41,3 +41,7 @@ before_install:
 before_script:
   - ./scripts/wait_for_emulator.sh
   - adb shell input keyevent 82 &
+
+script:
+  - ./gradlew :Wearable:build
+  - ./gradlew :android:preDexDebug --stacktrace --debug
