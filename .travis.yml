@@ -16,6 +16,11 @@ language: android
 
 sudo: false
 
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+
 android:
   components:
     - build-tools-20.0.0
@@ -30,6 +35,8 @@ notifications:
   email: false
 
 env:
+  global:
+    - GRADLE_USER_HOME=${TRAVIS_BUILD_DIR}/gradle
   matrix:
     - ANDROID_TARGET=android-18  ANDROID_ABI=armeabi-v7a
     - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
