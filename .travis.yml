@@ -16,6 +16,8 @@ language: android
 
 android:
   components:
+    - platform-tool
+    - tool
     - build-tools-23.0.1
     - android-21
     - addon-google_apis-google-21
