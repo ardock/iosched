@@ -124,7 +124,7 @@
 -dontwarn sun.misc.Unsafe
 -dontwarn com.google.common.util.concurrent.RateLimiter
 
--dontwarn com.android.volley.toolbox.**
+# Avoid packageQualityassurance warnings on CI server
 -dontwarn com.android.volley.toolbox.**
 -dontwarn com.google.android.gms.analytics.**
 -dontwarn com.google.android.gms.internal.zzvp
