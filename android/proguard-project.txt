@@ -123,3 +123,11 @@
 -dontwarn com.sothree.slidinguppanel.**
 -dontwarn sun.misc.Unsafe
 -dontwarn com.google.common.util.concurrent.RateLimiter
+
+-dontwarn com.android.volley.toolbox.**
+-dontwarn com.android.volley.toolbox.**
+-dontwarn com.google.android.gms.analytics.**
+-dontwarn com.google.android.gms.internal.zzvp
+-dontwarn com.google.android.gms.common.GooglePlayServicesUtil
+-dontwarn com.google.android.gms.tagmanager.**
+-dontwarn com.larvalabs.svgandroid.**

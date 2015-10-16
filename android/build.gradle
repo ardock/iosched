@@ -114,6 +114,7 @@ android {
     packagingOptions {
         // Exclude files to avoid packaging collisions (same file name in multiple dependencies).
         exclude 'LICENSE.txt'
+        exclude '.readme'
     }
 
     // Test Android jar comes with unimplemented methods that throw exceptions by default. This
