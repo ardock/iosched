@@ -18,8 +18,6 @@ sudo: false
 
 android:
   components:
-    - platform-tool
-    - tool
     - build-tools-23.0.1
     - android-23
     - addon-google_apis-google-21
